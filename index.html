@@ -6,44 +6,31 @@
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6.5pt; }
-        .notebook-container { max-width: 1050px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        .notebook-container { max-width: 1080px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 10pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 4px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 6pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        /* 核心三欄佈局：左右採絕對定位對應時間軸 */
-        .main-layout { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 8px; align-items: start; position: relative; }
+        /* 核心三欄佈局連線網格 */
+        .main-layout { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 15px; align-items: start; position: relative; }
         
-        .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 7pt; color: white; margin-bottom: 4px; }
+        .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 7pt; color: white; margin-bottom: 6px; }
         .north-header { background: #e74c3c; }
         .south-header { background: #27ae60; }
 
-        /* 時間軸與卡片放置區容器 */
-        .timeline-side { position: relative; height: 780px; }
+        /* 側邊卡片區（自然展開，不壓縮文字） */
+        .cards-side { display: flex; flex-direction: column; gap: 5px; position: relative; }
 
-        /* 統一卡片樣式：透過絕對定位與百分比精準對齊色帶 */
+        /* 統一卡片樣式：舒適寬裕，絕不壓縮 */
         .king-card {
-            position: absolute; left: 0; right: 0;
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
-            padding: 2px 4px; font-size: 5.8pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            line-height: 1.1; overflow: hidden; display: flex; flex-direction: column; justify-content: center;
+            padding: 4px 6px; font-size: 6pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            line-height: 1.2; position: relative;
         }
-        
-        /* 北國卡片靠右側出箭頭指向中間色帶 */
         .north-card { border-left: 3px solid #e74c3c; }
-        .north-card::after {
-            content: ""; position: absolute; right: -7px; top: 50%; transform: translateY(-50%);
-            border-width: 3px 0 3px 5px; border-style: solid; border-color: transparent transparent transparent #e74c3c;
-        }
-
-        /* 南國卡片靠左側出箭頭指向中間色帶 */
         .south-card { border-left: 3px solid #27ae60; }
-        .south-card::before {
-            content: ""; position: absolute; left: -7px; top: 50%; transform: translateY(-50%);
-            border-width: 3px 5px 3px 0; border-style: solid; border-color: transparent #27ae60 transparent transparent;
-        }
         
-        .king-name { font-weight: bold; color: #2c3e50; font-size: 6.2pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
+        .king-name { font-weight: bold; color: #2c3e50; font-size: 6.5pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 2px; }
         .bad { color: #c0392b; }
         .good { color: #27ae60; }
 
@@ -51,242 +38,331 @@
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            position: relative;
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
-        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; position: relative; height: 780px; }
+        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; position: relative; height: 980px; }
         .bar-segment { position: absolute; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.6); }
+
+        /* 覆蓋整體的 SVG 連線圖層（達成連連看箭頭效果） */
+        .svg-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10;
+        }
     </style>
 </head>
 <body>
 
 <div class="notebook-container">
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">北國 19 王、南國 20 位統治者，卡片與中間比例色帶嚴格按歷史年份百分比對應！</p>
+    <p class="subtitle">文字空間完全保留、不壓縮，透過動態連線箭頭精準指向中間歷史色帶區段！</p>
 
-    <div class="main-layout">
+    <div class="main-layout" id="layoutContainer">
         
-        <!-- 1. 北國以色列 19 王（絕對定位精準對齊色帶） -->
+        <!-- 全域 SVG 連線與箭頭定義 -->
+        <svg class="svg-overlay" id="linkSvg">
+            <defs>
+                <marker id="arrow-north" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 Z" fill="#e74c3c" />
+                </marker>
+                <marker id="arrow-south" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
+                    <path d="M6,0 L0,3 L6,6 Z" fill="#27ae60" />
+                </marker>
+            </defs>
+        </svg>
+
+        <!-- 1. 北國以色列 19 王（舒適排版） -->
         <div>
             <div class="column-header north-header">北國以色列 (19王全展開)</div>
-            <div class="timeline-side">
-                <div class="king-card north-card" style="top: 0%; height: 5.2%;">
+            <div class="cards-side" id="northCards">
+                <div class="king-card north-card" data-target="0">
                     <div class="king-name">1. 耶羅波安一世 (22年, 930-909 BC)</div>
                     <div>✨ 特質：<span class="bad">行惡，設金牛犢</span> | 👑 未具名 | 📜 亞希雅</div>
                 </div>
-                <div class="king-card north-card" style="top: 5.2%; height: 0.5%;">
-                    <div class="king-name">2. 拿答 (2年)</div>
-                    <div>✨ 特質：<span class="bad">行惡</span> | ⚡ 遭背叛刺殺</div>
+                <div class="king-card north-card" data-target="1">
+                    <div class="king-name">2. 拿答 (2年, 909-908 BC)</div>
+                    <div>✨ 特質：<span class="bad">行惡</span> | ⚡ 國基比亞時遭巴沙背叛殺段</div>
                 </div>
-                <div class="king-card north-card" style="top: 5.7%; height: 5.7%;">
+                <div class="king-card north-card" data-target="2">
                     <div class="king-name">3. 巴沙 (24年, 908-886 BC)</div>
                     <div>✨ 特質：<span class="bad">步後塵</span> | 📜 耶戶 | ⚡ 全家遭災</div>
                 </div>
-                <div class="king-card north-card" style="top: 11.4%; height: 0.5%;">
-                    <div class="king-name">4. 以拉 (2年)</div>
+                <div class="king-card north-card" data-target="3">
+                    <div class="king-name">4. 以拉 (2年, 886-885 BC)</div>
                     <div>✨ 特質：<span class="bad">荒淫酗酒</span> | ⚡ 遭心利殺害</div>
                 </div>
-                <div class="king-card north-card" style="top: 11.9%; height: 0.2%; background: #fadbd8;">
-                    <div class="king-name">5. 心利 (7日)</div>
-                    <div>✨ 特質：<span class="bad">篡位7天</span> | ⚡ 遭圍困自焚</div>
+                <div class="king-card north-card" data-target="4" style="background: #fadbd8;">
+                    <div class="king-name">5. 心利 (7日, 885 BC)</div>
+                    <div>✨ 特質：<span class="bad">篡位僅7天</span> | ⚡ 遭圍困放火自焚</div>
                 </div>
-                <div class="king-card north-card" style="top: 12.1%; height: 2.8%;">
+                <div class="king-card north-card" data-target="5">
                     <div class="king-name">6. 暗利 (12年, 885-874 BC)</div>
                     <div>✨ 特質：<span class="bad">惡過前王</span> | 遷都撒瑪利亞</div>
                 </div>
-                <div class="king-card north-card" style="top: 14.9%; height: 5.2%;">
+                <div class="king-card north-card" data-target="6">
                     <div class="king-name">7. 亞哈 (22年, 874-853 BC)</div>
                     <div>✨ 特質：<span class="bad">極度行惡</span> | 👑 耶洗別 | 📜 以利亞</div>
                 </div>
-                <div class="king-card north-card" style="top: 20.1%; height: 0.5%;">
-                    <div class="king-name">8. 亞哈謝 (2年)</div>
-                    <div>✨ 特質：<span class="bad">隨從父母</span> | 📜 以利亞預言</div>
+                <div class="king-card north-card" data-target="7">
+                    <div class="king-name">8. 亞哈謝 (2年, 853-852 BC)</div>
+                    <div>✨ 特質：<span class="bad">隨從父母拜巴力</span> | 📜 以利亞預言排死</div>
                 </div>
-                <div class="king-card north-card" style="top: 20.6%; height: 2.8%;">
+                <div class="king-card north-card" data-target="8">
                     <div class="king-name">9. 約蘭 (12年, 852-841 BC)</div>
-                    <div>✨ 特質：除巴力柱像拜金牛犢 | 📜 以利沙</div>
+                    <div>✨ 特質：除巴力柱像但仍拜金牛犢 | 📜 以利沙</div>
                 </div>
-                <div class="king-card north-card" style="top: 23.4%; height: 6.5%;">
+                <div class="king-card north-card" data-target="9">
                     <div class="king-name">10. 耶戶 (28年, 841-814 BC)</div>
                     <div>✨ 特質：<span class="good">殲滅亞哈家</span> | 📜 以利沙 | ⚡ 隨金牛犢</div>
                 </div>
-                <div class="king-card north-card" style="top: 29.9%; height: 4.0%;">
+                <div class="king-card north-card" data-target="10">
                     <div class="king-name">11. 約哈斯 (17年, 814-798 BC)</div>
-                    <div>✨ 特質：<span class="bad">受亞蘭欺壓</span> | ⚡ 哀求神獲救</div>
+                    <div>✨ 特質：<span class="bad">受亞蘭欺壓</span> | ⚡ 哀求神、神賜拯救者</div>
                 </div>
-                <div class="king-card north-card" style="top: 33.9%; height: 3.8%;">
+                <div class="king-card north-card" data-target="11">
                     <div class="king-name">12. 約阿施 (16年, 798-782 BC)</div>
-                    <div>✨ 特質：行惡三勝亞蘭 | 📜 以利沙預言</div>
+                    <div>✨ 特質：行惡但三勝亞蘭 | 📜 以利沙臨終預言</div>
                 </div>
-                <div class="king-card north-card" style="top: 37.7%; height: 9.8%; background: #fcf3cf;">
+                <div class="king-card north-card" data-target="12" style="background: #fcf3cf;">
                     <div class="king-name">13. 耶羅波安二世 (41年, 782-753 BC)</div>
                     <div>✨ 特質：<span class="good">收復失土極盛</span> | 📜 阿摩司、何西阿</div>
                 </div>
-                <div class="king-card north-card" style="top: 47.5%; height: 0.2%; background: #fadbd8;">
-                    <div class="king-name">14. 撒迦利亞 (6月)</div>
-                    <div>✨ 特質：行惡被沙龍刺殺</div>
+                <div class="king-card north-card" data-target="13" style="background: #fadbd8;">
+                    <div class="king-name">14. 撒迦利亞 (6個月, 753 BC)</div>
+                    <div>✨ 特質：行惡，被沙龍背叛刺殺</div>
                 </div>
-                <div class="king-card north-card" style="top: 47.7%; height: 0.2%; background: #fadbd8;">
-                    <div class="king-name">15. 沙龍 (1月)</div>
-                    <div>✨ 特質：篡位即被米拿現擊殺</div>
+                <div class="king-card north-card" data-target="14" style="background: #fadbd8;">
+                    <div class="king-name">15. 沙龍 (1個月, 752 BC)</div>
+                    <div>✨ 特質：篡位一個月被米拿現擊殺</div>
                 </div>
-                <div class="king-card north-card" style="top: 47.9%; height: 2.4%;">
-                    <div class="king-name">16. 米拿現 (10年)</div>
-                    <div>✨ 特質：<span class="bad">極其殘暴</span> | 向亞述進貢</div>
+                <div class="king-card north-card" data-target="15">
+                    <div class="king-name">16. 米拿現 (10年, 752-742 BC)</div>
+                    <div>✨ 特質：<span class="bad">極其殘暴</span> | 向亞述進貢求穩固</div>
                 </div>
-                <div class="king-card north-card" style="top: 50.3%; height: 0.5%;">
-                    <div class="king-name">17. 比加轄 (2年)</div>
-                    <div>✨ 特質：行惡被比加殺害</div>
+                <div class="king-card north-card" data-target="16" style="background: #fadbd8;">
+                    <div class="king-name">17. 比加轄 (2年, 742-740 BC)</div>
+                    <div>✨ 特質：行惡，被比加政變殺害</div>
                 </div>
-                <div class="king-card north-card" style="top: 50.8%; height: 4.8%;">
+                <div class="king-card north-card" data-target="17">
                     <div class="king-name">18. 比加 (20年, 740-732 BC)</div>
-                    <div>✨ 特質：結盟亞蘭對抗亞述 | ⚡ 招致被擄</div>
+                    <div>✨ 特質：結盟亞蘭對抗亞述 | ⚡ 招致北方被擄</div>
                 </div>
-                <div class="king-card north-card" style="top: 55.6%; height: 4.4%; background: #e74c3c; color: white;">
+                <div class="king-card north-card" data-target="18" style="background: #e74c3c; color: white;">
                     <div class="king-name" style="color: white;">19. 何細亞 (9年, 732-722 BC)</div>
-                    <div>✨ 特質：末代背叛 | 💀 <span style="color: #f9e79f;">722 BC 北國滅亡</span></div>
+                    <div>✨ 特質：末代背叛亞述 | 💀 <span style="color: #f9e79f;">722 BC 北國滅亡</span></div>
                 </div>
             </div>
         </div>
 
         <!-- 2. 中間精準比例色帶 -->
-        <div class="timeline-center">
+        <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
                 <!-- 北國色帶 -->
-                <div class="bar-track">
-                    <div class="bar-segment" style="top: 0%; height: 5.2%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 5.2%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 5.7%; height: 5.7%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 11.4%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 11.9%; height: 0.2%; background: #c0392b;"></div>
-                    <div class="bar-segment" style="top: 12.1%; height: 2.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 14.9%; height: 5.2%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 20.1%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 20.6%; height: 2.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 23.4%; height: 6.5%; background: #27ae60;"></div>
-                    <div class="bar-segment" style="top: 29.9%; height: 4.0%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 33.9%; height: 3.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 37.7%; height: 9.8%; background: #f1c40f;"></div>
-                    <div class="bar-segment" style="top: 47.5%; height: 0.2%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 47.7%; height: 0.2%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 47.9%; height: 2.4%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 50.3%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 50.8%; height: 4.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" style="top: 55.6%; height: 4.4%; background: #78281f;"></div>
+                <div class="bar-track" id="northTrack">
+                    <div class="bar-segment" data-index="0" style="top: 0%; height: 5.2%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="1" style="top: 5.2%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="2" style="top: 5.7%; height: 5.7%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="3" style="top: 11.4%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="4" style="top: 11.9%; height: 0.2%; background: #c0392b;"></div>
+                    <div class="bar-segment" data-index="5" style="top: 12.1%; height: 2.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="6" style="top: 14.9%; height: 5.2%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="7" style="top: 20.1%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="8" style="top: 20.6%; height: 2.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="9" style="top: 23.4%; height: 6.5%; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="10" style="top: 29.9%; height: 4.0%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="11" style="top: 33.9%; height: 3.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="12" style="top: 37.7%; height: 9.8%; background: #f1c40f;"></div>
+                    <div class="bar-segment" data-index="13" style="top: 47.5%; height: 0.2%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="14" style="top: 47.7%; height: 0.2%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="15" style="top: 47.9%; height: 2.4%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="16" style="top: 50.3%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="17" style="top: 50.8%; height: 4.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="18" style="top: 55.6%; height: 4.4%; background: #78281f;"></div>
                 </div>
                 <!-- 南國色帶 -->
-                <div class="bar-track">
-                    <div class="bar-segment" style="top: 0%; height: 4.0%; background: #d4efdf;"></div>
-                    <div class="bar-segment" style="top: 4.0%; height: 0.7%; background: #fcf3cf;"></div>
-                    <div class="bar-segment" style="top: 4.7%; height: 9.7%; background: #27ae60;"></div>
-                    <div class="bar-segment" style="top: 14.4%; height: 5.9%; background: #27ae60;"></div>
-                    <div class="bar-segment" style="top: 20.3%; height: 1.9%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 22.2%; height: 0.2%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 22.4%; height: 1.4%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 23.8%; height: 9.5%; background: #d4efdf;"></div>
-                    <div class="bar-segment" style="top: 33.3%; height: 6.9%; background: #d4efdf;"></div>
-                    <div class="bar-segment" style="top: 40.2%; height: 12.4%; background: #27ae60;"></div>
-                    <div class="bar-segment" style="top: 52.6%; height: 3.8%; background: #d4efdf;"></div>
-                    <div class="bar-segment" style="top: 56.4%; height: 3.8%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 60.2%; height: 6.9%; background: #27ae60;"></div>
-                    <div class="bar-segment" style="top: 67.1%; height: 13.1%; background: #c0392b;"></div>
-                    <div class="bar-segment" style="top: 80.2%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 80.7%; height: 7.4%; background: #27ae60;"></div>
-                    <div class="bar-segment" style="top: 88.1%; height: 0.1%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 88.2%; height: 2.6%; background: #fadbd8;"></div>
-                    <div class="bar-segment" style="top: 90.8%; height: 9.2%; background: #78281f;"></div>
+                <div class="bar-track" id="southTrack">
+                    <div class="bar-segment" data-index="0" style="top: 0%; height: 4.0%; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="1" style="top: 4.0%; height: 0.7%; background: #fcf3cf;"></div>
+                    <div class="bar-segment" data-index="2" style="top: 4.7%; height: 9.7%; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="3" style="top: 14.4%; height: 5.9%; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="4" style="top: 20.3%; height: 1.9%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="5" style="top: 22.2%; height: 0.2%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="6" style="top: 22.4%; height: 1.4%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="7" style="top: 23.8%; height: 9.5%; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="8" style="top: 33.3%; height: 6.9%; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="9" style="top: 40.2%; height: 12.4%; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="10" style="top: 52.6%; height: 3.8%; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="11" style="top: 56.4%; height: 3.8%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="12" style="top: 60.2%; height: 6.9%; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="13" style="top: 67.1%; height: 13.1%; background: #c0392b;"></div>
+                    <div class="bar-segment" data-index="14" style="top: 80.2%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="15" style="top: 80.7%; height: 7.4%; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="16" style="top: 88.1%; height: 0.1%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="17" style="top: 88.2%; height: 2.6%; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="18" style="top: 90.8%; height: 4.6%; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="19" style="top: 95.4%; height: 4.6%; background: #78281f;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- 3. 南國猶大 20 位統治者（絕對定位精準對齊色帶） -->
+        <!-- 3. 南國猶大 20 位統治者（舒適排版） -->
         <div>
             <div class="column-header south-header">南國猶大 (20位統治者全展開)</div>
-            <div class="timeline-side">
-                <div class="king-card south-card" style="top: 0%; height: 4.0%;">
+            <div class="cards-side" id="southCards">
+                <div class="king-card south-card" data-target="0">
                     <div class="king-name">1. 羅波安 (17年, 930-913 BC)</div>
                     <div>✨ 特質：<span class="bad">離棄神國勢衰弱</span> | 📜 示瑪雅</div>
                 </div>
-                <div class="king-card south-card" style="top: 4.0%; height: 0.7%;">
-                    <div class="king-name">2. 亞比央 (3年)</div>
+                <div class="king-card south-card" data-target="1">
+                    <div class="king-name">2. 亞比央 (3年, 913-911 BC)</div>
                     <div>✨ 特質：<span class="bad">步父後塵</span> | ⚡ 靠神大勝</div>
                 </div>
-                <div class="king-card south-card" style="top: 4.7%; height: 9.7%; background: #d4efdf;">
+                <div class="king-card south-card" data-target="2" style="background: #d4efdf;">
                     <div class="king-name">3. ⭐ 亞撒 (41年, 911-870 BC)</div>
-                    <div>✨ 特質：<span class="good">行善大革新除偶像</span> | 📜 亞撒利雅</div>
+                    <div>✨ 特質：<span class="good">行善大革新、除偶像</span> | 📜 亞撒利雅</div>
                 </div>
-                <div class="king-card south-card" style="top: 14.4%; height: 5.9%; background: #d4efdf;">
+                <div class="king-card south-card" data-target="3" style="background: #d4efdf;">
                     <div class="king-name">4. ⭐ 約沙法 (25年, 870-848 BC)</div>
-                    <div>✨ 特質：<span class="good">效法大衛教導律法</span> | 📜 耶戶</div>
+                    <div>✨ 特質：<span class="good">效法大衛、教導律法</span> | 📜 耶戶</div>
                 </div>
-                <div class="king-card south-card" style="top: 20.3%; height: 1.9%;">
-                    <div class="king-name">5. 約蘭 (8年)</div>
+                <div class="king-card south-card" data-target="4">
+                    <div class="king-name">5. 約蘭 (8年, 848-841 BC)</div>
                     <div>✨ 特質：<span class="bad">娶亞哈女行惡</span> | 👑 亞她利雅</div>
                 </div>
-                <div class="king-card south-card" style="top: 22.2%; height: 0.2%;">
-                    <div class="king-name">6. 亞哈謝 (1年)</div>
+                <div class="king-card south-card" data-target="5">
+                    <div class="king-name">6. 亞哈謝 (1年, 841 BC)</div>
                     <div>✨ 特質：<span class="bad">隨從惡行</span> | ⚡ 被耶戶擊殺</div>
                 </div>
-                <div class="king-card south-card" style="top: 22.4%; height: 1.4%; background: #fadbd8;">
-                    <div class="king-name">7. 亞她利雅 (女王6年)</div>
-                    <div>✨ 特質：<span class="bad">殘害王室滅大衛家</span></div>
+                <div class="king-card south-card" data-target="6" style="background: #fadbd8;">
+                    <div class="king-name">7. 亞她利雅 (女王6年, 841-835 BC)</div>
+                    <div>✨ 特質：<span class="bad">侵害王室企圖滅大衛家</span></div>
                 </div>
-                <div class="king-card south-card" style="top: 23.8%; height: 9.5%;">
+                <div class="king-card south-card" data-target="7">
                     <div class="king-name">8. 約阿施 (40年, 835-796 BC)</div>
                     <div>✨ 特質：祭司在生時行善，後被殺</div>
                 </div>
-                <div class="king-card south-card" style="top: 33.3%; height: 6.9%;">
+                <div class="king-card south-card" data-target="8">
                     <div class="king-name">9. 亞瑪謝 (29年, 796-767 BC)</div>
-                    <div>✨ 特質：心不專誠，拜偶像被殺</div>
+                    <div>✨ 特質：心不專誠，拜以東偶像被殺</div>
                 </div>
-                <div class="king-card south-card" style="top: 40.2%; height: 12.4%; background: #d4efdf;">
+                <div class="king-card south-card" data-target="9" style="background: #d4efdf;">
                     <div class="king-name">10. ⭐ 烏西雅 (52年, 767-740 BC)</div>
                     <div>✨ 特質：<span class="good">強盛發明戰具</span> | 📜 以賽亞</div>
                 </div>
-                <div class="king-card south-card" style="top: 52.6%; height: 3.8%; background: #d4efdf;">
+                <div class="king-card south-card" data-target="10" style="background: #d4efdf;">
                     <div class="king-name">11. 約坦 (16年, 740-732 BC)</div>
                     <div>✨ 特質：<span class="good">行正道日漸強盛</span> | 📜 彌迦</div>
                 </div>
-                <div class="king-card south-card" style="top: 56.4%; height: 3.8%;">
+                <div class="king-card south-card" data-target="11">
                     <div class="king-name">12. 亞哈斯 (16年, 732-716 BC)</div>
-                    <div>✨ 特質：<span class="bad">焚燒親子獻祭向亞述求救</span></div>
+                    <div>✨ 特質：<span class="bad">焚燒親子獻祭、向亞述求救</span></div>
                 </div>
-                <div class="king-card south-card" style="top: 60.2%; height: 6.9%; background: #d4efdf;">
+                <div class="king-card south-card" data-target="12" style="background: #d4efdf;">
                     <div class="king-name">13. ⭐ 希西家 (29年, 716-687 BC)</div>
-                    <div>✨ 特質：<span class="good">極大復興</span> | ⚡ 禱告擊退亞述</div>
+                    <div>✨ 特質：<span class="good">極大復興</span> | ⚡ 禱告擊退亞述大軍</div>
                 </div>
-                <div class="king-card south-card" style="top: 67.1%; height: 13.1%;">
+                <div class="king-card south-card" data-target="13">
                     <div class="king-name">14. 瑪拿西 (55年, 687-642 BC)</div>
                     <div>✨ 特質：<span class="bad">極邪惡流無辜血</span> | 後謙卑悔改</div>
                 </div>
-                <div class="king-card south-card" style="top: 80.2%; height: 0.5%;">
-                    <div class="king-name">15. 亞們 (2年)</div>
-                    <div>✨ 特質：<span class="bad">行惡不悔改</span> | ⚡ 遭叛殺</div>
+                <div class="king-card south-card" data-target="14">
+                    <div class="king-name">15. 亞們 (2年, 642-640 BC)</div>
+                    <div>✨ 特質：<span class="bad">行惡不悔改</span> | ⚡ 遭謀臣叛殺</div>
                 </div>
-                <div class="king-card south-card" style="top: 80.7%; height: 7.4%; background: #d4efdf;">
+                <div class="king-card south-card" data-target="15" style="background: #d4efdf;">
                     <div class="king-name">16. ⭐ 約西亞 (31年, 640-609 BC)</div>
                     <div>✨ 特質：<span class="good">8歲即位全面大改革</span></div>
                 </div>
-                <div class="king-card south-card" style="top: 88.1%; height: 0.1%;">
-                    <div class="king-name">17. 約哈斯</div>
-                    <div>✨ 特質：被埃及法老鎖禁客死</div>
+                <div class="king-card south-card" data-target="16">
+                    <div class="king-name">17. 約哈斯 (3個月, 609 BC)</div>
+                    <div>✨ 特質：行惡 | ⚡ 被埃及法老鎖禁客死</div>
                 </div>
-                <div class="king-card south-card" style="top: 88.2%; height: 2.6%;">
-                    <div class="king-name">18. 約雅敬 (11年)</div>
-                    <div>✨ 特質：<span class="bad">暴虐焚燒先知書卷</span></div>
+                <div class="king-card south-card" data-target="17">
+                    <div class="king-name">18. 約雅敬 (11年, 609-598 BC)</div>
+                    <div>✨ 特質：<span class="bad">暴虐、焚燒先知書卷</span></div>
                 </div>
-                <div class="king-card south-card" style="top: 90.8%; height: 4.6%; background: #e74c3c; color: white;">
+                <div class="king-card south-card" data-target="18" style="background: #e74c3c; color: white;">
                     <div class="king-name" style="color: white;">19. 西底家 (11年, 597-586 BC)</div>
-                    <div>✨ 特質：末代行惡君王</div>
+                    <div>✨ 特質：末代行惡君王，不聽勸告</div>
                 </div>
-                <div class="king-card south-card" style="top: 95.4%; height: 4.6%; background: #78281f; color: white;">
-                    <div class="king-name" style="color: white;">20. 亡國被擄 (586 BC)</div>
-                    <div>💀 <span style="color: #f9e79f;">聖殿被毀南國滅亡</span></div>
+                <div class="king-card south-card" data-target="19" style="background: #78281f; color: white;">
+                    <div class="king-name" style="color: white;">20. 亡國與被擄時期 (586 BC)</div>
+                    <div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span></div>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
+<script>
+    function drawLines() {
+        const container = document.getElementById('layoutContainer').getBoundingClientRect();
+        const svg = document.getElementById('linkSvg');
+        
+        // 清除舊連線
+        while (svg.childNodes.length > 3) {
+            svg.removeChild(svg.lastChild);
+        }
+
+        // 處理北國連線
+        const northCards = document.querySelectorAll('#northCards .king-card');
+        const northSegments = document.querySelectorAll('#northTrack .bar-segment');
+        
+        northCards.forEach(card => {
+            const index = card.getAttribute('data-target');
+            const segment = document.querySelector(`#northTrack .bar-segment[data-index="${index}"]`);
+            if (segment) {
+                const cardRect = card.getBoundingClientRect();
+                const segRect = segment.getBoundingClientRect();
+
+                const x1 = cardRect.right - container.left;
+                const y1 = cardRect.top + cardRect.height / 2 - container.top;
+                const x2 = segRect.left - container.left;
+                const y2 = segRect.top + segRect.height / 2 - container.top;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 15} ${y1}, ${x2 - 15} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('stroke', '#e74c3c');
+                path.setAttribute('stroke-width', '1.2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('marker-end', 'url(#arrow-north)');
+                path.setAttribute('opacity', '0.7');
+                svg.appendChild(path);
+            }
+        });
+
+        // 處理南國連線
+        const southCards = document.querySelectorAll('#southCards .king-card');
+        
+        southCards.forEach(card => {
+            const index = card.getAttribute('data-target');
+            const segment = document.querySelector(`#southTrack .bar-segment[data-index="${index}"]`);
+            if (segment) {
+                const cardRect = card.getBoundingClientRect();
+                const segRect = segment.getBoundingClientRect();
+
+                const x1 = segRect.right - container.left;
+                const y1 = segRect.top + segRect.height / 2 - container.top;
+                const x2 = cardRect.left - container.left;
+                const y2 = cardRect.top + cardRect.height / 2 - container.top;
+
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 15} ${y1}, ${x2 - 15} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('stroke', '#27ae60');
+                path.setAttribute('stroke-width', '1.2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('marker-end', 'url(#arrow-south)');
+                path.setAttribute('opacity', '0.7');
+                svg.appendChild(path);
+            }
+        });
+    }
+
+    window.addEventListener('load', drawLines);
+    window.addEventListener('resize', drawLines);
+    setTimeout(drawLines, 100);
+</script>
 
 </body>
 </html>
