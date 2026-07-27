@@ -2,73 +2,113 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>南北王國歷史對照甘特圖表</title>
+    <title>南北王國筆記本風格・外插箭頭對照圖</title>
     <style>
-        @page { size: A4 landscape; margin: 10mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fff; color: #2c3e50; margin: 0; padding: 10px; font-size: 8.5pt; }
-        .container { max-width: 1050px; margin: 0 auto; border: 2px solid #34495e; padding: 12px; background: #fdfefe; border-radius: 6px; }
-        h1 { text-align: center; font-size: 13pt; margin: 0 0 4px 0; background: #34495e; color: white; padding: 6px; border-radius: 4px; }
-        p.subtitle { text-align: center; font-size: 7.5pt; margin: 0 0 10px 0; color: #555; }
+        @page { size: A4 portrait; margin: 10mm; }
+        body { font-family: "Noto Sans TC", "Comic Sans MS", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 10px; font-size: 8.5pt; }
+        .notebook-container { max-width: 750px; margin: 0 auto; border: 3px dashed #d4ac0d; padding: 15px; background: #fffbf0; border-radius: 8px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th, td { border: 1px solid #bdc3c7; padding: 5px 8px; vertical-align: middle; }
-        th { background: #2980b9; color: white; font-size: 8.5pt; text-align: center; }
+        h1 { text-align: center; font-size: 13pt; margin: 0 0 5px 0; background: #f9e79f; color: #7d6608; padding: 8px; border-radius: 6px; border: 1px solid #f1c40f; }
+        p.subtitle { text-align: center; font-size: 7.5pt; margin: 0 0 15px 0; color: #7f8c8d; }
+
+        /* 雙軌筆記本版面配置 */
+        .chart-grid { display: grid; grid-template-columns: 1fr 120px 1fr; gap: 10px; position: relative; }
         
-        .time-col { background: #eaeded; text-align: center; font-weight: bold; width: 12%; font-size: 8pt; }
-        .north-col { background: #fadbd8; width: 42%; }
-        .south-col { background: #d4efdf; width: 42%; }
-        
-        .event-tag { display: inline-block; background: #c0392b; color: white; padding: 1px 4px; border-radius: 3px; font-size: 7pt; margin-top: 2px; }
-        .prophet-tag { color: #7d6608; font-weight: bold; }
+        .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 4px; font-size: 8.5pt; color: white; }
+        .north-header { background: #e74c3c; }
+        .time-header { background: #34495e; font-size: 8pt; }
+        .south-header { background: #27ae60; }
+
+        /* 軌道與區塊 */
+        .track { position: relative; height: 750px; background: #ffffff; border: 2px solid #bdc3c7; border-radius: 4px; }
+        .time-track { background: #f4f6f7; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 7.5pt; color: #555; font-weight: bold; border: 2px solid #34495e; }
+
+        .block {
+            position: absolute; left: 5px; right: 5px; border-radius: 4px; padding: 4px 8px; font-size: 7.5pt;
+            border: 1.5px solid rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .north-block { background: #fadbd8; border-left: 5px solid #c0392b; color: #78281f; }
+        .south-block { background: #d4efdf; border-left: 5px solid #27ae60; color: #145a32; }
+        .star-block { background: #fcf3cf !important; border-left: 5px solid #d4ac0d !important; font-weight: bold; }
+
+        /* 外插註解標籤（學生筆記風） */
+        .note-tag {
+            position: absolute; background: #ffffff; border: 1.5px solid #e67e22; color: #d35400;
+            padding: 2px 6px; font-size: 7pt; border-radius: 4px; box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+            white-space: nowrap; z-index: 10;
+        }
+        .note-tag::before {
+            content: ""; position: absolute; top: 50%; transform: translateY(-50%);
+            border-width: 4px; border-style: solid;
+        }
+        /* 左側外插標籤（箭頭向右指） */
+        .left-tag { right: -130px; }
+        .left-tag::before { left: -8px; border-color: transparent #e67e22 transparent transparent; }
+
+        /* 右側外插標籤（箭頭向左指） */
+        .right-tag { left: -130px; }
+        .right-tag::before { right: -8px; border-color: transparent transparent transparent #e67e22; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📜 舊約南北王國歷史與先知雙軌交錯對照表</h1>
-    <p class="subtitle">以結構化表格展開南北雙軌，完美容納王系、在位年數、先知交錯及重大事件，絕不覆蓋</p>
+<div class="notebook-container">
+    <h1>✏️ 舊約南北王國歷史・學生筆記對照圖</h1>
+    <p class="subtitle">用外插座標與箭頭標記，精準對應王系、先知與歷史事件的黃金交叉點！</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>絕對時間軸</th>
-                <th>北國 (以色列) 王系、先知與事件</th>
-                <th>南國 (猶大) 王系、先知與事件</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="time-col">主前 930 年</td>
-                <td class="north-col"><b>耶羅波安一世</b> (22年) <br><span class="prophet-tag">先知：亞希雅</span><br><span class="event-tag">金牛犢事件</span></td>
-                <td class="south-col"><b>羅波安</b> (17年)</td>
-            </tr>
-            <tr>
-                <td class="time-col">主前 910 - 870 年</td>
-                <td class="north-col">拿答 ➔ 巴沙 ➔ 以拉 ➔ 心利(7日) ➔ 暗利 ➔ <b>亞哈</b></td>
-                <td class="south-col">亞比央 (3年) ➔ ⭐ <b>亞撒</b> (41年，復興)</td>
-            </tr>
-            <tr>
-                <td class="time-col">主前 870 - 850 年</td>
-                <td class="north-col">亞哈謝 ➔ 約蘭<br><span class="prophet-tag">先知：以利亞、以利沙</span></td>
-                <td class="south-col">⭐ <b>約沙法</b> (25年)<br><span class="event-tag">與北國結盟</span></td>
-            </tr>
-            <tr>
-                <td class="time-col">主前 840 - 750 年</td>
-                <td class="north-col"><b>耶戶</b> ➔ 約哈斯 ➔ 約阿施 ➔ <b>耶羅波安二世</b> (41年)<br><span class="prophet-tag">先知：阿摩司、何西阿</span></td>
-                <td class="south-col">約蘭 ➔ 亞哈謝 ➔ 亞她利雅(女王) ➔ 約阿施 ➔ 亞瑪謝 ➔ <b>烏西雅</b> (52年)</td>
-            </tr>
-            <tr>
-                <td class="time-col">主前 750 - 722 年</td>
-                <td class="north-col">撒迦利亞 ➔ 沙龍 ➔ 米拿現 ➔ 比加轄 ➔ 比加 ➔ 何細亞<br><span class="event-tag" style="background:#78281f;">主前 722 年：北國亞述滅亡</span></td>
-                <td class="south-col">約坦 ➔ 里哈斯 <br><span class="prophet-tag">先知：以賽亞、彌迦</span><br>⭐ <b>希西家</b> (29年，受亞述圍城)</td>
-            </tr>
-            <tr>
-                <td class="time-col">主前 690 - 586 年</td>
-                <td class="north-col" style="background: #f5b7b1; text-align: center; color: #78281f;"><b>[ 北國已亡國 ]</b></td>
-                <td class="south-col">瑪拿西 ➔ 亞們 ➔ ⭐ <b>約西亞</b> (31年，律法書復興)<br>約哈斯 ➔ 約雅敬 ➔ <span class="event-tag">597年約雅斤被擄</span><br>💀 <b>西底家</b> <br><span class="event-tag" style="background:#c0392b;">主前 586 年：南國巴比倫滅亡・聖殿被毀</span></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="chart-grid">
+        <!-- 北國軌道 -->
+        <div class="column-header north-header">北國 (以色列) 王系</div>
+        <div class="column-header time-header">絕對時間軸</div>
+        <div class="column-header south-header">南國 (猶大) 王系</div>
+
+        <!-- 北國區塊 (使用精確絕對定位) -->
+        <div class="track">
+            <div class="block north-block" style="top: 2%; height: 7%;"><b>耶羅波安一世</b> (22年)</div>
+            <div class="block north-block" style="top: 10%; height: 12%;"><b>巴沙</b> (24年)</div>
+            <div class="block north-block" style="top: 24%; height: 12%;"><b>亞哈</b> (22年)</div>
+            <div class="block north-block" style="top: 38%; height: 14%;"><b>耶戶</b> (28年)</div>
+            <div class="block north-block star-block" style="top: 54%; height: 16%;">⭐ <b>耶羅波安二世</b> (41年)</div>
+            <div class="block north-block" style="top: 72%; height: 15%;">比加 / 何細亞</div>
+            <div class="block north-block" style="top: 89%; height: 8%; background: #f5b7b1; border-color: #c0392b;"><b>主前 722 北國亡</b></div>
+
+            <!-- 外插筆記註解（向右指回北國） -->
+            <div class="note-tag left-tag" style="top: 3.5%;">👉 先知：亞希雅 (分裂預言)</div>
+            <div class="note-tag left-tag" style="top: 27%;">👉 先知：以利亞・迦密山對決</div>
+            <div class="note-tag left-tag" style="top: 59%;">👉 先知：阿摩司、何西阿</div>
+        </div>
+
+        <!-- 中間時間軸 -->
+        <div class="track time-track">
+            <span>主前 930 年</span>
+            <span>主前 870 年</span>
+            <span>主前 810 年</span>
+            <span>主前 750 年</span>
+            <span>主前 722 年 (北亡)</span>
+            <span>主前 650 年</span>
+            <span>主前 586 年 (南亡)</span>
+        </div>
+
+        <!-- 南國區塊 (使用精確絕對定位) -->
+        <div class="track">
+            <div class="block south-block" style="top: 2%; height: 6%;">羅波安 (17年)</div>
+            <div class="block south-block star-block" style="top: 9%; height: 14%;">⭐ <b>亞撒</b> (41年，宗教改革)</div>
+            <div class="block south-block star-block" style="top: 25%; height: 10%;">⭐ <b>約沙法</b> (25年)</div>
+            <div class="block south-block" style="top: 36%; height: 13%;">約阿施 / 亞瑪謝</div>
+            <div class="block south-block star-block" style="top: 50%; height: 17%;">⭐ <b>烏西雅</b> (52年，強盛)</div>
+            <div class="block south-block star-block" style="top: 68%; height: 12%;">⭐ <b>希西家</b> (29年)</div>
+            <div class="block south-block" style="top: 81%; height: 10%;">瑪拿西 (55年)</div>
+            <div class="block south-block star-block" style="top: 92%; height: 7%;">⭐ <b>約西亞</b></div>
+            <div class="block south-block" style="top: 100%; height: 8%; background: #fadbd8; border-color: #c0392b;"><b>主前 586 南國亡</b></div>
+
+            <!-- 外插筆記註解（向左指回南國） -->
+            <div class="note-tag right-tag" style="top: 27%;">以利沙活動 👈</div>
+            <div class="note-tag right-tag" style="top: 54%;">以賽亞、彌迦 👈</div>
+            <div class="note-tag right-tag" style="top: 83%;">那鴻 / 律法書重現 👈</div>
+            <div class="note-tag right-tag" style="top: 94%;">以西結、但以理 👈</div>
+        </div>
+    </div>
 </div>
 
 </body>
