@@ -5,28 +5,28 @@
     <title>南國（猶大）王系與先知垂直色帶進度圖</title>
     <style>
         @page { size: A4 portrait; margin: 10mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fff; color: #2c3e50; margin: 0; padding: 15px; font-size: 9pt; }
-        .container { max-width: 600px; margin: 0 auto; border: 2px solid #27ae60; padding: 15px; background: #fdfefe; border-radius: 6px; }
-        h1 { text-align: center; font-size: 14pt; margin: 0 0 5px 0; background: #27ae60; color: white; padding: 8px; border-radius: 4px; }
-        p.subtitle { text-align: center; font-size: 8pt; margin: 0 0 15px 0; color: #555; }
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fff; color: #2c3e50; margin: 0; padding: 10px; font-size: 8.5pt; }
+        .container { max-width: 650px; margin: 0 auto; border: 2px solid #27ae60; padding: 12px; background: #fdfefe; border-radius: 6px; }
+        h1 { text-align: center; font-size: 13pt; margin: 0 0 4px 0; background: #27ae60; color: white; padding: 6px; border-radius: 4px; }
+        p.subtitle { text-align: center; font-size: 7.5pt; margin: 0 0 10px 0; color: #555; }
         
-        .chart-layout { display: grid; grid-template-columns: 100px 1fr; gap: 10px; border-top: 2px solid #27ae60; padding-top: 10px; }
-        .col-header { background: #27ae60; color: white; text-align: center; font-weight: bold; padding: 6px; font-size: 9pt; border-radius: 3px; }
+        .chart-layout { display: grid; grid-template-columns: 110px 1fr; gap: 8px; border-top: 2px solid #27ae60; padding-top: 8px; }
+        .col-header { background: #27ae60; color: white; text-align: center; font-weight: bold; padding: 5px; font-size: 8.5pt; border-radius: 3px; }
         .time-header { background: #34495e; }
         
-        .track { position: relative; background: #f4f6f7; border: 1px solid #bdc3c7; height: 750px; }
+        .track { position: relative; background: #f4f6f7; border: 1px solid #bdc3c7; height: 920px; }
         
         .band {
-            position: absolute; left: 6px; right: 6px; border-radius: 3px; padding: 3px 8px; font-size: 8pt;
+            position: absolute; left: 4px; right: 4px; border-radius: 2px; padding: 2px 5px; font-size: 7.5pt;
             border: 1px solid rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: center;
-            background-color: #d4efdf; border-left: 5px solid #27ae60; color: #145a32; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            background-color: #d4efdf; border-left: 4px solid #27ae60; color: #145a32; overflow: hidden; white-space: nowrap;
         }
-        .star-king { background-color: #f9e79f !important; border-left: 5px solid #d4ac0d !important; font-weight: bold; color: #7d6608; }
-        .crit-event { background-color: #fadbd8 !important; border-left: 5px solid #c0392b !important; font-weight: bold; color: #78281f; }
+        .star-king { background-color: #f9e79f !important; border-left: 4px solid #d4ac0d !important; font-weight: bold; color: #7d6608; }
+        .crit-event { background-color: #fadbd8 !important; border-left: 4px solid #c0392b !important; font-weight: bold; color: #78281f; white-space: normal; }
         
         .time-scale-label {
-            position: absolute; right: 8px; font-size: 7.5pt; color: #7f8c8d;
-            border-top: 1px dashed #bdc3c7; width: 100%; text-align: right; padding-right: 6px;
+            position: absolute; right: 6px; font-size: 7.5pt; color: #7f8c8d;
+            border-top: 1px dashed #bdc3c7; width: 100%; text-align: right; padding-right: 4px;
         }
     </style>
 </head>
@@ -40,40 +40,56 @@
         <div class="col-header time-header">絕對時間軸</div>
         <div class="col-header">南國（猶大）君王與先知進度</div>
         
-        <!-- 時間軸刻度 -->
+        <!-- 時間軸刻度 (依總高度 920px 精確等比分布) -->
         <div class="track">
-            <div class="time-scale-label" style="top: 0%;">主前 930 年</div>
-            <div class="time-scale-label" style="top: 15%;">主前 870 年</div>
-            <div class="time-scale-label" style="top: 30%;">主前 810 年</div>
-            <div class="time-scale-label" style="top: 45%;">主前 750 年</div>
-            <div class="time-scale-label" style="top: 60%;">主前 690 年</div>
-            <div class="time-scale-label" style="top: 75%;">主前 630 年</div>
-            <div class="time-scale-label" style="top: 90%;">主前 570 年</div>
-            <div class="time-scale-label" style="top: 98%;">主前 586 年 (亡)</div>
+            <div class="time-scale-label" style="top: 0%;">主前 930 年 (羅波安即位)</div>
+            <div class="time-scale-label" style="top: 17.4%;">主前 870 年</div>
+            <div class="time-scale-label" style="top: 34.8%;">主前 810 年</div>
+            <div class="time-scale-label" style="top: 52.3%;">主前 750 年</div>
+            <div class="time-scale-label" style="top: 69.7%;">主前 690 年</div>
+            <div class="time-scale-label" style="top: 87.2%;">主前 630 年</div>
+            <div class="time-scale-label" style="top: 96.5%;">主前 597 年 (被擄)</div>
+            <div class="time-scale-label" style="top: 98.2%;">主前 586 年 (南亡)</div>
         </div>
         
-        <!-- 南國色帶進度條 (依據在位年數精確定位) -->
+        <!-- 南國色帶進度條 (總計 344 年 = 920px 高度，計算比例精確定位) -->
         <div class="track">
-            <div class="band" style="top: 0%; height: 4.9%;">羅波安 (17年)</div>
-            <div class="band" style="top: 4.9%; height: 0.6%;">亞比央 (3年)</div>
-            <div class="band star-king" style="top: 5.5%; height: 11.9%;">⭐ 亞撒 (41年)</div>
-            <div class="band star-king" style="top: 17.4%; height: 7.3%;">⭐ 約沙法 (25年) [以利亞]</div>
-            <div class="band" style="top: 24.7%; height: 2.3%;">約蘭 (8年) [以利沙]</div>
-            <div class="band" style="top: 27.0%; height: 0.3%;">亞哈謝 (1年)</div>
-            <div class="band" style="top: 27.3%; height: 1.7%;">亞她利雅 👑 篡位女王 (6年)</div>
-            <div class="band" style="top: 29.0%; height: 11.3%;">約阿施 (40年)</div>
-            <div class="band" style="top: 40.3%; height: 8.4%;">亞瑪謝 (29年)</div>
-            <div class="band" style="top: 48.7%; height: 15.1%;">烏西雅 / 亞撒利雅 (52年)</div>
-            <div class="band" style="top: 63.8%; height: 4.7%;">🔺 約坦 (16年) [何西阿]</div>
-            <div class="band" style="top: 68.5%; height: 4.7%;">里哈斯 (16年) [以賽亞、彌迦]</div>
-            <div class="band star-king" style="top: 73.2%; height: 8.4%;">⭐ 希西家 (29年)</div>
-            <div class="band" style="top: 81.6%; height: 12.8%;">瑪拿西 (55年) [那鴻]</div>
-            <div class="band" style="top: 94.4%; height: 0.6%;">亞們 (2年)</div>
-            <div class="band star-king" style="top: 95.0%; height: 9.0%;">⭐ 約西亞 (31年) [西番雅]</div>
-            <div class="band" style="top: 104.0%; height: 0.3%;">約哈斯 / 沙龍 (3月)</div>
-            <div class="band" style="top: 104.3%; height: 3.2%;">約雅敬 (11年) [哈巴谷]</div>
-            <div class="band crit-event" style="top: 107.5%; height: 0.3%;">約雅斤 ➔ 【主前 597 年被擄】</div>
-            <div class="band crit-event" style="top: 107.8%; height: 3.2%;">西底家 (11年) [以西結、但以理]<br><b>【主前 586 年南國滅亡・聖殿被毀】</b></div>
+            <!-- 羅波安 17年 (4.94%) -->
+            <div class="band" style="top: 0%; height: 4.94%;">羅波安 (17年)</div>
+            <!-- 亞比央 3年 (0.87%) -->
+            <div class="band" style="top: 4.94%; height: 0.87%;">亞比央 (3年)</div>
+            <!-- 亞撒 41年 (11.92%) -->
+            <div class="band star-king" style="top: 5.81%; height: 11.92%;">⭐ 亞撒 (41年)</div>
+            <!-- 約沙法 25年 (7.27%) -->
+            <div class="band star-king" style="top: 17.73%; height: 7.27%;">⭐ 約沙法 (25年) [以利亞]</div>
+            <!-- 約蘭 8年 (2.33%) -->
+            <div class="band" style="top: 25.00%; height: 2.33%;">約蘭 (8年) [以利沙]</div>
+            <!-- 亞哈謝 1年 (0.29%) -->
+            <div class="band" style="top: 27.33%; height: 0.29%;">亞哈謝 (1年)</div>
+            <!-- 亞她利雅 6年 (1.74%) -->
+            <div class="band" style="top: 27.62%; height: 1.74%;">亞她利雅 👑 篡位女王 (6年)</div>
+            <!-- 約阿施 40年 (11.63%) -->
+            <div class="band" style="top: 29.36%; height: 11.63%;">約阿施 (40年)</div>
+            <!-- 亞瑪謝 29年 (8.43%) -->
+            <div class="band" style="top: 40.99%; height: 8.43%;">亞瑪謝 (29年)</div>
+            <!-- 烏西雅 52年 (15.12%) -->
+            <div class="band" style="top: 49.42%; height: 15.12%;">烏西雅/亞撒利雅 (52年)</div>
+            <!-- 約坦 16年 (4.65%) -->
+            <div class="band" style="top: 64.53%; height: 4.65%;">🔺 約坦 (16年) [何西阿]</div>
+            <!-- 里哈斯 16年 (4.65%) -->
+            <div class="band" style="top: 69.19%; height: 4.65%;">里哈斯 (16年) [以賽亞、彌迦]</div>
+            <!-- 希西家 29年 (8.43%) -->
+            <div class="band star-king" style="top: 73.84%; height: 8.43%;">⭐ 希西家 (29年)</div>
+            <!-- 瑪拿西 55年 (15.99%) -->
+            <div class="band" style="top: 82.27%; height: 15.99%;">瑪拿西 (55年) [那鴻]</div>
+            <!-- 亞們 2年 (0.58%) -->
+            <div class="band" style="top: 98.26%; height: 0.58%;">亞們(2)</div>
+            <!-- 約西亞 31年 (9.01%) -->
+            <div class="band star-king" style="top: 98.84%; height: 3.5%;">⭐ 約西亞 (31年) [西番雅]</div>
+            <!-- 下方緊湊末代君王群 (以絕對安全區呈現) -->
+            <div class="band crit-event" style="top: 102.34%; height: -2%;">
+                約哈斯(3月) | 約雅敬(11年) [哈巴谷] | 🔴 約雅斤(597被擄) | 💀 西底家(11年)【主前586南國滅亡】
+            </div>
         </div>
     </div>
 </div>
