@@ -2,111 +2,132 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>南北王國筆記本風格・外插箭頭對照圖</title>
+    <title>舊約南北王國全王系・學生筆記對照圖</title>
     <style>
         @page { size: A4 portrait; margin: 10mm; }
-        body { font-family: "Noto Sans TC", "Comic Sans MS", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 10px; font-size: 8.5pt; }
-        .notebook-container { max-width: 750px; margin: 0 auto; border: 3px dashed #d4ac0d; padding: 15px; background: #fffbf0; border-radius: 8px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        body { font-family: "Noto Sans TC", "Comic Sans MS", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 10px; font-size: 8pt; }
+        .notebook-container { max-width: 800px; margin: 0 auto; border: 3px dashed #d4ac0d; padding: 12px; background: #fffbf0; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         
-        h1 { text-align: center; font-size: 13pt; margin: 0 0 5px 0; background: #f9e79f; color: #7d6608; padding: 8px; border-radius: 6px; border: 1px solid #f1c40f; }
-        p.subtitle { text-align: center; font-size: 7.5pt; margin: 0 0 15px 0; color: #7f8c8d; }
+        h1 { text-align: center; font-size: 12pt; margin: 0 0 4px 0; background: #f9e79f; color: #7d6608; padding: 6px; border-radius: 6px; border: 1px solid #f1c40f; }
+        p.subtitle { text-align: center; font-size: 7pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
-        /* 雙軌筆記本版面配置 */
-        .chart-grid { display: grid; grid-template-columns: 1fr 120px 1fr; gap: 10px; position: relative; }
+        .chart-grid { display: grid; grid-template-columns: 1fr 100px 1fr; gap: 8px; position: relative; }
         
-        .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 4px; font-size: 8.5pt; color: white; }
+        .column-header { text-align: center; font-weight: bold; padding: 5px; border-radius: 4px; font-size: 8pt; color: white; }
         .north-header { background: #e74c3c; }
-        .time-header { background: #34495e; font-size: 8pt; }
+        .time-header { background: #34495e; font-size: 7.5pt; }
         .south-header { background: #27ae60; }
 
-        /* 軌道與區塊 */
-        .track { position: relative; height: 750px; background: #ffffff; border: 2px solid #bdc3c7; border-radius: 4px; }
-        .time-track { background: #f4f6f7; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 7.5pt; color: #555; font-weight: bold; border: 2px solid #34495e; }
+        .track { position: relative; height: 1100px; background: #ffffff; border: 2px solid #bdc3c7; border-radius: 4px; }
+        .time-track { background: #f4f6f7; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 7pt; color: #555; font-weight: bold; border: 2px solid #34495e; height: 1084px; }
 
         .block {
-            position: absolute; left: 5px; right: 5px; border-radius: 4px; padding: 4px 8px; font-size: 7.5pt;
-            border: 1.5px solid rgba(0,0,0,0.2); display: flex; flex-direction: column; justify-content: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: absolute; left: 4px; right: 4px; border-radius: 3px; padding: 2px 5px; font-size: 7pt;
+            border: 1px solid rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: space-between;
+            overflow: hidden; white-space: nowrap;
         }
-        .north-block { background: #fadbd8; border-left: 5px solid #c0392b; color: #78281f; }
-        .south-block { background: #d4efdf; border-left: 5px solid #27ae60; color: #145a32; }
-        .star-block { background: #fcf3cf !important; border-left: 5px solid #d4ac0d !important; font-weight: bold; }
+        .north-block { background: #fadbd8; border-left: 4px solid #c0392b; color: #78281f; }
+        .south-block { background: #d4efdf; border-left: 4px solid #27ae60; color: #145a32; }
+        .star-block { background: #fcf3cf !important; border-left: 4px solid #d4ac0d !important; font-weight: bold; }
+        .crit-block { background: #f5b7b1 !important; border-left: 4px solid #78281f !important; font-weight: bold; }
 
-        /* 外插註解標籤（學生筆記風） */
+        /* 外插筆記標籤（學生筆記風：支援左右外插） */
         .note-tag {
             position: absolute; background: #ffffff; border: 1.5px solid #e67e22; color: #d35400;
-            padding: 2px 6px; font-size: 7pt; border-radius: 4px; box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+            padding: 1px 5px; font-size: 6.5pt; border-radius: 3px; box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
             white-space: nowrap; z-index: 10;
         }
-        .note-tag::before {
-            content: ""; position: absolute; top: 50%; transform: translateY(-50%);
-            border-width: 4px; border-style: solid;
-        }
-        /* 左側外插標籤（箭頭向右指） */
-        .left-tag { right: -130px; }
-        .left-tag::before { left: -8px; border-color: transparent #e67e22 transparent transparent; }
+        .note-tag::before { content: ""; position: absolute; top: 50%; transform: translateY(-50%); border-width: 3px; border-style: solid; }
+        
+        .left-tag { right: -125px; }
+        .left-tag::before { left: -6px; border-color: transparent #e67e22 transparent transparent; }
 
-        /* 右側外插標籤（箭頭向左指） */
-        .right-tag { left: -130px; }
-        .right-tag::before { right: -8px; border-color: transparent transparent transparent #e67e22; }
+        .right-tag { left: -125px; }
+        .right-tag::before { right: -6px; border-color: transparent transparent transparent #e67e22; }
     </style>
 </head>
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 舊約南北王國歷史・學生筆記對照圖</h1>
-    <p class="subtitle">用外插座標與箭頭標記，精準對應王系、先知與歷史事件的黃金交叉點！</p>
+    <h1>✏️ 舊約南北王國全王系與先知・學生筆記對照圖</h1>
+    <p class="subtitle">完整收錄每一位短命與長期君王，透過外插座標與箭頭標記對應先知與歷史事件！</p>
 
     <div class="chart-grid">
-        <!-- 北國軌道 -->
-        <div class="column-header north-header">北國 (以色列) 王系</div>
+        <!-- 標題欄 -->
+        <div class="column-header north-header">北國 (以色列) 全王系</div>
         <div class="column-header time-header">絕對時間軸</div>
-        <div class="column-header south-header">南國 (猶大) 王系</div>
+        <div class="column-header south-header">南國 (猶大) 全王系</div>
 
-        <!-- 北國區塊 (使用精確絕對定位) -->
+        <!-- 北國軌道 (收錄所有 19 位王與亡國) -->
         <div class="track">
-            <div class="block north-block" style="top: 2%; height: 7%;"><b>耶羅波安一世</b> (22年)</div>
-            <div class="block north-block" style="top: 10%; height: 12%;"><b>巴沙</b> (24年)</div>
-            <div class="block north-block" style="top: 24%; height: 12%;"><b>亞哈</b> (22年)</div>
-            <div class="block north-block" style="top: 38%; height: 14%;"><b>耶戶</b> (28年)</div>
-            <div class="block north-block star-block" style="top: 54%; height: 16%;">⭐ <b>耶羅波安二世</b> (41年)</div>
-            <div class="block north-block" style="top: 72%; height: 15%;">比加 / 何細亞</div>
-            <div class="block north-block" style="top: 89%; height: 8%; background: #f5b7b1; border-color: #c0392b;"><b>主前 722 北國亡</b></div>
+            <div class="block north-block" style="top: 0.5%; height: 5%;"><span>1. 耶羅波安一世 (22年)</span></div>
+            <div class="block north-block" style="top: 5.8%; height: 0.8%;"><span>2. 拿答 (2年)</span></div>
+            <div class="block north-block" style="top: 6.9%; height: 5.5%;"><span>3. 巴沙 (24年)</span></div>
+            <div class="block north-block" style="top: 12.7%; height: 0.8%;"><span>4. 以拉 (2年)</span></div>
+            <div class="block north-block" style="top: 13.8%; height: 0.5%;"><span style="font-size: 6pt;">5. 心利(7日)</span></div>
+            <div class="block north-block" style="top: 14.6%; height: 12%;"><span>6. 暗利(12) ➔ 7. 亞哈(22)</span></div>
+            <div class="block north-block" style="top: 26.9%; height: 0.8%;"><span>8. 亞哈謝 (2年)</span></div>
+            <div class="block north-block" style="top: 28.0%; height: 3%;"><span>9. 約蘭 (12年)</span></div>
+            <div class="block north-block" style="top: 31.3%; height: 6.5%;"><span>10. 耶戶 (28年)</span></div>
+            <div class="block north-block" style="top: 38.1%; height: 4%;"><span>11. 約哈斯 (17)</span></div>
+            <div class="block north-block" style="top: 42.4%; height: 3.5%;"><span>12. 約阿施 (16)</span></div>
+            <div class="block north-block star-block" style="top: 46.2%; height: 9.5%;"><span>13. 耶羅波安二世 (41)</span></div>
+            <div class="block north-block" style="top: 56.0%; height: 0.5%;"><span>14. 撒迦利亞(6月)</span></div>
+            <div class="block north-block" style="top: 56.8%; height: 0.5%;"><span>15. 沙龍(1月)</span></div>
+            <div class="block north-block" style="top: 57.6%; height: 2.5%;"><span>16. 米拿現 (10年)</span></div>
+            <div class="block north-block" style="top: 60.4%; height: 0.8%;"><span>17. 比加轄 (2年)</span></div>
+            <div class="block north-block" style="top: 61.5%; height: 4.5%;"><span>18. 比加 (20年)</span></div>
+            <div class="block north-block" style="top: 66.3%; height: 4.5%;"><span>19. 何細亞 (9年)</span></div>
+            <div class="block crit-block" style="top: 71.1%; height: 3.5%;"><span>💀 主前 722 北國亞述滅亡</span></div>
 
-            <!-- 外插筆記註解（向右指回北國） -->
-            <div class="note-tag left-tag" style="top: 3.5%;">👉 先知：亞希雅 (分裂預言)</div>
-            <div class="note-tag left-tag" style="top: 27%;">👉 先知：以利亞・迦密山對決</div>
-            <div class="note-tag left-tag" style="top: 59%;">👉 先知：阿摩司、何西阿</div>
+            <!-- 北國外插筆記註解 -->
+            <div class="note-tag left-tag" style="top: 1.5%;">👉 先知：亞希雅 (分裂)</div>
+            <div class="note-tag left-tag" style="top: 18.0%;">👉 先知：以利亞・迦密山對決</div>
+            <div class="note-tag left-tag" style="top: 32.5%;">👉 先知：以利沙神蹟</div>
+            <div class="note-tag left-tag" style="top: 49.0%;">👉 先知：阿摩司、何西阿</div>
         </div>
 
         <!-- 中間時間軸 -->
         <div class="track time-track">
             <span>主前 930 年</span>
-            <span>主前 870 年</span>
+            <span>主前 890 年</span>
+            <span>主前 850 年</span>
             <span>主前 810 年</span>
-            <span>主前 750 年</span>
-            <span>主前 722 年 (北亡)</span>
+            <span>主前 770 年</span>
+            <span>主前 730 年</span>
+            <span>主前 690 年</span>
             <span>主前 650 年</span>
+            <span>主前 610 年</span>
             <span>主前 586 年 (南亡)</span>
         </div>
 
-        <!-- 南國區塊 (使用精確絕對定位) -->
+        <!-- 南國軌道 (收錄所有猶大王與關鍵事件) -->
         <div class="track">
-            <div class="block south-block" style="top: 2%; height: 6%;">羅波安 (17年)</div>
-            <div class="block south-block star-block" style="top: 9%; height: 14%;">⭐ <b>亞撒</b> (41年，宗教改革)</div>
-            <div class="block south-block star-block" style="top: 25%; height: 10%;">⭐ <b>約沙法</b> (25年)</div>
-            <div class="block south-block" style="top: 36%; height: 13%;">約阿施 / 亞瑪謝</div>
-            <div class="block south-block star-block" style="top: 50%; height: 17%;">⭐ <b>烏西雅</b> (52年，強盛)</div>
-            <div class="block south-block star-block" style="top: 68%; height: 12%;">⭐ <b>希西家</b> (29年)</div>
-            <div class="block south-block" style="top: 81%; height: 10%;">瑪拿西 (55年)</div>
-            <div class="block south-block star-block" style="top: 92%; height: 7%;">⭐ <b>約西亞</b></div>
-            <div class="block south-block" style="top: 100%; height: 8%; background: #fadbd8; border-color: #c0392b;"><b>主前 586 南國亡</b></div>
+            <div class="block south-block" style="top: 0.5%; height: 4%;"><span>1. 羅波安 (17年)</span></div>
+            <div class="block south-block" style="top: 4.8%; height: 0.8%;"><span>2. 亞比央 (3年)</span></div>
+            <div class="block south-block star-block" style="top: 5.9%; height: 9.5%;"><span>3. ⭐ 亞撒 (41年)</span></div>
+            <div class="block south-block star-block" style="top: 15.7%; height: 6%;"><span>4. ⭐ 約沙法 (25)</span></div>
+            <div class="block south-block" style="top: 22.0%; height: 2%;"><span>5. 約蘭 (8年)</span></div>
+            <div class="block south-block" style="top: 24.3%; height: 0.5%;"><span>6. 亞哈謝(1)</span></div>
+            <div class="block south-block" style="top: 25.1%; height: 1.5%;"><span>7. 亞她利雅(6)</span></div>
+            <div class="block south-block" style="top: 26.9%; height: 9.5%;"><span>8. 約阿施 (40年)</span></div>
+            <div class="block south-block" style="top: 36.7%; height: 7%;"><span>9. 亞瑪謝 (29)</span></div>
+            <div class="block south-block star-block" style="top: 44.0%; height: 12.5%;"><span>10. ⭐ 烏西雅 (52年)</span></div>
+            <div class="block south-block" style="top: 56.8%; height: 4%;"><span>11. 約坦 (16)</span></div>
+            <div class="block south-block" style="top: 61.1%; height: 4%;"><span>12. 里哈斯 (16)</span></div>
+            <div class="block south-block star-block" style="top: 65.4%; height: 7%;"><span>13. ⭐ 希西家 (29)</span></div>
+            <div class="block south-block" style="top: 72.7%; height: 13.5%;"><span>14. 瑪拿西 (55年)</span></div>
+            <div class="block south-block" style="top: 86.5%; height: 0.8%;"><span>15. 亞們 (2年)</span></div>
+            <div class="block south-block star-block" style="top: 87.6%; height: 7.5%;"><span>16. ⭐ 約西亞 (31)</span></div>
+            <div class="block south-block" style="top: 95.4%; height: 0.5%;"><span>17. 約哈斯(3月)</span></div>
+            <div class="block south-block" style="top: 96.2%; height: 2.8%;"><span>18. 約雅敬 (11)</span></div>
+            <div class="block crit-block" style="top: 99.3%; height: 0.5%;"><span>🔴 597被擄</span></div>
+            <div class="block crit-block" style="top: 100.1%; height: 2.8%;"><span>💀 19.西底家/南亡</span></div>
 
-            <!-- 外插筆記註解（向左指回南國） -->
-            <div class="note-tag right-tag" style="top: 27%;">以利沙活動 👈</div>
-            <div class="note-tag right-tag" style="top: 54%;">以賽亞、彌迦 👈</div>
-            <div class="note-tag right-tag" style="top: 83%;">那鴻 / 律法書重現 👈</div>
-            <div class="note-tag right-tag" style="top: 94%;">以西結、但以理 👈</div>
+            <!-- 南國外插筆記註解 -->
+            <div class="note-tag right-tag" style="top: 62.5%;">以賽亞、彌迦 👈</div>
+            <div class="note-tag right-tag" style="top: 78.5%;">拿鴻 / 律法書重現 👈</div>
+            <div class="note-tag right-tag" style="top: 97.0%;">以西結、但以理 👈</div>
         </div>
     </div>
 </div>
