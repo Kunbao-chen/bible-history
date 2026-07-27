@@ -4,54 +4,59 @@
     <meta charset="UTF-8">
     <title>聖經南北王國・全 39 位君王獨立對照筆記圖</title>
     <style>
-        @page { size: A4 portrait; margin: 5mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 5px; font-size: 7pt; }
-        .notebook-container { max-width: 980px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 10px; background: #fffbf0; border-radius: 6px; }
+        @page { size: A4 portrait; margin: 4mm; }
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6.5pt; }
+        .notebook-container { max-width: 1000px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
-        h1 { text-align: center; font-size: 11pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 5px; border-radius: 4px; }
-        p.subtitle { text-align: center; font-size: 6.5pt; margin: 0 0 8px 0; color: #7f8c8d; }
+        h1 { text-align: center; font-size: 10pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 4px; border-radius: 4px; }
+        p.subtitle { text-align: center; font-size: 6pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        .main-layout { display: grid; grid-template-columns: 1fr 130px 1fr; gap: 8px; align-items: start; }
+        /* 核心三欄佈局：左北國 | 中間精密色帶與時間軸 | 右南國 */
+        .main-layout { display: grid; grid-template-columns: 1fr 110px 1fr; gap: 6px; align-items: start; }
         
-        .column-header { text-align: center; font-weight: bold; padding: 4px; border-radius: 3px; font-size: 7.5pt; color: white; margin-bottom: 5px; position: sticky; top: 0; z-index: 10; }
+        .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 7pt; color: white; margin-bottom: 4px; position: sticky; top: 0; z-index: 10; }
         .north-header { background: #e74c3c; }
-        .time-header { background: #34495e; }
         .south-header { background: #27ae60; }
 
         .king-card {
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
-            padding: 3px 5px; margin-bottom: 3px; font-size: 6.5pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            line-height: 1.2;
+            padding: 3px 4px; margin-bottom: 3px; font-size: 6.2pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            line-height: 1.15;
         }
         .north-card { border-left: 3px solid #e74c3c; }
         .south-card { border-left: 3px solid #27ae60; }
         
-        .king-name { font-weight: bold; color: #2c3e50; font-size: 7pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
+        .king-name { font-weight: bold; color: #2c3e50; font-size: 6.8pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
         .bad { color: #c0392b; }
         .good { color: #27ae60; }
 
-        .timeline-center { position: relative; display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; padding: 5px 0; }
-        .bar-track { width: 28px; background: #f4f6f7; border: 1px solid #95a5a6; position: relative; }
-        .bar-segment { position: absolute; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.8); }
-        
-        .time-labels { width: 55px; font-size: 6pt; color: #333; font-weight: bold; text-align: right; padding-right: 3px; display: flex; flex-direction: column; justify-content: space-between; }
+        /* 中間時間軸與色帶區塊：完美置中對齊 */
+        .timeline-center { 
+            position: sticky; top: 30px; 
+            display: flex; background: #fff; border: 1px solid #bdc3c7; 
+            padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+        .time-labels { width: 45px; font-size: 5.5pt; color: #333; font-weight: bold; text-align: right; padding-right: 2px; display: flex; flex-direction: column; justify-content: space-between; }
+        .bar-track-container { display: flex; gap: 4px; width: 55px; justify-content: center; }
+        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; position: relative; height: 750px; }
+        .bar-segment { position: absolute; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.6); }
     </style>
 </head>
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 舊約南北王國・全 39 位君王獨立考據筆記圖</h1>
-    <p class="subtitle">北國 19 王、南國 20 位統治者（19王1后）完全獨立列出，按歷史年代比例對應色帶！</p>
+    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
+    <p class="subtitle">北國 19 王、南國 20 位統治者（19王1后）完整獨立展開，中間為精密比例時間色帶！</p>
 
     <div class="main-layout">
-        <!-- 北國以色列 19 王獨立清單 -->
+        <!-- 1. 北國以色列 19 王獨立清單 -->
         <div>
             <div class="column-header north-header">北國以色列 (19王全展開)</div>
             
             <div class="king-card north-card">
                 <div class="king-name">1. 耶羅波安一世 (22年, 930-909 BC)</div>
                 <div>✨ 特質：<span class="bad">行惡，設金牛犢陷民於罪</span></div>
-                <div>👑 王后：未具名 (米基雅?) | 📜 先知：亞希雅</div>
+                <div>👑 王后：未具名 | 📜 先知：亞希雅</div>
                 <div>⚡ 互動：遭神咒詛，家門被徹底除滅</div>
             </div>
             <div class="king-card north-card">
@@ -62,89 +67,84 @@
             <div class="king-card north-card">
                 <div class="king-name">3. 巴沙 (24年, 908-886 BC)</div>
                 <div>✨ 特質：<span class="bad">步耶羅波安後塵，爭戰不斷</span></div>
-                <div>📜 先知：耶戶 (先知哈拿尼之子) | ⚡ 互動：神宣告其全家遭災</div>
+                <div>📜 先知：耶戶 | ⚡ 互動：神宣告其全家遭災</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">4. 以拉 (2年, 886-885 BC)</div>
-                <div>✨ 特質：<span class="bad">荒淫酗酒</span></div>
-                <div>⚡ 互動：在宰相亞撒家飲酒醉時遭心利殺害</div>
+                <div>✨ 特質：<span class="bad">荒淫酗酒</span> | ⚡ 互動：醉酒時遭心利殺害</div>
             </div>
             <div class="king-card north-card" style="background: #fadbd8;">
                 <div class="king-name">5. 心利 (7日, 885 BC)</div>
-                <div>✨ 特質：<span class="bad">篡位僅7天，滅絕巴沙全家</span></div>
-                <div>⚡ 互動: 遭民兵圍困王宮，放火自焚身亡</div>
+                <div>✨ 特質：<span class="bad">篡位僅7天</span> | ⚡ 互動：遭民兵圍困放火自焚</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">6. 暗利 (12年, 885-874 BC)</div>
                 <div>✨ 特質：<span class="bad">惡過以前諸王</span> | 遷都撒瑪利亞</div>
-                <div>⚡ 互動：政治軍事強悍，亞述碑文常記以色列為「暗利之家」</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">7. 亞哈 (22年, 874-853 BC)</div>
                 <div>✨ 特質：<span class="bad">極度行惡，引進巴力信仰</span></div>
-                <div>👑 王后：耶洗別 (極兇惡) | 📜 先知：以利亞、米該亞</div>
-                <div>⚡ 互動：迦密山對決後悔改暫緩降禍，陣亡於基列拉末</div>
+                <div>👑 王后：耶洗別 | 📜 先知：以利亞、米該亞</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">8. 亞哈謝 (2年, 853-852 BC)</div>
-                <div>✨ 特質：<span class="bad">隨從父母拜巴力</span></div>
-                <div>📜 先知：以利亞 | ⚡ 互動：因病問巴力迦得申，遭以利亞預言摔死</div>
+                <div>✨ 特質：<span class="bad">隨從父母拜巴力</span> | 📜 先知：以利亞</div>
+                <div>⚡ 互動：因病問巴力遭以利亞預言摔死</div>
             </div>
             <div class="king-card north-card">
-                <div class="king-name">9. 約蘭/約曷蘭 (12年, 852-841 BC)</div>
+                <div class="king-name">9. 約蘭 (12年, 852-841 BC)</div>
                 <div>✨ 特質：除巴力柱像但仍拜金牛犢</div>
-                <div>📜 先知：以利沙 | ⚡ 互動：平定摩押，後被耶戶射殺</div>
+                <div>📜 先知：以利沙 | ⚡ 互動：被耶戶射殺</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">10. 耶戶 (28年, 841-814 BC)</div>
                 <div>✨ 特質：<span class="good">殲滅亞哈家與巴力先知</span></div>
-                <div>📜 先知：以利沙 | ⚡ 互動：奉命審判亞哈家，但自身仍隨金牛犢</div>
+                <div>📜 先知：以利沙 | ⚡ 互動：自身仍隨金牛犢</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">11. 約哈斯 (17年, 814-798 BC)</div>
                 <div>✨ 特質：<span class="bad">受亞蘭王哈薛欺壓至極</span></div>
-                <div>⚡ 互動：困境中哀求神，神因其悲慘而賜拯救者</div>
+                <div>⚡ 互動：哀求神，神賜拯救者</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">12. 約阿施 (16年, 798-782 BC)</div>
                 <div>✨ 特質：行惡但三勝亞蘭</div>
-                <div>📜 先知：以利沙臨終預言 | ⚡ 互動：擊敗南國約阿施並劫掠聖殿</div>
+                <div>📜 先知：以利沙臨終預言 | ⚡ 互動：擊敗南國約阿施</div>
             </div>
             <div class="king-card north-card" style="background: #fcf3cf;">
                 <div class="king-name">13. 耶羅波安二世 (41年, 782-753 BC)</div>
-                <div>✨ 特質：<span class="good">按先知約拿預言收復失土，國力極盛</span></div>
-                <div>📜 先知：阿摩司、何西阿、約拿 | ⚡ 互動：神憐憫暫賜國家繁榮</div>
+                <div>✨ 特質：<span class="good">收復失土，國力極盛</span></div>
+                <div>📜 先知：阿摩司、何西阿、約拿</div>
             </div>
             <div class="king-card north-card" style="background: #fadbd8;">
                 <div class="king-name">14. 撒迦利亞 (6個月, 753 BC)</div>
-                <div>✨ 特質：行惡，被沙龍背叛刺殺（應驗耶戶王朝4代預言）</div>
+                <div>✨ 特質：行惡，被沙龍背叛刺殺</div>
             </div>
             <div class="king-card north-card" style="background: #fadbd8;">
                 <div class="king-name">15. 沙龍 (1個月, 752 BC)</div>
-                <div>✨ 特質：篡位僅一個月即被米拿現擊殺</div>
+                <div>✨ 特質：篡位一個月即被米拿現擊殺</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">16. 米拿現 (10年, 752-742 BC)</div>
-                <div>✨ 特質：<span class="bad">極其殘暴（剖孕婦）</span></div>
-                <div>⚡ 互動：向亞述王普勒進貢千他連得銀子以鞏固王位</div>
+                <div>✨ 特質：<span class="bad">極其殘暴</span> | 向亞述進貢求穩固</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">17. 比加轄 (2年, 742-740 BC)</div>
-                <div>✨ 特質：行惡，被將領比加政變殺害於王宮</div>
+                <div>✨ 特質：行惡，被比加政變殺害</div>
             </div>
             <div class="king-card north-card">
                 <div class="king-name">18. 比加 (20年, 740-732 BC)</div>
-                <div>✨ 特質：行惡結盟亞蘭對抗亞述</div>
-                <div>⚡ 互動：招致亞述王提革拉毘列色入侵並擄掠北方支派</div>
+                <div>✨ 特質：結盟亞蘭對抗亞述</div>
+                <div>⚡ 互動：招致亞述入侵並擄掠北方</div>
             </div>
             <div class="king-card north-card" style="background: #e74c3c; color: white;">
                 <div class="king-name" style="color: white;">19. 何細亞 (9年, 732-722 BC)</div>
-                <div>✨ 特質：末代君王，暗中聯絡埃及背叛亞述</div>
-                <div>💀 事件：<span style="color: #f9e79f;">主前 722 年首都撒瑪利亞被亞述攻陷，北國滅亡</span></div>
+                <div>✨ 特質：末代君王，背叛亞述</div>
+                <div>💀 事件：<span style="color: #f9e79f;">722 BC 撒瑪利亞陷落，北國滅亡</span></div>
             </div>
         </div>
 
-        <!-- 中間時間軸與色帶 -->
+        <!-- 2. 中間時間軸與精準比例色帶 -->
         <div class="timeline-center">
             <div class="time-labels">
                 <span>930 BC</span>
@@ -158,155 +158,138 @@
                 <span>610 BC</span>
                 <span>586 BC</span>
             </div>
-            <!-- 北國色帶 -->
-            <div class="bar-track">
-                <div class="bar-segment" style="top: 0%; height: 5.2%;"></div>
-                <div class="bar-segment" style="top: 5.2%; height: 0.5%;"></div>
-                <div class="bar-segment" style="top: 5.7%; height: 5.7%;"></div>
-                <div class="bar-segment" style="top: 11.4%; height: 0.5%;"></div>
-                <div class="bar-segment" style="top: 11.9%; height: 0.2%;"></div>
-                <div class="bar-segment" style="top: 12.1%; height: 2.8%;"></div>
-                <div class="bar-segment" style="top: 14.9%; height: 5.2%;"></div>
-                <div class="bar-segment" style="top: 20.1%; height: 0.5%;"></div>
-                <div class="bar-segment" style="top: 20.6%; height: 2.8%;"></div>
-                <div class="bar-segment" style="top: 23.4%; height: 6.5%;"></div>
-                <div class="bar-segment" style="top: 29.9%; height: 4.0%;"></div>
-                <div class="bar-segment" style="top: 33.9%; height: 3.8%;"></div>
-                <div class="bar-segment" style="top: 37.7%; height: 9.8%;"></div>
-                <div class="bar-segment" style="top: 47.5%; height: 0.2%;"></div>
-                <div class="bar-segment" style="top: 47.7%; height: 0.2%;"></div>
-                <div class="bar-segment" style="top: 47.9%; height: 2.4%;"></div>
-                <div class="bar-segment" style="top: 50.3%; height: 0.5%;"></div>
-                <div class="bar-segment" style="top: 50.8%; height: 4.8%;"></div>
-                <div class="bar-segment" style="top: 55.6%; height: 2.2%;"></div>
-                <div class="bar-segment" style="top: 57.8%; height: 2.2%; background: #c0392b;"></div>
-            </div>
-            <!-- 南國色帶 -->
-            <div class="bar-track">
-                <div class="bar-segment" style="top: 0%; height: 4.0%;"></div>
-                <div class="bar-segment" style="top: 4.0%; height: 0.7%;"></div>
-                <div class="bar-segment" style="top: 4.7%; height: 9.7%;"></div>
-                <div class="bar-segment" style="top: 14.4%; height: 5.9%;"></div>
-                <div class="bar-segment" style="top: 20.3%; height: 1.9%;"></div>
-                <div class="bar-segment" style="top: 22.2%; height: 0.2%;"></div>
-                <div class="bar-segment" style="top: 22.4%; height: 1.4%;"></div>
-                <div class="bar-segment" style="top: 23.8%; height: 9.5%;"></div>
-                <div class="bar-segment" style="top: 33.3%; height: 6.9%;"></div>
-                <div class="bar-segment" style="top: 40.2%; height: 12.4%;"></div>
-                <div class="bar-segment" style="top: 52.6%; height: 3.8%;"></div>
-                <div class="bar-segment" style="top: 56.4%; height: 3.8%;"></div>
-                <div class="bar-segment" style="top: 60.2%; height: 6.9%;"></div>
-                <div class="bar-segment" style="top: 67.1%; height: 13.1%;"></div>
-                <div class="bar-segment" style="top: 80.2%; height: 0.5%;"></div>
-                <div class="bar-segment" style="top: 80.7%; height: 7.4%;"></div>
-                <div class="bar-segment" style="top: 88.1%; height: 0.1%;"></div>
-                <div class="bar-segment" style="top: 88.2%; height: 2.6%;"></div>
-                <div class="bar-segment" style="top: 90.8%; height: 2.6%; background: #c0392b;"></div>
+            <div class="bar-track-container">
+                <!-- 北國色帶 -->
+                <div class="bar-track">
+                    <div class="bar-segment" style="top: 0%; height: 5.2%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 5.2%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 5.7%; height: 5.7%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 11.4%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 11.9%; height: 0.2%; background: #c0392b;"></div>
+                    <div class="bar-segment" style="top: 12.1%; height: 2.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 14.9%; height: 5.2%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 20.1%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 20.6%; height: 2.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 23.4%; height: 6.5%; background: #27ae60;"></div>
+                    <div class="bar-segment" style="top: 29.9%; height: 4.0%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 33.9%; height: 3.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 37.7%; height: 9.8%; background: #f1c40f;"></div>
+                    <div class="bar-segment" style="top: 47.5%; height: 0.2%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 47.7%; height: 0.2%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 47.9%; height: 2.4%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 50.3%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 50.8%; height: 4.8%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 55.6%; height: 2.2%; background: #e74c3c;"></div>
+                    <div class="bar-segment" style="top: 57.8%; height: 2.2%; background: #78281f;"></div>
+                </div>
+                <!-- 南國色帶 -->
+                <div class="bar-track">
+                    <div class="bar-segment" style="top: 0%; height: 4.0%; background: #d4efdf;"></div>
+                    <div class="bar-segment" style="top: 4.0%; height: 0.7%; background: #fcf3cf;"></div>
+                    <div class="bar-segment" style="top: 4.7%; height: 9.7%; background: #27ae60;"></div>
+                    <div class="bar-segment" style="top: 14.4%; height: 5.9%; background: #27ae60;"></div>
+                    <div class="bar-segment" style="top: 20.3%; height: 1.9%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 22.2%; height: 0.2%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 22.4%; height: 1.4%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 23.8%; height: 9.5%; background: #d4efdf;"></div>
+                    <div class="bar-segment" style="top: 33.3%; height: 6.9%; background: #d4efdf;"></div>
+                    <div class="bar-segment" style="top: 40.2%; height: 12.4%; background: #27ae60;"></div>
+                    <div class="bar-segment" style="top: 52.6%; height: 3.8%; background: #d4efdf;"></div>
+                    <div class="bar-segment" style="top: 56.4%; height: 3.8%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 60.2%; height: 6.9%; background: #27ae60;"></div>
+                    <div class="bar-segment" style="top: 67.1%; height: 13.1%; background: #c0392b;"></div>
+                    <div class="bar-segment" style="top: 80.2%; height: 0.5%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 80.7%; height: 7.4%; background: #27ae60;"></div>
+                    <div class="bar-segment" style="top: 88.1%; height: 0.1%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 88.2%; height: 2.6%; background: #fadbd8;"></div>
+                    <div class="bar-segment" style="top: 90.8%; height: 7.8%; background: #78281f;"></div>
+                </div>
             </div>
         </div>
 
-        <!-- 南國猶大 20 位統治者（19王1后）獨立清單 -->
+        <!-- 3. 南國猶大 20 位統治者（19王1后）獨立清單 -->
         <div>
             <div class="column-header south-header">南國猶大 (20位統治者全展開)</div>
             
             <div class="king-card south-card">
                 <div class="king-name">1. 羅波安 (17年, 930-913 BC)</div>
-                <div>✨ 特質：<span class="bad">離棄神，國勢分裂衰弱</span></div>
-                <div>👑 王后：瑪哈拉、亞比孩 | 📜 先知：示瑪雅</div>
-                <div>⚡ 互動：因埃及王示撒入侵而謙卑，神使之暫得保全</div>
+                <div>✨ 特質：<span class="bad">離棄神，國勢衰弱</span> | 📜 先知：示瑪雅</div>
             </div>
             <div class="king-card south-card">
-                <div class="king-name">2. 亞比央/亞比雅 (3年, 913-911 BC)</div>
-                <div>✨ 特質：<span class="bad">步其父後塵，行惡</span></div>
-                <div>⚡ 互動：大戰耶羅波安時痛斥北國並靠神獲大勝</div>
+                <div class="king-name">2. 亞比央 (3年, 913-911 BC)</div>
+                <div>✨ 特質：<span class="bad">步其父後塵</span> | ⚡ 靠神大勝</div>
             </div>
             <div class="king-card south-card" style="background: #d4efdf;">
                 <div class="king-name">3. ⭐ 亞撒 (41年, 911-870 BC)</div>
-                <div>✨ 特質：<span class="good">行善與大革新，廢偶像、除孌童</span></div>
-                <div>📜 先知：亞撒利雅、哈拿尼 | ⚡ 互動：倚靠神大敗古實百萬大軍</div>
+                <div>✨ 特質：<span class="good">行善大革新，除偶像</span> | 📜 亞撒利雅</div>
             </div>
             <div class="king-card south-card" style="background: #d4efdf;">
                 <div class="king-name">4. ⭐ 約沙法 (25年, 870-848 BC)</div>
-                <div>✨ 特質：<span class="good">效法大衛，差人全地教導律法</span></div>
-                <div>📜 先知：耶戶、雅哈薛、以利沙 | ⚡ 互動：讚美軍隊大勝聯軍</div>
+                <div>✨ 特質：<span class="good">效法大衛，教導律法</span> | 📜 耶戶</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">5. 約蘭 (8年, 848-841 BC)</div>
-                <div>✨ 特質：<span class="bad">娶亞哈女兒亞她利雅為妻，行惡</span></div>
-                <div>👑 王后：亞她利雅 | 📜 先知：以利亞(信件)</div>
-                <div>⚡ 互動：身患絕症腸子脫落而死，無人哀哭</div>
+                <div>✨ 特質：<span class="bad">娶亞哈女行惡</span> | 👑 亞她利雅</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">6. 亞哈謝 (1年, 841 BC)</div>
-                <div>✨ 特質：<span class="bad">隨從亞哈家惡行行事</span></div>
-                <div>⚡ 互動：隨北國約蘭探病時被耶戶擊殺</div>
+                <div>✨ 特質：<span class="bad">隨從亞哈家惡行</span> | ⚡ 被耶戶擊殺</div>
             </div>
             <div class="king-card south-card" style="background: #fadbd8;">
                 <div class="king-name">7. 亞她利雅 (女王, 6年, 841-835 BC)</div>
-                <div>✨ 特質：<span class="bad">殘害王室企圖滅絕大衛家血脈</span></div>
-                <div>⚡ 互動：祭司耶何耶達將幼王約阿施藏匿於聖殿，後被處決</div>
+                <div>✨ 特質：<span class="bad">殘害王室企圖滅絕大衛家</span></div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">8. 約阿施 (40年, 835-796 BC)</div>
-                <div>✨ 特質：祭司在生時行善，死後背道</div>
-                <div>📜 先知：撒迦利亞(祭司之子) | ⚡ 互動：背道並命人用石頭打死先知，遭臣下叛殺</div>
+                <div>✨ 特質：祭司在生時行善，後背道被殺</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">9. 亞瑪謝 (29年, 796-767 BC)</div>
-                <div>✨ 特質：心不專誠，戰勝以東後竟將以東偶像帶回膜拜</div>
-                <div>⚡ 互動：向北國挑戰落敗遭劫掠，後被臣民叛殺</div>
+                <div>✨ 特質：心不專誠，拜以東偶像被殺</div>
             </div>
             <div class="king-card south-card" style="background: #d4efdf;">
-                <div class="king-name">10. ⭐ 烏西雅/亞撒利雅 (52年, 767-740 BC)</div>
-                <div>✨ 特質：<span class="good">強盛，發明戰具、重視農牧</span></div>
-                <div>📜 先知：以賽亞、何西阿、阿摩司 | ⚡ 互動：因國強心高氣傲擅燒香長大痲瘋</div>
+                <div class="king-name">10. ⭐ 烏西雅 (52年, 767-740 BC)</div>
+                <div>✨ 特質：<span class="good">強盛發明戰具</span> | 📜 以賽亞</div>
             </div>
             <div class="king-card south-card" style="background: #d4efdf;">
                 <div class="king-name">11. 約坦 (16年, 740-732 BC)</div>
-                <div>✨ 特質：<span class="good">行耶和華眼中看為正的事，修築上門</span></div>
-                <div>📜 先知：彌迦、以賽亞 | ⚡ 互動：行事誠實故日漸強盛</div>
+                <div>✨ 特質：<span class="good">行正道日漸強盛</span> | 📜 彌迦</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">12. 亞哈斯 (16年, 732-716 BC)</div>
-                <div>✨ 特質：<span class="bad">極度行惡，效法列邦、焚燒親子獻祭</span></div>
-                <div>📜 先知：以賽亞 (曾賜以馬內利預言) | ⚡ 互動：向亞述求救而使聖殿變質</div>
+                <div>✨ 特質：<span class="bad">焚燒親子獻祭，向亞述求救</span></div>
             </div>
             <div class="king-card south-card" style="background: #d4efdf;">
                 <div class="king-name">13. ⭐ 希西家 (29年, 716-687 BC)</div>
-                <div>✨ 特質：<span class="good">猶大少有的好王，極大宗教復興</span></div>
-                <div>👑 王后：希弗巴 | 📜 先知：以賽亞、那鴻、彌迦</div>
-                <div>⚡ 互動：面臨亞述大軍圍城，切求神使天使一夜擊殺 185 萬敵軍</div>
+                <div>✨ 特質：<span class="good">極大復興</span> | ⚡ 禱告擊退亞述大軍</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">14. 瑪拿西 (55年, 687-642 BC)</div>
-                <div>✨ 特質：<span class="bad">猶大最邪惡之王，流無辜人血滿耶路撒冷</span></div>
-                <div>📜 先知：那鴻 | ⚡ 互動：被亞述用銅鏈鎖往巴比倫後極其謙卑悔改，蒙神垂聽赦免</div>
+                <div>✨ 特質：<span class="bad">極邪惡流無辜血</span> | ⚡ 後謙卑悔改</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">15. 亞們 (2年, 642-640 BC)</div>
-                <div>✨ 特質：<span class="bad">行惡不悔改，步其父作惡後塵</span></div>
-                <div>⚡ 互動：作惡過甚遭宮臣叛變在宮中擊殺</div>
+                <div>✨ 特質：<span class="bad">行惡不悔改</span> | ⚡ 遭宮臣叛殺</div>
             </div>
             <div class="king-card south-card" style="background: #d4efdf;">
                 <div class="king-name">16. ⭐ 約西亞 (31年, 640-609 BC)</div>
-                <div>✨ 特質：<span class="good">8歲即位，尋求神，全國大規模清除偶像與復興</span></div>
-                <div>👑 王后：西比達、哈慕大 | 📜 先知：西番雅、耶利米、女先知戶勒大</div>
-                <div>⚡ 互動：修理聖殿時重現律法書，全國大大守逾越節</div>
+                <div>✨ 特質：<span class="good">8歲即位，全面大改革</span></div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">17. 約哈斯 (3個月, 609 BC)</div>
-                <div>✨ 特質：<span class="bad">行惡</span></div>
-                <div>⚡ 互動：即位僅三個月即遭埃及法老尼哥革職鎖禁並帶往埃及客死</div>
+                <div>✨ 特質：<span class="bad">行惡</span> | ⚡ 被埃及法老鎖禁客死</div>
             </div>
             <div class="king-card south-card">
                 <div class="king-name">18. 約雅敬 (11年, 609-598 BC)</div>
-                <div>✨ 特質：<span class="bad">暴虐貪婪、用刀割破並焚燒耶利米先知書卷</span></div>
-                <div>📜 先知：耶利米、烏利亞、哈巴谷 | ⚡ 互動：遭巴比倫尼布甲尼撒捆鎖</div>
+                <div>✨ 特質：<span class="bad">暴虐、焚燒先知書卷</span></div>
             </div>
             <div class="king-card south-card" style="background: #e74c3c; color: white;">
                 <div class="king-name" style="color: white;">19. 西底家 (11年, 597-586 BC)</div>
-                <div>✨ 特質：末代行惡君王，耳軟不聽耶利米勸告</div>
-                <div>📜 先知：耶利米、以西結 | 💀 事件：<span style="color: #f9e79f;">主前 586 年聖殿被毀、南國滅亡被擄</span></div>
+                <div>✨ 特質：末代行惡君王，不聽勸告</div>
+            </div>
+            <div class="king-card south-card" style="background: #78281f; color: white;">
+                <div class="king-name" style="color: white;">20. 亡國與被擄時期 (586 BC)</div>
+                <div>💀 事件：<span style="color: #f9e79f;">聖殿被毀、南國滅亡被擄巴比倫</span></div>
             </div>
         </div>
     </div>
