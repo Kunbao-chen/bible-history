@@ -2,64 +2,71 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>南國（猶大）王系與先知歷史表</title>
+    <title>南北王國歷史對照甘特圖表</title>
     <style>
-        @page { size: A4 portrait; margin: 10mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fff; color: #2c3e50; margin: 0; padding: 10px; font-size: 9pt; }
-        .container { max-width: 700px; margin: 0 auto; border: 2px solid #27ae60; padding: 12px; background: #fdfefe; border-radius: 6px; }
-        h1 { text-align: center; font-size: 13pt; margin: 0 0 4px 0; background: #27ae60; color: white; padding: 6px; border-radius: 4px; }
+        @page { size: A4 landscape; margin: 10mm; }
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fff; color: #2c3e50; margin: 0; padding: 10px; font-size: 8.5pt; }
+        .container { max-width: 1050px; margin: 0 auto; border: 2px solid #34495e; padding: 12px; background: #fdfefe; border-radius: 6px; }
+        h1 { text-align: center; font-size: 13pt; margin: 0 0 4px 0; background: #34495e; color: white; padding: 6px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 7.5pt; margin: 0 0 10px 0; color: #555; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #bdc3c7; padding: 6px 10px; text-align: left; vertical-align: middle; }
-        th { background: #34495e; color: white; font-size: 8.5pt; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { border: 1px solid #bdc3c7; padding: 5px 8px; vertical-align: middle; }
+        th { background: #2980b9; color: white; font-size: 8.5pt; text-align: center; }
         
-        .king-row { background-color: #d4efdf; }
-        .star-row { background-color: #f9e79f !important; font-weight: bold; }
-        .crit-row { background-color: #fadbd8 !important; color: #78281f; font-weight: bold; }
+        .time-col { background: #eaeded; text-align: center; font-weight: bold; width: 12%; font-size: 8pt; }
+        .north-col { background: #fadbd8; width: 42%; }
+        .south-col { background: #d4efdf; width: 42%; }
         
-        .bar-container { background: #ecf0f1; border-radius: 3px; width: 100%; height: 12px; overflow: hidden; display: flex; }
-        .bar-fill { background: #27ae60; height: 100%; border-radius: 3px; }
-        .star-fill { background: #d4ac0d !important; }
-        .crit-fill { background: #c0392b !important; }
+        .event-tag { display: inline-block; background: #c0392b; color: white; padding: 1px 4px; border-radius: 3px; font-size: 7pt; margin-top: 2px; }
+        .prophet-tag { color: #7d6608; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🏛️ 南國（猶大）王系與先知結構化歷史對照表</h1>
-    <p class="subtitle">以表格化結構取代絕對座標，確保所有在位年數、先知與歷史事件完整呈現、絕不覆蓋</p>
+    <h1>📜 舊約南北王國歷史與先知雙軌交錯對照表</h1>
+    <p class="subtitle">以結構化表格展開南北雙軌，完美容納王系、在位年數、先知交錯及重大事件，絕不覆蓋</p>
 
     <table>
         <thead>
             <tr>
-                <th style="width: 25%;">君王與特色</th>
-                <th style="width: 15%;">在位年數</th>
-                <th style="width: 15%;">搭配先知 / 事件</th>
-                <th style="width: 45%;">相對量化色帶比例</th>
+                <th>絕對時間軸</th>
+                <th>北國 (以色列) 王系、先知與事件</th>
+                <th>南國 (猶大) 王系、先知與事件</th>
             </tr>
         </thead>
         <tbody>
-            <tr class="king-row"><td>羅波安</td><td>17 年</td><td>-</td><td><div class="bar-container"><div class="bar-fill" style="width: 32.6%;"></div></div></td></tr>
-            <tr class="king-row"><td>亞比央</td><td>3 年</td><td>-</td><td><div class="bar-container"><div class="bar-fill" style="width: 5.7%;"></div></div></td></tr>
-            <tr class="star-row"><td>⭐ 亞撒</td><td>41 年</td><td>神合心意之王</td><td><div class="bar-container"><div class="bar-fill star-fill" style="width: 78.8%;"></div></div></td></tr>
-            <tr class="star-row"><td>⭐ 約沙法</td><td>25 年</td><td>以利亞</td><td><div class="bar-container"><div class="bar-fill star-fill" style="width: 48.0%;"></div></div></td></tr>
-            <tr class="king-row"><td>約蘭</td><td>8 年</td><td>以利沙</td><td><div class="bar-container"><div class="bar-fill" style="width: 15.3%;"></div></div></td></tr>
-            <tr class="king-row"><td>亞哈謝</td><td>1 年</td><td>-</td><td><div class="bar-container"><div class="bar-fill" style="width: 1.9%;"></div></div></td></tr>
-            <tr class="king-row"><td>亞她利雅 (女王)</td><td>6 年</td><td>篡位</td><td><div class="bar-container"><div class="bar-fill" style="width: 11.5%;"></div></div></td></tr>
-            <tr class="king-row"><td>約阿施</td><td>40 年</td><td>祭司耶何耶大輔佐</td><td><div class="bar-container"><div class="bar-fill" style="width: 76.9%;"></div></div></td></tr>
-            <tr class="king-row"><td>亞瑪謝</td><td>29 年</td><td>-</td><td><div class="bar-container"><div class="bar-fill" style="width: 55.7%;"></div></div></td></tr>
-            <tr class="star-row"><td>烏西雅 (亞撒利雅)</td><td>52 年</td><td>強盛一時</td><td><div class="bar-container"><div class="bar-fill star-fill" style="width: 100%;"></div></div></td></tr>
-            <tr class="king-row"><td>🔺 約坦</td><td>16 年</td><td>何西阿</td><td><div class="bar-container"><div class="bar-fill" style="width: 30.7%;"></div></div></td></tr>
-            <tr class="king-row"><td>里哈斯</td><td>16 年</td><td>以賽亞、彌迦</td><td><div class="bar-container"><div class="bar-fill" style="width: 30.7%;"></div></div></td></tr>
-            <tr class="star-row"><td>⭐ 希西家</td><td>29 年</td><td>逾越節復興</td><td><div class="bar-container"><div class="bar-fill star-fill" style="width: 55.7%;"></div></div></td></tr>
-            <tr class="king-row"><td>瑪拿西</td><td>55 年</td><td>那鴻 / 行惡最久</td><td><div class="bar-container"><div class="bar-fill" style="width: 105.7%;"></div></div></td></tr>
-            <tr class="king-row"><td>亞們</td><td>2 年</td><td>-</td><td><div class="bar-container"><div class="bar-fill" style="width: 3.8%;"></div></div></td></tr>
-            <tr class="star-row"><td>⭐ 約西亞</td><td>31 年</td><td>西番雅 / 律法書重現</td><td><div class="bar-container"><div class="bar-fill star-fill" style="width: 59.6%;"></div></div></td></tr>
-            <tr class="king-row"><td>約哈斯</td><td>3 個月</td><td>-</td><td><div class="bar-container"><div class="bar-fill" style="width: 1%;"></div></div></td></tr>
-            <tr class="king-row"><td>約雅敬</td><td>11 年</td><td>哈巴谷</td><td><div class="bar-container"><div class="bar-fill" style="width: 21.1%;"></div></div></td></tr>
-            <tr class="crit-row"><td>🔴 約雅斤 (被擄)</td><td>3 個月</td><td>主前 597 年被擄</td><td><div class="bar-container"><div class="bar-fill crit-fill" style="width: 1%;"></div></div></td></tr>
-            <tr class="crit-row"><td>💀 西底家 (南亡)</td><td>11 年</td><td>以西結 / 主前 586 滅亡</td><td><div class="bar-container"><div class="bar-fill crit-fill" style="width: 21.1%;"></div></div></td></tr>
+            <tr>
+                <td class="time-col">主前 930 年</td>
+                <td class="north-col"><b>耶羅波安一世</b> (22年) <br><span class="prophet-tag">先知：亞希雅</span><br><span class="event-tag">金牛犢事件</span></td>
+                <td class="south-col"><b>羅波安</b> (17年)</td>
+            </tr>
+            <tr>
+                <td class="time-col">主前 910 - 870 年</td>
+                <td class="north-col">拿答 ➔ 巴沙 ➔ 以拉 ➔ 心利(7日) ➔ 暗利 ➔ <b>亞哈</b></td>
+                <td class="south-col">亞比央 (3年) ➔ ⭐ <b>亞撒</b> (41年，復興)</td>
+            </tr>
+            <tr>
+                <td class="time-col">主前 870 - 850 年</td>
+                <td class="north-col">亞哈謝 ➔ 約蘭<br><span class="prophet-tag">先知：以利亞、以利沙</span></td>
+                <td class="south-col">⭐ <b>約沙法</b> (25年)<br><span class="event-tag">與北國結盟</span></td>
+            </tr>
+            <tr>
+                <td class="time-col">主前 840 - 750 年</td>
+                <td class="north-col"><b>耶戶</b> ➔ 約哈斯 ➔ 約阿施 ➔ <b>耶羅波安二世</b> (41年)<br><span class="prophet-tag">先知：阿摩司、何西阿</span></td>
+                <td class="south-col">約蘭 ➔ 亞哈謝 ➔ 亞她利雅(女王) ➔ 約阿施 ➔ 亞瑪謝 ➔ <b>烏西雅</b> (52年)</td>
+            </tr>
+            <tr>
+                <td class="time-col">主前 750 - 722 年</td>
+                <td class="north-col">撒迦利亞 ➔ 沙龍 ➔ 米拿現 ➔ 比加轄 ➔ 比加 ➔ 何細亞<br><span class="event-tag" style="background:#78281f;">主前 722 年：北國亞述滅亡</span></td>
+                <td class="south-col">約坦 ➔ 里哈斯 <br><span class="prophet-tag">先知：以賽亞、彌迦</span><br>⭐ <b>希西家</b> (29年，受亞述圍城)</td>
+            </tr>
+            <tr>
+                <td class="time-col">主前 690 - 586 年</td>
+                <td class="north-col" style="background: #f5b7b1; text-align: center; color: #78281f;"><b>[ 北國已亡國 ]</b></td>
+                <td class="south-col">瑪拿西 ➔ 亞們 ➔ ⭐ <b>約西亞</b> (31年，律法書復興)<br>約哈斯 ➔ 約雅敬 ➔ <span class="event-tag">597年約雅斤被擄</span><br>💀 <b>西底家</b> <br><span class="event-tag" style="background:#c0392b;">主前 586 年：南國巴比倫滅亡・聖殿被毀</span></td>
+            </tr>
         </tbody>
     </table>
 </div>
