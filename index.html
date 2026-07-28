@@ -64,7 +64,7 @@
             transition: all 0.2s ease; cursor: pointer; position: relative;
         }
         
-        /* 恢復原本精準按年份比例分配高度的設定 */
+        /* 高度比例分配 */
         #northTrack .bar-segment[data-index="0"] { height: calc(22 * 1.8px); }
         #northTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
         #northTrack .bar-segment[data-index="2"] { height: calc(22 * 1.8px); }
@@ -475,32 +475,30 @@
         });
     }
 
-    // 修正點亮邏輯：確保時間重疊區段的「文字卡」與「對應色帶」同時點亮
+    // 完整點亮邏輯：同步處理文字卡與色帶
     function triggerHighlight(start, end, mainSide, mainIndex) {
         // 清除先前點亮
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
             el.classList.remove('highlight-main', 'highlight-overlap');
         });
 
-        // 1. 標示主選取目標（極亮橘色卡片與色帶）
+        // 1. 標示主選取目標
         const mainCard = document.querySelector(`.king-card[data-side="${mainSide}"][data-index="${mainIndex}"]`);
         const mainSeg = document.querySelector(`.bar-segment[data-side="${mainSide}"][data-index="${mainIndex}"]`);
         if (mainCard) mainCard.classList.add('highlight-main');
         if (mainSeg) mainSeg.classList.add('highlight-main');
 
-        // 2. 交叉檢查所有時間重疊之君王 (同時點亮重疊的卡片與對應色帶)
+        // 2. 交叉檢查所有時間重疊之君王 (同步點亮卡片與對應色帶)
         const allCards = document.querySelectorAll('.king-card');
         allCards.forEach(card => {
             const cSide = card.getAttribute('data-side');
             const cIndex = card.getAttribute('data-index');
 
-            // 忽略主體本身
             if (cSide === mainSide && cIndex === mainIndex) return;
 
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // 數學判定：時間區間重疊
             if (Math.max(start, cStart) <= Math.min(end, cEnd)) {
                 card.classList.add('highlight-overlap');
                 const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
@@ -521,7 +519,7 @@
             });
         });
 
-        // B. 點選中間色帶 (反向點亮功能)
+        // B. 點選中間色帶點亮
         document.querySelectorAll('.bar-segment').forEach(seg => {
             seg.addEventListener('click', (e) => {
                 e.stopPropagation();
