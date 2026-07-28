@@ -6,22 +6,20 @@
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6.5pt; }
-        .notebook-container { max-width: 1080px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        .notebook-container { max-width: 1050px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 10pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 4px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 6pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        /* 核心三欄佈局連線網格 */
-        .main-layout { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 15px; align-items: start; position: relative; }
+        /* 縮減左右欄寬度以挪出斜直線箭頭的穿梭空間，保持文字卡片原位不動 */
+        .main-layout { display: grid; grid-template-columns: 340px 60px 340px; justify-content: center; gap: 30px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 7pt; color: white; margin-bottom: 6px; }
         .north-header { background: #e74c3c; }
         .south-header { background: #27ae60; }
 
-        /* 側邊卡片區（自然展開，不壓縮文字） */
         .cards-side { display: flex; flex-direction: column; gap: 5px; position: relative; }
 
-        /* 統一卡片樣式：舒適寬裕，絕不壓縮 */
         .king-card {
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
             padding: 4px 6px; font-size: 6pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
@@ -44,7 +42,7 @@
         .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; position: relative; height: 980px; }
         .bar-segment { position: absolute; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.6); }
 
-        /* 覆蓋整體的 SVG 連線圖層（達成連連看箭頭效果） */
+        /* 斜直線箭頭 SVG 圖層 */
         .svg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
@@ -55,11 +53,11 @@
 
 <div class="notebook-container">
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">文字空間完全保留、不壓縮，透過動態連線箭頭精準指向中間歷史色帶區段！</p>
+    <p class="subtitle">縮減文字欄位保留空間，改用清爽俐落的「斜直線箭頭」直接指向正確色帶區段！</p>
 
     <div class="main-layout" id="layoutContainer">
         
-        <!-- 全域 SVG 連線與箭頭定義 -->
+        <!-- SVG 斜直線箭頭定義 -->
         <svg class="svg-overlay" id="linkSvg">
             <defs>
                 <marker id="arrow-north" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
@@ -71,7 +69,7 @@
             </defs>
         </svg>
 
-        <!-- 1. 北國以色列 19 王（舒適排版） -->
+        <!-- 1. 北國以色列 19 王 -->
         <div>
             <div class="column-header north-header">北國以色列 (19王全展開)</div>
             <div class="cards-side" id="northCards">
@@ -81,7 +79,7 @@
                 </div>
                 <div class="king-card north-card" data-target="1">
                     <div class="king-name">2. 拿答 (2年, 909-908 BC)</div>
-                    <div>✨ 特質：<span class="bad">行惡</span> | ⚡ 國基比亞時遭巴沙背叛殺段</div>
+                    <div>✨ 特質：<span class="bad">行惡</span> | ⚡ 國基比亞時遭巴沙背叛殺害</div>
                 </div>
                 <div class="king-card north-card" data-target="2">
                     <div class="king-name">3. 巴沙 (24年, 908-886 BC)</div>
@@ -205,7 +203,7 @@
             </div>
         </div>
 
-        <!-- 3. 南國猶大 20 位統治者（舒適排版） -->
+        <!-- 3. 南國猶大 20 位統治者 -->
         <div>
             <div class="column-header south-header">南國猶大 (20位統治者全展開)</div>
             <div class="cards-side" id="southCards">
@@ -300,15 +298,12 @@
         const container = document.getElementById('layoutContainer').getBoundingClientRect();
         const svg = document.getElementById('linkSvg');
         
-        // 清除舊連線
         while (svg.childNodes.length > 3) {
             svg.removeChild(svg.lastChild);
         }
 
-        // 處理北國連線
+        // 北國斜直線箭頭 (使用直線 L 指向正確色帶區段)
         const northCards = document.querySelectorAll('#northCards .king-card');
-        const northSegments = document.querySelectorAll('#northTrack .bar-segment');
-        
         northCards.forEach(card => {
             const index = card.getAttribute('data-target');
             const segment = document.querySelector(`#northTrack .bar-segment[data-index="${index}"]`);
@@ -322,19 +317,18 @@
                 const y2 = segRect.top + segRect.height / 2 - container.top;
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 15} ${y1}, ${x2 - 15} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
                 path.setAttribute('stroke', '#e74c3c');
                 path.setAttribute('stroke-width', '1.2');
                 path.setAttribute('fill', 'none');
                 path.setAttribute('marker-end', 'url(#arrow-north)');
-                path.setAttribute('opacity', '0.7');
+                path.setAttribute('opacity', '0.8');
                 svg.appendChild(path);
             }
         });
 
-        // 處理南國連線
+        // 南國斜直線箭頭 (使用直線 L 指向正確色帶區段)
         const southCards = document.querySelectorAll('#southCards .king-card');
-        
         southCards.forEach(card => {
             const index = card.getAttribute('data-target');
             const segment = document.querySelector(`#southTrack .bar-segment[data-index="${index}"]`);
@@ -348,12 +342,12 @@
                 const y2 = cardRect.top + cardRect.height / 2 - container.top;
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${x1} ${y1} C ${x1 + 15} ${y1}, ${x2 - 15} ${y2}, ${x2} ${y2}`);
+                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
                 path.setAttribute('stroke', '#27ae60');
                 path.setAttribute('stroke-width', '1.2');
                 path.setAttribute('fill', 'none');
                 path.setAttribute('marker-end', 'url(#arrow-south)');
-                path.setAttribute('opacity', '0.7');
+                path.setAttribute('opacity', '0.8');
                 svg.appendChild(path);
             }
         });
