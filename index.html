@@ -17,17 +17,17 @@
         .north-header { background: #e74c3c; }
         .south-header { background: #27ae60; }
 
-        .cards-side { display: flex; flex-direction: column; gap: 7px; position: relative; }
+        .cards-side { display: flex; flex-direction: column; gap: 5px; position: relative; }
 
         .king-card {
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
-            padding: 6px 8px; font-size: 6pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            line-height: 1.25; position: relative;
+            padding: 5px 7px; font-size: 5.5pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            line-height: 1.2; position: relative;
         }
         .north-card { border-left: 3px solid #e74c3c; }
         .south-card { border-left: 3px solid #27ae60; }
         
-        .king-name { font-weight: bold; color: #2c3e50; font-size: 6.5pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 2px; }
+        .king-name { font-weight: bold; color: #2c3e50; font-size: 6pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 2px; }
         .bad { color: #c0392b; }
         .good { color: #27ae60; }
 
@@ -38,8 +38,7 @@
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
         
-        /* 讓色帶高度略低於文字群總高，呈現文字總高度大於色帶效果 */
-        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; height: 850px; }
+        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; height: 880px; }
         .bar-segment { width: 100%; border-bottom: 1px solid rgba(255,255,255,0.6); box-sizing: border-box; }
 
         .svg-overlay {
@@ -52,7 +51,7 @@
 
 <div class="notebook-container">
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">已修正南北箭標方向、補齊南國 20 個完整色段，並拉大文字卡片高度使總高大於色帶！</p>
+    <p class="subtitle">已精準修正南國 20 位統治者（19王+1女王）獨立卡片與色帶完全對應，並將亡國時期作為獨立結語！</p>
 
     <div class="main-layout" id="layoutContainer">
         
@@ -62,7 +61,7 @@
                 <marker id="arrow-north" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                     <path d="M0,0 L6,3 L0,6 Z" fill="#e74c3c" />
                 </marker>
-                <!-- 南國箭頭 (修正方向，指向右側文字卡片) -->
+                <!-- 南國箭頭 (指向右側文字卡片) -->
                 <marker id="arrow-south" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                     <path d="M0,0 L6,3 L0,6 Z" fill="#27ae60" />
                 </marker>
@@ -95,7 +94,7 @@
             </div>
         </div>
 
-        <!-- 2. 中間精準比例色帶 -->
+        <!-- 2. 中間精準比例色帶 (含 19 北國區段 + 20 南國區段) -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
                 <!-- 北國色帶 (19段) -->
@@ -120,7 +119,7 @@
                     <div class="bar-segment" data-index="17" style="flex-grow: 20; background: #e74c3c;"></div>
                     <div class="bar-segment" data-index="18" style="flex-grow: 9; background: #78281f;"></div>
                 </div>
-                <!-- 南國色帶 (完整 20 段) -->
+                <!-- 南國色帶 (20王 + 1亡國時期 = 21段) -->
                 <div class="bar-track" id="southTrack">
                     <div class="bar-segment" data-index="0" style="flex-grow: 17; background: #d4efdf;"></div>
                     <div class="bar-segment" data-index="1" style="flex-grow: 3; background: #fcf3cf;"></div>
@@ -146,9 +145,9 @@
             </div>
         </div>
 
-        <!-- 3. 南國猶大 20 位統治者 -->
+        <!-- 3. 南國猶大 20 位統治者 + 亡國時期獨立結語卡片 -->
         <div>
-            <div class="column-header south-header">南國猶大 (20位統治者全展開)</div>
+            <div class="column-header south-header">南國猶大 (20位統治者 + 亡國時期)</div>
             <div class="cards-side" id="southCards">
                 <div class="king-card south-card" data-target="0"><div class="king-name">1. 羅波安 (17年, 930-913 BC)</div><div>✨ 特質：<span class="bad">離棄神國勢衰弱</span> | 📜 示瑪雅</div></div>
                 <div class="king-card south-card" data-target="1"><div class="king-name">2. 亞比央 (3年, 913-911 BC)</div><div>✨ 特質：<span class="bad">步父後塵</span> | ⚡ 靠神大勝</div></div>
@@ -169,7 +168,11 @@
                 <div class="king-card south-card" data-target="16"><div class="king-name">17. 約哈斯 (3個月, 609 BC)</div><div>✨ 特質：行惡 | ⚡ 被埃及法老鎖禁客死</div></div>
                 <div class="king-card south-card" data-target="17"><div class="king-name">18. 約雅敬 (11年, 609-598 BC)</div><div>✨ 特質：<span class="bad">暴虐、焚燒先知書卷</span></div></div>
                 <div class="king-card south-card" data-target="18" style="background: #e74c3c; color: white;"><div class="king-name" style="color: white;">19. 西底家 (11年, 597-586 BC)</div><div>✨ 特質：末代行惡君王，不聽勸告</div></div>
-                <div class="king-card south-card" data-target="19" style="background: #78281f; color: white;"><div class="king-name" style="color: white;">20. 亡國與被擄時期 (586 BC)</div><div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span></div></div>
+                <!-- 獨立的第 20 個色段對應卡片：亡國與被擄時期 -->
+                <div class="king-card south-card" data-target="19" style="background: #78281f; color: white;">
+                    <div class="king-name" style="color: white;">20. 亡國與被擄時期 (586 BC)</div>
+                    <div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span></div>
+                </div>
             </div>
         </div>
 
