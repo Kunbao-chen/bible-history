@@ -475,20 +475,20 @@
         });
     }
 
-    // 核心雙向與精準交叉重疊點亮邏輯
+    // 修正點亮邏輯：確保時間重疊區段的「文字卡」與「對應色帶」同時點亮
     function triggerHighlight(start, end, mainSide, mainIndex) {
         // 清除先前點亮
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
             el.classList.remove('highlight-main', 'highlight-overlap');
         });
 
-        // 1. 標示主選取目標（極亮橘色）
+        // 1. 標示主選取目標（極亮橘色卡片與色帶）
         const mainCard = document.querySelector(`.king-card[data-side="${mainSide}"][data-index="${mainIndex}"]`);
         const mainSeg = document.querySelector(`.bar-segment[data-side="${mainSide}"][data-index="${mainIndex}"]`);
         if (mainCard) mainCard.classList.add('highlight-main');
         if (mainSeg) mainSeg.classList.add('highlight-main');
 
-        // 2. 交叉檢查所有時間重疊之君王 (精準判定區間重疊)
+        // 2. 交叉檢查所有時間重疊之君王 (同時點亮重疊的卡片與對應色帶)
         const allCards = document.querySelectorAll('.king-card');
         allCards.forEach(card => {
             const cSide = card.getAttribute('data-side');
