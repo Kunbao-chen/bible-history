@@ -28,7 +28,7 @@
         .north-card { border-left: 3px solid #e74c3c; }
         .south-card { border-left: 3px solid #27ae60; }
         
-        /* 超顯眼點亮互動效果 (主選取 vs 重疊關聯) */
+        /* 點亮互動效果 (主選取 vs 重疊關聯) */
         .king-card.highlight-main {
             background: #fff2ac !important;
             border: 2px solid #f39c12 !important;
@@ -58,28 +58,56 @@
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
         
-        .bar-track { width: 18px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; height: 720px; }
+        .bar-track { width: 18px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; }
         .bar-segment { 
             width: 100%; border-bottom: 1px solid #000000; box-sizing: border-box; 
             transition: all 0.2s ease; cursor: pointer; position: relative;
-            display: flex; align-items: center; justify-content: center;
         }
         
-        /* 色帶文字樣式 (改為縱向排版以精確適應窄狹色帶) */
-        .segment-text {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            font-size: 3.5pt;
-            font-weight: bold;
-            color: #111;
-            text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.9);
-            pointer-events: none;
-            user-select: none;
-            overflow: hidden;
-            white-space: nowrap;
-        }
+        /* 恢復原本精準按年份比例分配高度的設定 */
+        #northTrack .bar-segment[data-index="0"] { height: calc(22 * 1.8px); }
+        #northTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
+        #northTrack .bar-segment[data-index="2"] { height: calc(22 * 1.8px); }
+        #northTrack .bar-segment[data-index="3"] { height: calc(2 * 1.8px); }
+        #northTrack .bar-segment[data-index="4"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="5"] { height: calc(11 * 1.8px); }
+        #northTrack .bar-segment[data-index="6"] { height: calc(21 * 1.8px); }
+        #northTrack .bar-segment[data-index="7"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="8"] { height: calc(11 * 1.8px); }
+        #northTrack .bar-segment[data-index="9"] { height: calc(27 * 1.8px); }
+        #northTrack .bar-segment[data-index="10"] { height: calc(16 * 1.8px); }
+        #northTrack .bar-segment[data-index="11"] { height: calc(16 * 1.8px); }
+        #northTrack .bar-segment[data-index="12"] { height: calc(29 * 1.8px); }
+        #northTrack .bar-segment[data-index="13"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="14"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="15"] { height: calc(10 * 1.8px); }
+        #northTrack .bar-segment[data-index="16"] { height: calc(2 * 1.8px); }
+        #northTrack .bar-segment[data-index="17"] { height: calc(8 * 1.8px); }
+        #northTrack .bar-segment[data-index="18"] { height: calc(10 * 1.8px); }
 
-        /* 色帶超顯眼點亮效果 */
+        #southTrack .bar-segment[data-index="0"] { height: calc(17 * 1.8px); }
+        #southTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
+        #southTrack .bar-segment[data-index="2"] { height: calc(41 * 1.8px); }
+        #southTrack .bar-segment[data-index="3"] { height: calc(22 * 1.8px); }
+        #southTrack .bar-segment[data-index="4"] { height: calc(7 * 1.8px); }
+        #southTrack .bar-segment[data-index="5"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="6"] { height: calc(6 * 1.8px); }
+        #southTrack .bar-segment[data-index="7"] { height: calc(39 * 1.8px); }
+        #southTrack .bar-segment[data-index="8"] { height: calc(29 * 1.8px); }
+        #southTrack .bar-segment[data-index="9"] { height: calc(27 * 1.8px); }
+        #southTrack .bar-segment[data-index="10"] { height: calc(8 * 1.8px); }
+        #southTrack .bar-segment[data-index="11"] { height: calc(16 * 1.8px); }
+        #southTrack .bar-segment[data-index="12"] { height: calc(29 * 1.8px); }
+        #southTrack .bar-segment[data-index="13"] { height: calc(55 * 1.8px); }
+        #southTrack .bar-segment[data-index="14"] { height: calc(2 * 1.8px); }
+        #southTrack .bar-segment[data-index="15"] { height: calc(31 * 1.8px); }
+        #southTrack .bar-segment[data-index="16"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="17"] { height: calc(11 * 1.8px); }
+        #southTrack .bar-segment[data-index="18"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="19"] { height: calc(11 * 1.8px); }
+        #southTrack .bar-segment[data-index="20"] { height: calc(1 * 1.8px); }
+
+        /* 色帶點亮效果 */
         .bar-segment.highlight-main {
             border: 2px solid #e67e22 !important;
             filter: brightness(1.3);
@@ -103,7 +131,7 @@
 
 <div class="notebook-container">
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">✨ 雙向極致點亮：點選「左/右卡片」或「中間色帶/文字」，即刻高亮主體與所有平行歷史時空重疊之君王卡片與色段！</p>
+    <p class="subtitle">✨ 雙向極致點亮：點選「左/右卡片」或「中間色帶」，即刻高亮主體與所有平行歷史時空重疊之君王卡片與色段！</p>
 
     <div class="main-layout" id="layoutContainer">
         
@@ -220,52 +248,52 @@
             </div>
         </div>
 
-        <!-- 2. 中間精準比例色帶 (含動態標示名稱與反向點亮) -->
+        <!-- 2. 中間比例色帶 -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
                 <div class="bar-track" id="northTrack">
-                    <div class="bar-segment" data-side="north" data-index="0" data-start="930" data-end="909" style="flex-grow: 22; background: linear-gradient(to bottom, #d98880, #c0392b);"><span class="segment-text">耶羅波安一世</span></div>
-                    <div class="bar-segment" data-side="north" data-index="1" data-start="909" data-end="908" style="flex-grow: 2; background: #f5b7b1;"><span class="segment-text">拿答</span></div>
-                    <div class="bar-segment" data-side="north" data-index="2" data-start="908" data-end="886" style="flex-grow: 24; background: linear-gradient(to bottom, #c0392b, #b03a2e);"><span class="segment-text">巴沙</span></div>
-                    <div class="bar-segment" data-side="north" data-index="3" data-start="886" data-end="885" style="flex-grow: 2; background: #f5b7b1;"><span class="segment-text">以拉</span></div>
-                    <div class="bar-segment" data-side="north" data-index="4" data-start="885" data-end="885" style="flex-grow: 0.5; background: #e6b0aa;"><span class="segment-text">心利</span></div>
-                    <div class="bar-segment" data-side="north" data-index="5" data-start="885" data-end="874" style="flex-grow: 12; background: #b03a2e;"><span class="segment-text">暗利</span></div>
-                    <div class="bar-segment" data-side="north" data-index="6" data-start="874" data-end="853" style="flex-grow: 22; background: linear-gradient(to bottom, #b03a2e, #922b21);"><span class="segment-text">亞哈</span></div>
-                    <div class="bar-segment" data-side="north" data-index="7" data-start="853" data-end="852" style="flex-grow: 2; background: #f5b7b1;"><span class="segment-text">亞哈謝</span></div>
-                    <div class="bar-segment" data-side="north" data-index="8" data-start="852" data-end="841" style="flex-grow: 12; background: #922b21;"><span class="segment-text">約蘭</span></div>
-                    <div class="bar-segment" data-side="north" data-index="9" data-start="841" data-end="814" style="flex-grow: 28; background: linear-gradient(to bottom, #52be80, #e74c3c);"><span class="segment-text">耶戶</span></div>
-                    <div class="bar-segment" data-side="north" data-index="10" data-start="814" data-end="798" style="flex-grow: 17; background: #922b21;"><span class="segment-text">約哈斯</span></div>
-                    <div class="bar-segment" data-side="north" data-index="11" data-start="798" data-end="782" style="flex-grow: 16; background: #922b21;"><span class="segment-text">約阿施</span></div>
-                    <div class="bar-segment" data-side="north" data-index="12" data-start="782" data-end="753" style="flex-grow: 41; background: linear-gradient(to bottom, #f9e79f, #f1c40f);"><span class="segment-text">耶羅波安二世</span></div>
-                    <div class="bar-segment" data-side="north" data-index="13" data-start="753" data-end="753" style="flex-grow: 1; background: #f5b7b1;"><span class="segment-text">撒迦利亞</span></div>
-                    <div class="bar-segment" data-side="north" data-index="14" data-start="752" data-end="752" style="flex-grow: 1; background: #f5b7b1;"><span class="segment-text">沙龍</span></div>
-                    <div class="bar-segment" data-side="north" data-index="15" data-start="752" data-end="742" style="flex-grow: 10; background: #922b21;"><span class="segment-text">米拿現</span></div>
-                    <div class="bar-segment" data-side="north" data-index="16" data-start="742" data-end="740" style="flex-grow: 2; background: #f5b7b1;"><span class="segment-text">比加轄</span></div>
-                    <div class="bar-segment" data-side="north" data-index="17" data-start="740" data-end="732" style="flex-grow: 20; background: #922b21;"><span class="segment-text">比加</span></div>
-                    <div class="bar-segment" data-side="north" data-index="18" data-start="732" data-end="722" style="flex-grow: 9; background: #641e16;"><span class="segment-text">何細亞</span></div>
+                    <div class="bar-segment" data-side="north" data-index="0" data-start="930" data-end="909" style="background: linear-gradient(to bottom, #d98880, #c0392b);"></div>
+                    <div class="bar-segment" data-side="north" data-index="1" data-start="909" data-end="908" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="2" data-start="908" data-end="886" style="background: linear-gradient(to bottom, #c0392b, #b03a2e);"></div>
+                    <div class="bar-segment" data-side="north" data-index="3" data-start="886" data-end="885" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="4" data-start="885" data-end="885" style="background: #e6b0aa;"></div>
+                    <div class="bar-segment" data-side="north" data-index="5" data-start="885" data-end="874" style="background: #b03a2e;"></div>
+                    <div class="bar-segment" data-side="north" data-index="6" data-start="874" data-end="853" style="background: linear-gradient(to bottom, #b03a2e, #922b21);"></div>
+                    <div class="bar-segment" data-side="north" data-index="7" data-start="853" data-end="852" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="8" data-start="852" data-end="841" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="9" data-start="841" data-end="814" style="background: linear-gradient(to bottom, #52be80, #e74c3c);"></div>
+                    <div class="bar-segment" data-side="north" data-index="10" data-start="814" data-end="798" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="11" data-start="798" data-end="782" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="12" data-start="782" data-end="753" style="background: linear-gradient(to bottom, #f9e79f, #f1c40f);"></div>
+                    <div class="bar-segment" data-side="north" data-index="13" data-start="753" data-end="753" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="14" data-start="752" data-end="752" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="15" data-start="752" data-end="742" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="16" data-start="742" data-end="740" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="17" data-start="740" data-end="732" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="18" data-start="732" data-end="722" style="background: #641e16;"></div>
                 </div>
                 <div class="bar-track" id="southTrack">
-                    <div class="bar-segment" data-side="south" data-index="0" data-start="930" data-end="913" style="flex-grow: 17; background: linear-gradient(to bottom, #a9dfbf, #7dcea0);"><span class="segment-text">羅波安</span></div>
-                    <div class="bar-segment" data-side="south" data-index="1" data-start="913" data-end="911" style="flex-grow: 3; background: #fcf3cf;"><span class="segment-text">亞比央</span></div>
-                    <div class="bar-segment" data-side="south" data-index="2" data-start="911" data-end="870" style="flex-grow: 41; background: linear-gradient(to bottom, #52be80, #1e8449);"><span class="segment-text">亞撒</span></div>
-                    <div class="bar-segment" data-side="south" data-index="3" data-start="870" data-end="848" style="flex-grow: 25; background: linear-gradient(to bottom, #52be80, #27ae60);"><span class="segment-text">約沙法</span></div>
-                    <div class="bar-segment" data-side="south" data-index="4" data-start="848" data-end="841" style="flex-grow: 8; background: #f5b7b1;"><span class="segment-text">約蘭</span></div>
-                    <div class="bar-segment" data-side="south" data-index="5" data-start="841" data-end="841" style="flex-grow: 1; background: #f5b7b1;"><span class="segment-text">亞哈謝</span></div>
-                    <div class="bar-segment" data-side="south" data-index="6" data-start="841" data-end="835" style="flex-grow: 6; background: #e6b0aa;"><span class="segment-text">亞她利雅</span></div>
-                    <div class="bar-segment" data-side="south" data-index="7" data-start="835" data-end="796" style="flex-grow: 40; background: linear-gradient(to bottom, #27ae60, #c0392b);"><span class="segment-text">約阿施</span></div>
-                    <div class="bar-segment" data-side="south" data-index="8" data-start="796" data-end="767" style="flex-grow: 29; background: linear-gradient(to bottom, #f5b7b1, #e74c3c);"><span class="segment-text">亞瑪謝</span></div>
-                    <div class="bar-segment" data-side="south" data-index="9" data-start="767" data-end="740" style="flex-grow: 52; background: linear-gradient(to bottom, #27ae60, #f39c12);"><span class="segment-text">烏西雅</span></div>
-                    <div class="bar-segment" data-side="south" data-index="10" data-start="740" data-end="732" style="flex-grow: 16; background: linear-gradient(to bottom, #52be80, #27ae60);"><span class="segment-text">約坦</span></div>
-                    <div class="bar-segment" data-side="south" data-index="11" data-start="732" data-end="716" style="flex-grow: 16; background: linear-gradient(to bottom, #c0392b, #922b21);"><span class="segment-text">亞哈斯</span></div>
-                    <div class="bar-segment" data-side="south" data-index="12" data-start="716" data-end="687" style="flex-grow: 29; background: linear-gradient(to bottom, #27ae60, #196f3d);"><span class="segment-text">希西家</span></div>
-                    <div class="bar-segment" data-side="south" data-index="13" data-start="687" data-end="642" style="flex-grow: 55; background: linear-gradient(to bottom, #c0392b, #52be80);"><span class="segment-text">瑪拿西</span></div>
-                    <div class="bar-segment" data-side="south" data-index="14" data-start="642" data-end="640" style="flex-grow: 2; background: #c0392b;"><span class="segment-text">亞們</span></div>
-                    <div class="bar-segment" data-side="south" data-index="15" data-start="640" data-end="609" style="flex-grow: 31; background: linear-gradient(to bottom, #27ae60, #145a32);"><span class="segment-text">約西亞</span></div>
-                    <div class="bar-segment" data-side="south" data-index="16" data-start="609" data-end="609" style="flex-grow: 1; background: #f5b7b1;"><span class="segment-text">約哈斯</span></div>
-                    <div class="bar-segment" data-side="south" data-index="17" data-start="609" data-end="598" style="flex-grow: 11; background: #c0392b;"><span class="segment-text">約雅敬</span></div>
-                    <div class="bar-segment" data-side="south" data-index="18" data-start="597" data-end="597" style="flex-grow: 1; background: #f5b7b1;"><span class="segment-text">約雅斤</span></div>
-                    <div class="bar-segment" data-side="south" data-index="19" data-start="597" data-end="586" style="flex-grow: 11; background: #922b21;"><span class="segment-text">西底家</span></div>
-                    <div class="bar-segment" data-side="south" data-index="20" data-start="586" data-end="586" style="flex-grow: 5; background: #641e16;"><span class="segment-text">亡國被擄</span></div>
+                    <div class="bar-segment" data-side="south" data-index="0" data-start="930" data-end="913" style="background: linear-gradient(to bottom, #a9dfbf, #7dcea0);"></div>
+                    <div class="bar-segment" data-side="south" data-index="1" data-start="913" data-end="911" style="background: #fcf3cf;"></div>
+                    <div class="bar-segment" data-side="south" data-index="2" data-start="911" data-end="870" style="background: linear-gradient(to bottom, #52be80, #1e8449);"></div>
+                    <div class="bar-segment" data-side="south" data-index="3" data-start="870" data-end="848" style="background: linear-gradient(to bottom, #52be80, #27ae60);"></div>
+                    <div class="bar-segment" data-side="south" data-index="4" data-start="848" data-end="841" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="5" data-start="841" data-end="841" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="6" data-start="841" data-end="835" style="background: #e6b0aa;"></div>
+                    <div class="bar-segment" data-side="south" data-index="7" data-start="835" data-end="796" style="background: linear-gradient(to bottom, #27ae60, #c0392b);"></div>
+                    <div class="bar-segment" data-side="south" data-index="8" data-start="796" data-end="767" style="background: linear-gradient(to bottom, #f5b7b1, #e74c3c);"></div>
+                    <div class="bar-segment" data-side="south" data-index="9" data-start="767" data-end="740" style="background: linear-gradient(to bottom, #27ae60, #f39c12);"></div>
+                    <div class="bar-segment" data-side="south" data-index="10" data-start="740" data-end="732" style="background: linear-gradient(to bottom, #52be80, #27ae60);"></div>
+                    <div class="bar-segment" data-side="south" data-index="11" data-start="732" data-end="716" style="background: linear-gradient(to bottom, #c0392b, #922b21);"></div>
+                    <div class="bar-segment" data-side="south" data-index="12" data-start="716" data-end="687" style="background: linear-gradient(to bottom, #27ae60, #196f3d);"></div>
+                    <div class="bar-segment" data-side="south" data-index="13" data-start="687" data-end="642" style="background: linear-gradient(to bottom, #c0392b, #52be80);"></div>
+                    <div class="bar-segment" data-side="south" data-index="14" data-start="642" data-end="640" style="background: #c0392b;"></div>
+                    <div class="bar-segment" data-side="south" data-index="15" data-start="640" data-end="609" style="background: linear-gradient(to bottom, #27ae60, #145a32);"></div>
+                    <div class="bar-segment" data-side="south" data-index="16" data-start="609" data-end="609" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="17" data-start="609" data-end="598" style="background: #c0392b;"></div>
+                    <div class="bar-segment" data-side="south" data-index="18" data-start="597" data-end="597" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="19" data-start="597" data-end="586" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="south" data-index="20" data-start="586" data-end="586" style="background: #641e16;"></div>
                 </div>
             </div>
         </div>
@@ -472,9 +500,8 @@
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // 數學判定：時間區間重疊 (Math.max(start1, start2) <= Math.min(end1, end2))
+            // 數學判定：時間區間重疊
             if (Math.max(start, cStart) <= Math.min(end, cEnd)) {
-                // 點亮重疊關聯王 (亮黃色虛線框)
                 card.classList.add('highlight-overlap');
                 const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
                 if (seg) seg.classList.add('highlight-overlap');
@@ -494,7 +521,7 @@
             });
         });
 
-        // B. 點選中間色帶/文字 (反向點亮功能)
+        // B. 點選中間色帶 (反向點亮功能)
         document.querySelectorAll('.bar-segment').forEach(seg => {
             seg.addEventListener('click', (e) => {
                 e.stopPropagation();
