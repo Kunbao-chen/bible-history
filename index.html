@@ -475,7 +475,7 @@
         });
     }
 
-    // BC 倒數年份專用交集判斷邏輯：Start 為大數（登基年），End 為小數（結束年）
+    // BC 嚴格並存重疊交集邏輯：計算兩區間的實際交集長度是否大於 0
     function triggerHighlight(start, end, mainSide, mainIndex) {
         // 清除先前點亮
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
@@ -488,7 +488,7 @@
         if (mainCard) mainCard.classList.add('highlight-main');
         if (mainSeg) mainSeg.classList.add('highlight-main');
 
-        // 2. 交叉檢查所有時間重疊之君王 (修正為 BC 倒數年份交集公式)
+        // 2. 嚴格時空交集檢驗 (確保只有真正同時在位者才被點亮)
         const allCards = document.querySelectorAll('.king-card');
         allCards.forEach(card => {
             const cSide = card.getAttribute('data-side');
@@ -499,8 +499,11 @@
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // BC 區間重疊條件：A的起始大年 >= B的結束小年 且 A的結束小年 <= B的起始大年
-            if (start >= cEnd && end <= cStart) {
+            // 嚴格交集運算式：Math.min(A起, B起) - Math.max(A結, B結) >= 0
+            const overlapStart = Math.min(start, cStart);
+            const overlapEnd = Math.max(end, cEnd);
+
+            if (overlapStart - overlapEnd >= 0) {
                 card.classList.add('highlight-overlap');
                 const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
                 if (seg) seg.classList.add('highlight-overlap');
