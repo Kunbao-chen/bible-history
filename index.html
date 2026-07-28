@@ -51,7 +51,7 @@
 
 <div class="notebook-container">
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">已修正南國第19位約雅斤、第20位西底家之王位順序，並精準對應色帶與亡國結語！</p>
+    <p class="subtitle">已修正南國綠色箭頭方向（改為從右側卡片指向左側色帶），維持左右對稱完美呼應！</p>
 
     <div class="main-layout" id="layoutContainer">
         
@@ -61,7 +61,7 @@
                 <marker id="arrow-north" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                     <path d="M0,0 L6,3 L0,6 Z" fill="#e74c3c" />
                 </marker>
-                <!-- 南國箭頭 (指向右側文字卡片) -->
+                <!-- 南國箭頭 (修正為指向左側色帶) -->
                 <marker id="arrow-south" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                     <path d="M0,0 L6,3 L0,6 Z" fill="#27ae60" />
                 </marker>
@@ -215,7 +215,7 @@
             }
         });
 
-        // 南國斜直線箭頭 (左色帶右側 -> 右卡片左側，箭頭指向右側文字卡片)
+        // 南國斜直線箭頭 (修正方向：從右卡片左側 -> 左色帶右側，箭頭指向左側色帶)
         const southCards = document.querySelectorAll('#southCards .king-card');
         southCards.forEach(card => {
             const index = card.getAttribute('data-target');
@@ -224,10 +224,10 @@
                 const cardRect = card.getBoundingClientRect();
                 const segRect = segment.getBoundingClientRect();
 
-                const x1 = segRect.right - container.left;
-                const y1 = segRect.top + segRect.height / 2 - container.top;
-                const x2 = cardRect.left - container.left;
-                const y2 = cardRect.top + cardRect.height / 2 - container.top;
+                const x1 = cardRect.left - container.left;
+                const y1 = cardRect.top + cardRect.height / 2 - container.top;
+                const x2 = segRect.right - container.left;
+                const y2 = segRect.top + segRect.height / 2 - container.top;
 
                 const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                 path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
