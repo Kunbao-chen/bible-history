@@ -37,8 +37,10 @@
             position: relative;
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
-        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; position: relative; height: 980px; }
-        .bar-segment { position: absolute; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.6); }
+        
+        /* 改用 Flexbox 讓色段依歷史年數比例自動撐開、絕不重疊 */
+        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; height: 980px; }
+        .bar-segment { width: 100%; border-bottom: 1px solid rgba(255,255,255,0.6); box-sizing: border-box; }
 
         .svg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -50,17 +52,19 @@
 
 <div class="notebook-container">
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">已修復索引對應，確保每一張君王卡片與色帶精準一對一斜直線指向！</p>
+    <p class="subtitle">已修正箭標指向與色帶等比比例對應，確保 39 位君王完全一對一精準指到色帶！</p>
 
     <div class="main-layout" id="layoutContainer">
         
         <svg class="svg-overlay" id="linkSvg">
             <defs>
+                <!-- 北國箭頭 (指向右側色帶) -->
                 <marker id="arrow-north" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
                     <path d="M0,0 L6,3 L0,6 Z" fill="#e74c3c" />
                 </marker>
-                <marker id="arrow-south" markerWidth="6" markerHeight="6" refX="1" refY="3" orient="auto">
-                    <path d="M6,0 L0,3 L6,6 Z" fill="#27ae60" />
+                <!-- 南國箭頭 (修正方向，指向左側色帶) -->
+                <marker id="arrow-south" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 Z" fill="#27ae60" />
                 </marker>
             </defs>
         </svg>
@@ -91,53 +95,53 @@
             </div>
         </div>
 
-        <!-- 2. 中間精準比例色帶 -->
+        <!-- 2. 中間精準比例色帶 (使用 flex flex-grow 確保年數比例對應且不重疊) -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
-                <!-- 北國色帶 (0~18 完美對應 19 王) -->
+                <!-- 北國色帶 (19段) -->
                 <div class="bar-track" id="northTrack">
-                    <div class="bar-segment" data-index="0" style="top: 0%; height: 5.2%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="1" style="top: 5.2%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="2" style="top: 5.7%; height: 5.7%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="3" style="top: 11.4%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="4" style="top: 11.9%; height: 0.2%; background: #c0392b;"></div>
-                    <div class="bar-segment" data-index="5" style="top: 12.1%; height: 2.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="6" style="top: 14.9%; height: 5.2%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="7" style="top: 20.1%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="8" style="top: 20.6%; height: 2.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="9" style="top: 23.4%; height: 6.5%; background: #27ae60;"></div>
-                    <div class="bar-segment" data-index="10" style="top: 29.9%; height: 4.0%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="11" style="top: 33.9%; height: 3.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="12" style="top: 37.7%; height: 9.8%; background: #f1c40f;"></div>
-                    <div class="bar-segment" data-index="13" style="top: 47.5%; height: 0.2%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="14" style="top: 47.7%; height: 0.2%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="15" style="top: 47.9%; height: 2.4%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="16" style="top: 50.3%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="17" style="top: 50.8%; height: 4.8%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="18" style="top: 55.6%; height: 4.4%; background: #78281f;"></div>
+                    <div class="bar-segment" data-index="0" style="flex-grow: 22; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="1" style="flex-grow: 2; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="2" style="flex-grow: 24; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="3" style="flex-grow: 2; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="4" style="flex-grow: 0.5; background: #c0392b;"></div>
+                    <div class="bar-segment" data-index="5" style="flex-grow: 12; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="6" style="flex-grow: 22; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="7" style="flex-grow: 2; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="8" style="flex-grow: 12; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="9" style="flex-grow: 28; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="10" style="flex-grow: 17; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="11" style="flex-grow: 16; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="12" style="flex-grow: 41; background: #f1c40f;"></div>
+                    <div class="bar-segment" data-index="13" style="flex-grow: 1; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="14" style="flex-grow: 1; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="15" style="flex-grow: 10; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="16" style="flex-grow: 2; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="17" style="flex-grow: 20; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="18" style="flex-grow: 9; background: #78281f;"></div>
                 </div>
-                <!-- 南國色帶 (0~19 完美對應 20 位統治者) -->
+                <!-- 南國色帶 (20段) -->
                 <div class="bar-track" id="southTrack">
-                    <div class="bar-segment" data-index="0" style="top: 0%; height: 4.0%; background: #d4efdf;"></div>
-                    <div class="bar-segment" data-index="1" style="top: 4.0%; height: 0.7%; background: #fcf3cf;"></div>
-                    <div class="bar-segment" data-index="2" style="top: 4.7%; height: 9.7%; background: #27ae60;"></div>
-                    <div class="bar-segment" data-index="3" style="top: 14.4%; height: 5.9%; background: #27ae60;"></div>
-                    <div class="bar-segment" data-index="4" style="top: 20.3%; height: 1.9%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="5" style="top: 22.2%; height: 0.2%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="6" style="top: 22.4%; height: 1.4%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="7" style="top: 23.8%; height: 9.5%; background: #d4efdf;"></div>
-                    <div class="bar-segment" data-index="8" style="top: 33.3%; height: 6.9%; background: #d4efdf;"></div>
-                    <div class="bar-segment" data-index="9" style="top: 40.2%; height: 12.4%; background: #27ae60;"></div>
-                    <div class="bar-segment" data-index="10" style="top: 52.6%; height: 3.8%; background: #d4efdf;"></div>
-                    <div class="bar-segment" data-index="11" style="top: 56.4%; height: 3.8%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="12" style="top: 60.2%; height: 6.9%; background: #27ae60;"></div>
-                    <div class="bar-segment" data-index="13" style="top: 67.1%; height: 13.1%; background: #c0392b;"></div>
-                    <div class="bar-segment" data-index="14" style="top: 80.2%; height: 0.5%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="15" style="top: 80.7%; height: 7.4%; background: #27ae60;"></div>
-                    <div class="bar-segment" data-index="16" style="top: 88.1%; height: 0.1%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="17" style="top: 88.2%; height: 2.6%; background: #fadbd8;"></div>
-                    <div class="bar-segment" data-index="18" style="top: 90.8%; height: 4.6%; background: #e74c3c;"></div>
-                    <div class="bar-segment" data-index="19" style="top: 95.4%; height: 4.6%; background: #78281f;"></div>
+                    <div class="bar-segment" data-index="0" style="flex-grow: 17; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="1" style="flex-grow: 3; background: #fcf3cf;"></div>
+                    <div class="bar-segment" data-index="2" style="flex-grow: 41; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="3" style="flex-grow: 25; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="4" style="flex-grow: 8; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="5" style="flex-grow: 1; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="6" style="flex-grow: 6; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="7" style="flex-grow: 40; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="8" style="flex-grow: 29; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="9" style="flex-grow: 52; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="10" style="flex-grow: 16; background: #d4efdf;"></div>
+                    <div class="bar-segment" data-index="11" style="flex-grow: 16; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="12" style="flex-grow: 29; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="13" style="flex-grow: 55; background: #c0392b;"></div>
+                    <div class="bar-segment" data-index="14" style="flex-grow: 2; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="15" style="flex-grow: 31; background: #27ae60;"></div>
+                    <div class="bar-segment" data-index="16" style="flex-grow: 1; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="17" style="flex-grow: 11; background: #fadbd8;"></div>
+                    <div class="bar-segment" data-index="18" style="flex-grow: 11; background: #e74c3c;"></div>
+                    <div class="bar-segment" data-index="19" style="flex-grow: 11; background: #78281f;"></div>
                 </div>
             </div>
         </div>
@@ -181,7 +185,7 @@
             svg.removeChild(svg.lastChild);
         }
 
-        // 北國斜直線箭頭
+        // 北國斜直線箭頭 (左卡片右側 -> 右色帶左側)
         const northCards = document.querySelectorAll('#northCards .king-card');
         northCards.forEach(card => {
             const index = card.getAttribute('data-target');
@@ -206,7 +210,7 @@
             }
         });
 
-        // 南國斜直線箭頭
+        // 南國斜直線箭頭 (左色帶右側 -> 右卡片左側，箭頭指向色帶)
         const southCards = document.querySelectorAll('#southCards .king-card');
         southCards.forEach(card => {
             const index = card.getAttribute('data-target');
