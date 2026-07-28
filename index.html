@@ -28,18 +28,18 @@
         .north-card { border-left: 3px solid #e74c3c; }
         .south-card { border-left: 3px solid #27ae60; }
         
-        /* 點亮互動效果 (主選取 vs 重疊關聯) */
+        /* 點亮互動效果 (強效對比) */
         .king-card.highlight-main {
             background: #fff2ac !important;
-            border: 2px solid #f39c12 !important;
+            border: 2px solid #d35400 !important;
             border-left: 6px solid #e67e22 !important;
             box-shadow: 0 0 10px rgba(230, 126, 34, 0.9);
-            transform: scale(1.02);
+            transform: scale(1.01);
             z-index: 25;
         }
         .king-card.highlight-overlap {
-            background: #fffde7 !important;
-            border: 2px dashed #f1c40f !important;
+            background: #fef9e7 !important;
+            border: 2px solid #f1c40f !important;
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.7);
             z-index: 20;
         }
@@ -109,14 +109,14 @@
 
         /* 色帶點亮效果 */
         .bar-segment.highlight-main {
-            border: 2px solid #e67e22 !important;
-            filter: brightness(1.3);
+            border: 2px solid #d35400 !important;
+            filter: brightness(1.35);
             box-shadow: 0 0 10px #e67e22;
             z-index: 25;
         }
         .bar-segment.highlight-overlap {
             border: 2px solid #f1c40f !important;
-            filter: brightness(1.15);
+            filter: brightness(1.2);
             box-shadow: 0 0 6px #f1c40f;
             z-index: 20;
         }
@@ -475,7 +475,7 @@
         });
     }
 
-    // 完整點亮邏輯：同步處理文字卡與色帶
+    // BC 倒數年份專用交集判斷邏輯：Start 為大數（登基年），End 為小數（結束年）
     function triggerHighlight(start, end, mainSide, mainIndex) {
         // 清除先前點亮
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
@@ -488,7 +488,7 @@
         if (mainCard) mainCard.classList.add('highlight-main');
         if (mainSeg) mainSeg.classList.add('highlight-main');
 
-        // 2. 交叉檢查所有時間重疊之君王 (同步點亮卡片與對應色帶)
+        // 2. 交叉檢查所有時間重疊之君王 (修正為 BC 倒數年份交集公式)
         const allCards = document.querySelectorAll('.king-card');
         allCards.forEach(card => {
             const cSide = card.getAttribute('data-side');
@@ -499,7 +499,8 @@
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            if (Math.max(start, cStart) <= Math.min(end, cEnd)) {
+            // BC 區間重疊條件：A的起始大年 >= B的結束小年 且 A的結束小年 <= B的起始大年
+            if (start >= cEnd && end <= cStart) {
                 card.classList.add('highlight-overlap');
                 const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
                 if (seg) seg.classList.add('highlight-overlap');
