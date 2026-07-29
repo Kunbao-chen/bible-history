@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>分裂王國年代表 (v3.08)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.09 色帶縮短對齊與國王細節補齊版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -11,7 +11,6 @@
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        /* 拉開卡片與色帶間距：增加左右欄與中間色帶的間距 */
         .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
@@ -56,7 +55,6 @@
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
         
-        /* 確保先知與父親/女性資訊不被摺疊換行 */
         .meta-row { 
             white-space: nowrap; 
             overflow: hidden; 
@@ -104,8 +102,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.08 先知不斷行與拉開間距版)</h1>
-    <p class="subtitle">✨ 已進版至 v3.08，先知與背景資訊已獨立不斷行，且卡片與色帶間距已拉開，線條更加清晰舒適！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.09 色帶縮短對齊與國王細節補齊版)</h1>
+    <p class="subtitle">✨ 已進版至 v3.09，色帶已精準縮短與卡片同高，且心利、暗利等所有國王皆已補齊豐富細節與核心事件！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -119,8 +117,8 @@
         <!-- 中間比例色帶區 (絕對時間軸) -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
-                <div class="bar-track" id="northTrack" style="height: 2800px;"></div>
-                <div class="bar-track" id="southTrack" style="height: 2800px;"></div>
+                <div class="bar-track" id="northTrack" style="height: 1650px;"></div>
+                <div class="bar-track" id="southTrack" style="height: 1650px;"></div>
             </div>
         </div>
 
@@ -135,15 +133,15 @@
 <script>
     const BASE_START_YEAR = 930;
     const TOTAL_YEARS = 344;
-    const TRACK_HEIGHT = 2800;
+    const TRACK_HEIGHT = 1650; // 色帶同步縮短至 1650px 以完美對齊文字卡片總高
 
     const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
 0,930,909,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八(以法蓮支派撒利達人),,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂。
 1,909,908,evil,2. 拿答,2年,行惡陷家絕,耶羅波安一世,,,率軍圍攻非利士基比頓時，遭部下巴沙叛變刺殺，全家遭殘酷滅絕，應驗亞希雅預言。
 2,908,886,bad,3. 巴沙,24年,篡位步前王後塵,亞希亞(以薩迦支派),,耶戶,建立新政權；築拉瑪封鎖猶大；受先知耶戶嚴厲審判，預言其後代同遭刀殺滅絕。
 3,886,885,evil,4. 以拉,2年,荒淫酗酒遭滅,巴沙,,,在得撒家宰亞比達家中飲酒大醉時，被戰車長官心利趁隙暗殺，宗族全數被斬草除根。
-4,885,885,evil,5. 心利,7日,閃電篡位僅7天,,,,,叛變殺以拉自立；以色列軍民隨即擁立暗利反攻並圍城得撒，心利絕望放火自焚於王宮。
-5,885,874,bad,6. 暗利,12年,軍閥奪權惡過前人,,,,,內戰擊敗提比尼登基；買撒瑪利亞山建立堅固新首都撒瑪利亞，政治手腕強但行惡極甚。
+4,885,885,evil,5. 心利,7日,閃電篡位僅7天,禁衛軍長官,,,,,率戰車的一半兵力在得撒叛變刺殺以拉自立；以色列軍民隨即擁立暗利反攻並圍城，心利絕望放火自焚於王宮內結束短命政權。
+5,885,874,bad,6. 暗利,12年,軍閥奪權惡過前人,資深軍事統帥,,,內戰擊敗對手提比尼登基；買下撒瑪利亞山建立堅固新首都撒瑪利亞，行惡比前王更甚，奠定強悍軍閥統治。
 6,874,853,evil,7. 亞哈,22年,引進巴力崇拜極惡,暗利,妻：耶洗別(西頓王謁巴力之女),以利亞,娶西頓王之女耶洗別使拜巴力合法化；迦密山大賽火燒祭壇；因貪奪拿伯葡萄園遭審判；基列拉末戰役中箭身亡。
 7,853,852,evil,8. 亞哈謝,2年,隨從父母拜巴力,亞哈,母親：耶洗別(西頓王謁巴力之女),,宮中格子欄跌傷求問巴力西卜，以利亞從天降火宣告其必死，病發無子而亡。
 8,852,841,bad,9. 約蘭,12年,除巴力柱仍拜金牛,亞哈,母親：耶洗別(西頓王謁巴力之女),以利沙,經歷以利沙多次神蹟；與猶大約沙法聯手打摩押；後在耶斯列養傷，遭耶戶叛箭射殺。
