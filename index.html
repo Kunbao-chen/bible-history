@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.01 精煉考據版)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.02 嚴謹和合本考據版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 5.5pt; }
@@ -55,7 +55,7 @@
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 5.2pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
         .prophet { font-weight: bold; color: #78281f; }
-        .bloodline { color: #7d3c98; font-weight: bold; }
+        .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 1px; font-size: 4.2pt; border-top: 1px dotted #f2f4f4; padding-top: 1px; }
 
         .timeline-center { 
@@ -93,8 +93,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.01 精煉考據版)</h1>
-    <p class="subtitle">✨ 嚴格對齊絕對時間軸座標（930-586 BC），深度考據母系血脈與王室親屬，實現高精度多軌聯動！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.02 嚴謹和合本考據版)</h1>
+    <p class="subtitle">✨ 嚴格對齊和合本譯名與世系關係（如亞撒之祖母瑪迦），女性資訊採正常字形，多軌聯動對照！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -122,12 +122,11 @@
 </div>
 
 <script>
-    // 絕對時間軸基準：起始 930 BC，結束 586 BC，總計 344 年。畫面總高度設定為 860px（每單元年分佔 2.5px）
     const BASE_START_YEAR = 930;
     const TOTAL_YEARS = 344;
     const TRACK_HEIGHT = 860;
 
-    const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,bloodline,prophet,summary
+    const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
 0,930,909,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八(以法蓮支派撒利達人),無記錄,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂。
 1,909,908,evil,2. 拿答,2年,行惡陷家絕,耶羅波安一世,無記錄,無,率軍圍攻非利士基比吐頓時，遭部下巴沙叛變刺殺，全家遭殘酷滅絕，應驗亞希雅預言。
 2,908,886,bad,3. 巴沙,24年,篡位步前王後塵,亞希雅(以薩迦支派),無記錄,耶戶,建立新政權；築拉瑪封鎖猶大；受先知耶戶嚴厲審判，預言其後代同遭刀殺滅絕。
@@ -148,11 +147,11 @@
 17,740,732,bad,18. 比加,20年,聯亞蘭對抗亞述失利,利瑪利,無記錄,無,與亞蘭結盟攻猶大失敗；引來亞述王提革拉毗列薩大規模入侵，北方大片領土淪陷。
 18,732,722,collapse,19. 何細亞,9年,末代背叛亞述亡國,以拉,無記錄,無,💀 北國滅亡：聯合埃及暗中背叛亞述；遭亞述王撒缦以色圍城三年，撒瑪利亞淪陷，以色列人被擄異鄉。`;
 
-const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,bloodline,prophet,summary
+const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
 0,930,913,bad,1. 羅波安,17年,剛愎自用國勢衰弱,所羅門,母親：拿瑪(亞們人女子的王后),示瑪雅,年41歲登基；因拒絕老臣建議導致王國分裂；先知示瑪雅預言阻內戰；第5年遭埃及王示撒掠奪聖殿財寶。
-1,913,911,bad,2. 亞比央/亞比雅,3年,步父後塵靠神大勝,羅波安,母親：瑪迦(亞比沙龍的女兒/孫女米該亞),無,登基年齡未記;在洗瑪音山面臨百萬敵軍時，因呼求神而大敗耶羅波安，斬敵五十萬。
-2,911,870,good,3. ⭐ 亞撒,41年,行善大革新除偶像,亞比央,母親：瑪迦(亞比沙龍的女兒/孫女),亞撒利雅/哈拿尼,廢祖母瑪迦太后並燒毀偶像；大敗古實王謝拉百萬大軍；晚年腳患病僅求醫生未求問神。
-3,870,848,good,4. ⭐ 約沙法,25年,效法大衛教導律法,亞撒,母親：阿蘇巴(詩利孩的女兒),耶戶,年35歲登基；差利未人全國教導律法；組建詩班讚美隊不費刀兵大勝摩押與亞捫聯軍。
+1,913,911,bad,2. 亞比央/亞比雅,3年,步父後塵靠神大勝,羅波安,母親：瑪迦(押沙龍的女兒),無,登基年齡未記；在洗瑪音山面臨百萬敵軍時，因呼求神而大敗耶羅波安，斬敵五十萬。
+2,911,870,good,3. ⭐ 亞撒,41年,行善大革新除偶像,亞比央,祖母：瑪迦(押沙龍的女兒),亞撒利雅/哈拿尼,廢祖母瑪迦太后並燒毀偶像；大敗古實王謝拉百萬大軍；晚年腳患病僅求醫生未求問神。
+3,870,848,good,4. ⭐ 約沙法,25年,效法大衛教導律法,亞撒,母親：阿蘇巴(示利孩的女兒),耶戶,年35歲登基；差利未人全國教導律法；組建詩班讚美隊不費刀兵大勝摩押與亞捫聯軍。
 4,848,841,bad,5. 約蘭,8年,娶亞哈女行惡屠弟,約沙法,妻：亞他利雅(北國亞哈與耶洗別之女),以利亞,年32歲登基；因娶北國亞哈之女亞他利雅陷入拜偶像，殺盡諸弟；以利亞信函預言其腸病痛苦死亡。
 5,841,841,bad,6. 亞哈謝,1年,隨從亞哈家惡行,約蘭,母親：亞他利雅(北國亞哈與耶洗別之女),無,年22歲登基；隨從母系亞哈家族惡行；探視受傷的北國約蘭時，遭耶戶奉神命追殺身亡。
 6,841,835,evil,7. 亞他利雅,女王6年,血腥篡位滅絕王室,北國亞哈之女(母為耶洗別),無,無,亞哈謝死後直接篡位自立為女王；血腥屠殺大衛王室企圖滅絕血脈；後於馬門被處決。
@@ -200,7 +199,6 @@ const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,tit
                 const start = parseInt(item.start_year);
                 const end = parseInt(item.end_year);
                 
-                // 1. 卡片 HTML
                 const card = document.createElement('div');
                 card.className = `king-card ${side}-card tier-${item.justice_tier}`;
                 card.setAttribute('data-side', side);
@@ -210,12 +208,11 @@ const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,tit
                 card.innerHTML = `
                     <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
                     <div>✨ 特質：<span>${item.title_tag}</span></div>
-                    <div>👨 父親：${item.father || '無'} ${item.bloodline ? '| <span class="bloodline">' + item.bloodline + '</span>' : ''} ${item.prophet ? '| 📜 先知：<span class="prophet">' + item.prophet + '</span>' : ''}</div>
+                    <div>👨 父親：${item.father || '無'} ${item.female_info ? '| <span class="female-info">' + item.female_info + '</span>' : ''} ${item.prophet ? '| 📜 先知：<span class="prophet">' + item.prophet + '</span>' : ''}</div>
                     <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
                 `;
                 cardsContainer.appendChild(card);
 
-                // 2. 色帶 Segment (依絕對時間軸精準定位 top 與 height)
                 const seg = document.createElement('div');
                 seg.className = 'bar-segment';
                 seg.setAttribute('data-side', side);
@@ -223,15 +220,13 @@ const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,tit
                 seg.setAttribute('data-start', start);
                 seg.setAttribute('data-end', end);
 
-                // 計算絕對座標：(930 - startYear) 對應像素頂端位置
                 const topOffset = (BASE_START_YEAR - start) * (TRACK_HEIGHT / TOTAL_YEARS);
                 const durationYears = Math.abs(start - end);
-                const segHeight = Math.max(durationYears * (TRACK_HEIGHT / TOTAL_YEARS), 3); // 確保極短年分至少 3px
+                const segHeight = Math.max(durationYears * (TRACK_HEIGHT / TOTAL_YEARS), 3);
 
                 seg.style.top = `${topOffset}px`;
                 seg.style.height = `${segHeight}px`;
 
-                // 色彩樣式設定
                 if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
                 else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
                 else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
@@ -315,8 +310,6 @@ const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,tit
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // 嚴謹的絕對時間軸重疊判定：只要兩個時段有交集
-            // 北/南國統一採 BC 紀元邏輯：若 max(end) <= min(start) 即有交集
             const maxEnd = Math.max(end, cEnd);
             const minStart = Math.min(start, cStart);
 
