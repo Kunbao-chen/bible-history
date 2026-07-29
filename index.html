@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.32</title>
+    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.33</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6pt; }
@@ -28,7 +28,7 @@
         .north-card { border-left: 3px solid #e74c3c; }
         .south-card { border-left: 3px solid #27ae60; }
         
-        /* 點亮互動效果 (強效對比) */
+        /* 點亮互動效果 (強效對比，全面使用深黑字體以確保清晰) */
         .king-card.highlight-main {
             background: #fff2ac !important;
             border: 2px solid #d35400 !important;
@@ -36,12 +36,17 @@
             box-shadow: 0 0 10px rgba(230, 126, 34, 0.9);
             transform: scale(1.01);
             z-index: 25;
+            color: #111111 !important;
+        }
+        .king-card.highlight-main *, .king-card.highlight-overlap * {
+            color: #111111 !important;
         }
         .king-card.highlight-overlap {
             background: #fef9e7 !important;
             border: 2px solid #f1c40f !important;
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.7);
             z-index: 20;
+            color: #111111 !important;
         }
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 5.5pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
@@ -64,48 +69,48 @@
             transition: all 0.2s ease; cursor: pointer; position: relative;
         }
         
-        /* 高度比例分配 */
-        #northTrack .bar-segment[data-index="0"] { height: calc(22 * 1.8px); }
-        #northTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
-        #northTrack .bar-segment[data-index="2"] { height: calc(22 * 1.8px); }
-        #northTrack .bar-segment[data-index="3"] { height: calc(2 * 1.8px); }
-        #northTrack .bar-segment[data-index="4"] { height: calc(1 * 1.8px); }
-        #northTrack .bar-segment[data-index="5"] { height: calc(11 * 1.8px); }
-        #northTrack .bar-segment[data-index="6"] { height: calc(21 * 1.8px); }
-        #northTrack .bar-segment[data-index="7"] { height: calc(1 * 1.8px); }
-        #northTrack .bar-segment[data-index="8"] { height: calc(11 * 1.8px); }
-        #northTrack .bar-segment[data-index="9"] { height: calc(27 * 1.8px); }
-        #northTrack .bar-segment[data-index="10"] { height: calc(16 * 1.8px); }
-        #northTrack .bar-segment[data-index="11"] { height: calc(16 * 1.8px); }
-        #northTrack .bar-segment[data-index="12"] { height: calc(29 * 1.8px); }
-        #northTrack .bar-segment[data-index="13"] { height: calc(1 * 1.8px); }
-        #northTrack .bar-segment[data-index="14"] { height: calc(1 * 1.8px); }
-        #northTrack .bar-segment[data-index="15"] { height: calc(10 * 1.8px); }
-        #northTrack .bar-segment[data-index="16"] { height: calc(2 * 1.8px); }
-        #northTrack .bar-segment[data-index="17"] { height: calc(8 * 1.8px); }
-        #northTrack .bar-segment[data-index="18"] { height: calc(10 * 1.8px); }
+        /* 放大高度比例分配 (將基礎單位從 1.8px 提升至 3.2px，精準對齊兩側總高度與校正時間比例) */
+        #northTrack .bar-segment[data-index="0"] { height: calc(22 * 3.2px); }
+        #northTrack .bar-segment[data-index="1"] { height: calc(2 * 3.2px); }
+        #northTrack .bar-segment[data-index="2"] { height: calc(22 * 3.2px); }
+        #northTrack .bar-segment[data-index="3"] { height: calc(2 * 3.2px); }
+        #northTrack .bar-segment[data-index="4"] { height: calc(1 * 3.2px); }
+        #northTrack .bar-segment[data-index="5"] { height: calc(11 * 3.2px); }
+        #northTrack .bar-segment[data-index="6"] { height: calc(21 * 3.2px); }
+        #northTrack .bar-segment[data-index="7"] { height: calc(1 * 3.2px); }
+        #northTrack .bar-segment[data-index="8"] { height: calc(11 * 3.2px); }
+        #northTrack .bar-segment[data-index="9"] { height: calc(27 * 3.2px); }
+        #northTrack .bar-segment[data-index="10"] { height: calc(16 * 3.2px); }
+        #northTrack .bar-segment[data-index="11"] { height: calc(16 * 3.2px); }
+        #northTrack .bar-segment[data-index="12"] { height: calc(29 * 3.2px); }
+        #northTrack .bar-segment[data-index="13"] { height: calc(1 * 3.2px); }
+        #northTrack .bar-segment[data-index="14"] { height: calc(1 * 3.2px); }
+        #northTrack .bar-segment[data-index="15"] { height: calc(10 * 3.2px); }
+        #northTrack .bar-segment[data-index="16"] { height: calc(2 * 3.2px); }
+        #northTrack .bar-segment[data-index="17"] { height: calc(8 * 3.2px); }
+        #northTrack .bar-segment[data-index="18"] { height: calc(10 * 3.2px); }
 
-        #southTrack .bar-segment[data-index="0"] { height: calc(17 * 1.8px); }
-        #southTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
-        #southTrack .bar-segment[data-index="2"] { height: calc(41 * 1.8px); }
-        #southTrack .bar-segment[data-index="3"] { height: calc(22 * 1.8px); }
-        #southTrack .bar-segment[data-index="4"] { height: calc(7 * 1.8px); }
-        #southTrack .bar-segment[data-index="5"] { height: calc(1 * 1.8px); }
-        #southTrack .bar-segment[data-index="6"] { height: calc(6 * 1.8px); }
-        #southTrack .bar-segment[data-index="7"] { height: calc(39 * 1.8px); }
-        #southTrack .bar-segment[data-index="8"] { height: calc(29 * 1.8px); }
-        #southTrack .bar-segment[data-index="9"] { height: calc(27 * 1.8px); }
-        #southTrack .bar-segment[data-index="10"] { height: calc(8 * 1.8px); }
-        #southTrack .bar-segment[data-index="11"] { height: calc(16 * 1.8px); }
-        #southTrack .bar-segment[data-index="12"] { height: calc(29 * 1.8px); }
-        #southTrack .bar-segment[data-index="13"] { height: calc(55 * 1.8px); }
-        #southTrack .bar-segment[data-index="14"] { height: calc(2 * 1.8px); }
-        #southTrack .bar-segment[data-index="15"] { height: calc(31 * 1.8px); }
-        #southTrack .bar-segment[data-index="16"] { height: calc(1 * 1.8px); }
-        #southTrack .bar-segment[data-index="17"] { height: calc(11 * 1.8px); }
-        #southTrack .bar-segment[data-index="18"] { height: calc(1 * 1.8px); }
-        #southTrack .bar-segment[data-index="19"] { height: calc(11 * 1.8px); }
-        #southTrack .bar-segment[data-index="20"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="0"] { height: calc(17 * 3.2px); }
+        #southTrack .bar-segment[data-index="1"] { height: calc(2 * 3.2px); }
+        #southTrack .bar-segment[data-index="2"] { height: calc(41 * 3.2px); }
+        #southTrack .bar-segment[data-index="3"] { height: calc(22 * 3.2px); }
+        #southTrack .bar-segment[data-index="4"] { height: calc(7 * 3.2px); }
+        #southTrack .bar-segment[data-index="5"] { height: calc(1 * 3.2px); }
+        #southTrack .bar-segment[data-index="6"] { height: calc(6 * 3.2px); }
+        #southTrack .bar-segment[data-index="7"] { height: calc(39 * 3.2px); }
+        #southTrack .bar-segment[data-index="8"] { height: calc(29 * 3.2px); }
+        #southTrack .bar-segment[data-index="9"] { height: calc(27 * 3.2px); }
+        #southTrack .bar-segment[data-index="10"] { height: calc(8 * 3.2px); }
+        #southTrack .bar-segment[data-index="11"] { height: calc(16 * 3.2px); }
+        #southTrack .bar-segment[data-index="12"] { height: calc(29 * 3.2px); }
+        #southTrack .bar-segment[data-index="13"] { height: calc(55 * 3.2px); }
+        #southTrack .bar-segment[data-index="14"] { height: calc(2 * 3.2px); }
+        #southTrack .bar-segment[data-index="15"] { height: calc(31 * 3.2px); }
+        #southTrack .bar-segment[data-index="16"] { height: calc(1 * 3.2px); }
+        #southTrack .bar-segment[data-index="17"] { height: calc(11 * 3.2px); }
+        #southTrack .bar-segment[data-index="18"] { height: calc(1 * 3.2px); }
+        #southTrack .bar-segment[data-index="19"] { height: calc(11 * 3.2px); }
+        #southTrack .bar-segment[data-index="20"] { height: calc(1 * 3.2px); }
 
         /* 色帶點亮效果 */
         .bar-segment.highlight-main {
@@ -130,7 +135,7 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.32)</h1>
+    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.33)</h1>
     <p class="subtitle">✨ 雙向極致點亮：點選「左/右卡片」或「中間色帶」，即刻高亮主體與所有平行歷史時空重疊之君王卡片與色段！</p>
 
     <div class="main-layout" id="layoutContainer">
@@ -240,10 +245,10 @@
                     <div>✨ 特質：結盟亞蘭對抗亞述 | 👨 父親：利瑪利 | 📌 身分：原軍長政變</div>
                     <div class="detail-row">登基年齡未記；與亞蘭結盟攻猶大未果；引來亞述王提革拉毗列薩入侵，失去加利利、拿弗他利與約旦河東大片領土。</div>
                 </div>
-                <div class="king-card north-card" data-side="north" data-index="18" data-start="732" data-end="722" style="background: #e74c3c; color: white;">
-                    <div class="king-name" style="color: white;">19. 何細亞 (9年, 732-722 BC)</div>
+                <div class="king-card north-card" data-side="north" data-index="18" data-start="732" data-end="722" style="background: #e74c3c;">
+                    <div class="king-name" style="color: #ffffff;">19. 何細亞 (9年, 732-722 BC)</div>
                     <div>✨ 特質：末代背叛亞述 | 👨 父親：以拉 | 💀 <span style="color: #f9e79f;">722 BC 北國滅亡</span></div>
-                    <div class="detail-row" style="color: #fce4ec;">登基年齡未記；暗殺比加登基；聯合埃及王梭背叛亞述；被亞述王撒曼以色圍攻三年，撒瑪利亞淪陷，以色列人被擄至亞述。</div>
+                    <div class="detail-row">登基年齡未記；暗殺比加登基；聯合埃及王梭背叛亞述；被亞述王撒曼以色圍攻三年，撒瑪利亞淪陷，以色列人被擄至亞述。</div>
                 </div>
             </div>
         </div>
@@ -399,15 +404,15 @@
                     <div>✨ 特質：行惡 | 👨 父親：約雅敬 | 👩 母親：尼護施達 | 👑排行：長子 | 📜 當代先知：<span class="prophet">耶利米</span>、<span class="prophet">以西結</span></div>
                     <div class="detail-row">登基年齡：18歲（代下36:9作8歲）；聖殿變更：向巴比倫王投降後，聖殿與王宮所有財寶及金器全被砍下運往巴比倫。</div>
                 </div>
-                <div class="king-card south-card" data-side="south" data-index="19" data-start="597" data-end="586" style="background: #e74c3c; color: white;">
-                    <div class="king-name" style="color: white;">20. 西底家 (11年, 597-586 BC)</div>
+                <div class="king-card south-card" data-side="south" data-index="19" data-start="597" data-end="586" style="background: #e74c3c;">
+                    <div class="king-name" style="color: #ffffff;">20. 西底家 (11年, 597-586 BC)</div>
                     <div>✨ 特質：末代行惡君王，不聽勸告 | 👨 父親：約西亞 | 👩 母親：哈慕達 | 📜 當代先知：<span class="prophet">耶利米</span>、<span class="prophet">以西結</span></div>
-                    <div class="detail-row" style="color: #fce4ec;">登基年齡：21歲；原名「瑪坦雅」；背叛巴比倫引致慘烈圍城；城破逃跑被獲，眼見眾子被殺後被挖雙眼用銅鏈鎖往巴比倫。</div>
+                    <div class="detail-row">登基年齡：21歲；原名「瑪坦雅」；背叛巴比倫引致慘烈圍城；城破逃跑被獲，眼見眾子被殺後被挖雙眼用銅鏈鎖往巴比倫。</div>
                 </div>
-                <div class="king-card south-card" data-side="south" data-index="20" data-start="586" data-end="586" style="background: #78281f; color: white;">
-                    <div class="king-name" style="color: white;">21. 亡國與被擄時期 (586 BC)</div>
+                <div class="king-card south-card" data-side="south" data-index="20" data-start="586" data-end="586" style="background: #78281f;">
+                    <div class="king-name" style="color: #ffffff;">21. 亡國與被擄時期 (586 BC)</div>
                     <div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span> | 📜 當代先知：<span class="prophet" style="color: #f9e79f;">耶利米</span>、<span class="prophet" style="color: #f9e79f;">但以理</span>、<span class="prophet" style="color: #f9e79f;">以西結</span></div>
-                    <div class="detail-row" style="color: #fce4ec;">尼布撒拉旦率軍焚燒聖殿、王宮與耶路撒冷城牆，將柱子器皿全數砸碎運走，百姓被擄至巴比倫，大衛王朝暫告中斷。</div>
+                    <div class="detail-row" style="color: #ffffff;">尼布撒拉旦率軍焚燒聖殿、王宮與耶路撒冷城牆，將柱子器皿全數砸碎運走，百姓被擄至巴比倫，大衛王朝暫告中斷。</div>
                 </div>
             </div>
         </div>
@@ -475,7 +480,7 @@
         });
     }
 
-    // 嚴格點亮互動邏輯（修正公元前交集判斷：MaxEnd <= MinStart）
+    // 嚴格點亮互動邏輯（公元前交集判斷：MaxEnd <= MinStart）
     function triggerHighlight(start, end, mainSide, mainIndex) {
         // 清除先前點亮
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
