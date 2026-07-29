@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經南北王國・全 39 位君王獨立對照筆記圖</title>
+    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 (v1.1.14)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6pt; }
@@ -10,6 +10,8 @@
         
         h1 { text-align: center; font-size: 9.5pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 5.5pt; margin: 0 0 6px 0; color: #7f8c8d; }
+
+        .version-tag { text-align: right; font-size: 5pt; color: #e67e22; font-weight: bold; margin-bottom: 2px; }
 
         .main-layout { display: grid; grid-template-columns: 355px 50px 355px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
@@ -121,6 +123,23 @@
             z-index: 20;
         }
 
+        /* 箭頭連線高亮樣式 */
+        .link-path {
+            transition: all 0.2s ease;
+            opacity: 0.3;
+        }
+        .link-path.highlight-main {
+            opacity: 1 !important;
+            stroke: #d35400 !important;
+            stroke-width: 2.5px !important;
+            filter: drop-shadow(0 0 4px #e67e22);
+        }
+        .link-path.highlight-overlap {
+            opacity: 0.8 !important;
+            stroke: #f1c40f !important;
+            stroke-width: 1.8px !important;
+        }
+
         .svg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
@@ -130,8 +149,9 @@
 <body>
 
 <div class="notebook-container">
+    <div class="version-tag">Version: v1.1.14</div>
     <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖</h1>
-    <p class="subtitle">✨ 雙向極致點亮：點選「左/右卡片」或「中間色帶」，即刻高亮主體與所有平行歷史時空重疊之君王卡片與色段！</p>
+    <p class="subtitle">✨ 雙向極致點亮（精準獨立交集版）：點選「左/右卡片」或「中間色帶」，即刻高亮主體與所有平行歷史時空重疊之君王卡片、色段與導引箭頭！</p>
 
     <div class="main-layout" id="layoutContainer">
         
@@ -142,6 +162,12 @@
                 </marker>
                 <marker id="arrow-south" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
                     <path d="M0,0 L5,2.5 L0,5 Z" fill="#27ae60" />
+                </marker>
+                <marker id="arrow-north-active" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 Z" fill="#d35400" />
+                </marker>
+                <marker id="arrow-south-active" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+                    <path d="M0,0 L6,3 L0,6 Z" fill="#d35400" />
                 </marker>
             </defs>
         </svg>
@@ -406,7 +432,7 @@
                 </div>
                 <div class="king-card south-card" data-side="south" data-index="20" data-start="586" data-end="586" style="background: #78281f; color: white;">
                     <div class="king-name" style="color: white;">21. 亡國與被擄時期 (586 BC)</div>
-                    <div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span> | 📜 當代先知：<span class="prophet" style="color: #f9e79f;">耶利米</span>、<span class="prophet" style="color: #f9e79f;">但以理</span>、<span class="prophet" style="color: #f9e79f;">以西結</span></div>
+                    <div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span> | 📜 當代先知：<span class="prophet" style="color: #f9e79f;">耶利米</span>, <span class="prophet" style="color: #f9e79f;">但以理</span>, <span class="prophet" style="color: #f9e79f;">以西結</span></div>
                     <div class="detail-row" style="color: #fce4ec;">尼布撒拉旦率軍焚燒聖殿、王宮與耶路撒冷城牆，將柱子器皿全數砸碎運走，百姓被擄至巴比倫，大衛王朝暫告中斷。</div>
                 </div>
             </div>
@@ -420,7 +446,7 @@
         const container = document.getElementById('layoutContainer').getBoundingClientRect();
         const svg = document.getElementById('linkSvg');
         
-        while (svg.childNodes.length > 3) {
+        while (svg.childNodes.length > 9) { // 保留 defs
             svg.removeChild(svg.lastChild);
         }
 
@@ -444,7 +470,9 @@
                 path.setAttribute('stroke-width', '1.2');
                 path.setAttribute('fill', 'none');
                 path.setAttribute('marker-end', 'url(#arrow-north)');
-                path.setAttribute('opacity', '0.8');
+                path.setAttribute('class', 'link-path');
+                path.setAttribute('data-side', 'north');
+                path.setAttribute('data-index', index);
                 svg.appendChild(path);
             }
         });
@@ -469,26 +497,34 @@
                 path.setAttribute('stroke-width', '1.2');
                 path.setAttribute('fill', 'none');
                 path.setAttribute('marker-end', 'url(#arrow-south)');
-                path.setAttribute('opacity', '0.8');
+                path.setAttribute('class', 'link-path');
+                path.setAttribute('data-side', 'south');
+                path.setAttribute('data-index', index);
                 svg.appendChild(path);
             }
         });
     }
 
-    // BC 嚴格並存重疊交集邏輯：計算兩區間的實際交集長度是否大於 0
+    // 嚴格獨立交集點亮邏輯 (修復會無故勾稽相鄰無關卡片的錯誤)
     function triggerHighlight(start, end, mainSide, mainIndex) {
-        // 清除先前點亮
+        // 1. 清除先前所有高亮狀態
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
             el.classList.remove('highlight-main', 'highlight-overlap');
         });
 
-        // 1. 標示主選取目標
+        // 2. 標示主選取目標（卡片、色帶、對應箭頭）
         const mainCard = document.querySelector(`.king-card[data-side="${mainSide}"][data-index="${mainIndex}"]`);
         const mainSeg = document.querySelector(`.bar-segment[data-side="${mainSide}"][data-index="${mainIndex}"]`);
+        const mainPath = document.querySelector(`.link-path[data-side="${mainSide}"][data-index="${mainIndex}"]`);
+
         if (mainCard) mainCard.classList.add('highlight-main');
         if (mainSeg) mainSeg.classList.add('highlight-main');
+        if (mainPath) {
+            mainPath.classList.add('highlight-main');
+            mainPath.setAttribute('marker-end', mainSide === 'north' ? 'url(#arrow-north-active)' : 'url(#arrow-south-active)');
+        }
 
-        // 2. 嚴格時空交集檢驗 (確保只有真正同時在位者才被點亮)
+        // 3. 嚴格時空交集檢驗（確保只有真正並存重疊者才被點亮）
         const allCards = document.querySelectorAll('.king-card');
         allCards.forEach(card => {
             const cSide = card.getAttribute('data-side');
@@ -499,7 +535,7 @@
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // 嚴格交集運算式：Math.min(A起, B起) - Math.max(A結, B結) >= 0
+            // 嚴格交集檢驗運算：Math.min(A起, B起) - Math.max(A結, B結) >= 0
             const overlapStart = Math.min(start, cStart);
             const overlapEnd = Math.max(end, cEnd);
 
@@ -507,6 +543,9 @@
                 card.classList.add('highlight-overlap');
                 const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
                 if (seg) seg.classList.add('highlight-overlap');
+                
+                const path = document.querySelector(`.link-path[data-side="${cSide}"][data-index="${cIndex}"]`);
+                if (path) path.classList.add('highlight-overlap');
             }
         });
     }
@@ -514,7 +553,8 @@
     function initInteractive() {
         // A. 點選左/右君王卡片點亮
         document.querySelectorAll('.king-card').forEach(card => {
-            card.addEventListener('click', () => {
+            card.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const start = parseInt(card.getAttribute('data-start'));
                 const end = parseInt(card.getAttribute('data-end'));
                 const side = card.getAttribute('data-side');
@@ -532,6 +572,17 @@
                 const side = seg.getAttribute('data-side');
                 const index = seg.getAttribute('data-index');
                 triggerHighlight(start, end, side, index);
+            });
+        });
+
+        // C. 點擊空白處重置
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
+                el.classList.remove('highlight-main', 'highlight-overlap');
+            });
+            document.querySelectorAll('.link-path').forEach(path => {
+                const side = path.getAttribute('data-side');
+                path.setAttribute('marker-end', side === 'north' ? 'url(#arrow-north)' : 'url(#arrow-south)');
             });
         });
     }
