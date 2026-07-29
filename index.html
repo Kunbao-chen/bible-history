@@ -2,16 +2,16 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.0 模組化架構)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.01 精煉考據版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6pt; }
-        .notebook-container { max-width: 1100px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 5.5pt; }
+        .notebook-container { max-width: 1150px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 9.5pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 5.5pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        .main-layout { display: grid; grid-template-columns: 355px 50px 355px; justify-content: center; gap: 20px; align-items: start; position: relative; }
+        .main-layout { display: grid; grid-template-columns: 370px 50px 370px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 6.5pt; color: white; margin-bottom: 3px; }
         .north-header { background: #e74c3c; }
@@ -21,14 +21,13 @@
 
         .king-card {
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
-            padding: 3px 5px; font-size: 5pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            padding: 3px 5px; font-size: 4.8pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
             line-height: 1.15; position: relative; cursor: pointer;
             transition: all 0.2s ease;
         }
         .north-card { border-left: 3px solid #e74c3c; }
         .south-card { border-left: 3px solid #27ae60; }
         
-        /* 依據正義評分動態套用底色或邊框 */
         .king-card.tier-good { background: #eafaf1; }
         .king-card.tier-bad { background: #fdfefe; }
         .king-card.tier-evil { background: #fadbd8; }
@@ -45,9 +44,7 @@
             z-index: 25;
             color: #111111 !important;
         }
-        .king-card.highlight-main *, .king-card.highlight-overlap * {
-            color: #111111 !important;
-        }
+        .king-card.highlight-main *, .king-card.highlight-overlap * { color: #111111 !important; }
         .king-card.highlight-overlap {
             background: #fef9e7 !important;
             border: 2px solid #f39c12 !important;
@@ -56,24 +53,22 @@
             color: #111111 !important;
         }
 
-        .king-name { font-weight: bold; color: #2c3e50; font-size: 5.5pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
-        .bad { color: #c0392b; }
-        .good { color: #27ae60; }
-        .prophet { font-weight: bold; color: #111111; }
-        .detail-row { color: #566573; margin-top: 1px; font-size: 4.5pt; border-top: 1px dotted #f2f4f4; padding-top: 1px; }
+        .king-name { font-weight: bold; color: #2c3e50; font-size: 5.2pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
+        .prophet { font-weight: bold; color: #78281f; }
+        .bloodline { color: #7d3c98; font-weight: bold; }
+        .detail-row { color: #566573; margin-top: 1px; font-size: 4.2pt; border-top: 1px dotted #f2f4f4; padding-top: 1px; }
 
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-            position: relative;
-            margin-top: 13px;
+            position: relative; margin-top: 13px;
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
-        .bar-track { width: 18px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; }
+        .bar-track { width: 18px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
         
         .bar-segment { 
-            width: 100%; border-bottom: 1px solid #000000; box-sizing: border-box; 
-            transition: all 0.2s ease; cursor: pointer; position: relative;
+            width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
+            transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0; right: 0;
         }
 
         .bar-segment.highlight-main {
@@ -98,8 +93,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.0 模組化架構)</h1>
-    <p class="subtitle">✨ 資料與呈現徹底解耦：透過 CSV 資料源動態渲染卡片、比例色帶與跨時空高亮聯動！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.01 精煉考據版)</h1>
+    <p class="subtitle">✨ 嚴格對齊絕對時間軸座標（930-586 BC），深度考據母系血脈與王室親屬，實現高精度多軌聯動！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -110,11 +105,11 @@
             <div class="cards-side" id="northCardsContainer"></div>
         </div>
 
-        <!-- 中間比例色帶區 -->
+        <!-- 中間比例色帶區 (絕對時間軸) -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
-                <div class="bar-track" id="northTrack"></div>
-                <div class="bar-track" id="southTrack"></div>
+                <div class="bar-track" id="northTrack" style="height: 860px;"></div>
+                <div class="bar-track" id="southTrack" style="height: 860px;"></div>
             </div>
         </div>
 
@@ -127,64 +122,62 @@
 </div>
 
 <script>
-    // ==========================================
-    // 三、 外部 CSV 資料模擬載入區 (未來可改為 fetch('data_north.csv'))
-    // ==========================================
-    const csvNorthData = `index,start_year,end_year,duration,justice_tier,name,reign_info,title_tag,father,relatives,prophet,summary
-0,930,909,22,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八,,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂、手枯乾又復原之兆頭。
-1,909,908,1,evil,2. 拿答,2年,行惡陷家絕,耶羅波安一世,世襲：長子,,率軍圍攻非利士基比吐頓時，遭部下巴沙叛變刺殺，全家遭殘酷滅絕，應驗亞希雅預言。
-2,908,886,24,bad,3. 巴沙,24年,篡位步前王後塵,亞雅(以薩迦),,耶戶,建立新政權；築拉瑪封鎖猶大；受先知耶戶嚴厲審判，預言其後代同遭刀殺滅絕。
-3,886,885,2,evil,4. 以拉,2年,荒淫酗酒遭滅,巴沙,世襲：長子,,在得撒家宰亞比達家中飲酒大醉時，被戰車長官心利趁隙暗殺，宗族全數被斬草除根。
-4,885,885,0.5,evil,5. 心利,7日,閃電篡位僅7天,車輛半長官,,,叛變殺以拉自立；以色列軍民隨即擁立暗利反攻並圍城得撒，心利絕望放火自焚於王宮。
-5,885,874,12,bad,6. 暗利,12年,軍閥奪權惡過前人,原軍長,,,內戰擊敗提比尼登基；買撒瑪利亞山建立堅固新首都撒瑪利亞，政治手腕強但行惡極甚。
-6,874,853,22,evil,7. 亞哈,22年,引進巴力崇拜極惡,暗利,妻：耶洗別,以利亞,娶西頓公主耶洗別；迦密山大賽火燒祭壇；因貪奪拿伯葡萄園遭審判；基列拉末戰役中箭身亡。
-7,853,852,1,evil,8. 亞哈謝,2年,隨從父母拜巴力,亞哈,母親：耶洗別,,宮中格欄跌傷求問巴力西卜，以利亞從天降火宣告其必死，病發無子而亡，由弟繼位。
-8,852,841,12,bad,9. 約蘭,12年,除巴力柱仍拜金牛,亞哈,世襲：次子,以利沙,經歷以利沙多次神蹟；與猶大約沙法聯手打摩押；後在米斯黑受傷回耶斯列，遭耶戶叛箭射殺。
-9,841,814,28,good,10. 耶戶,28年,血洗亞哈家立大功,寧示,,以利沙,奉神命肅清亞哈王室與巴力先知，改巴力廟為廁所；雖激進執行神旨意，但自身仍未離棄金牛犢。
-10,814,798,17,bad,11. 約哈斯,17年,遭亞蘭欺壓窘迫,耶戶,世襲：長子,,國力衰弱，遭亞蘭王哈薛與便哈達欺壓至僅剩極少兵力；哀求耶和華，神垂聽並賜拯救者脫困。
-11,798,782,16,bad,12. 約阿施,16年,行惡但三勝亞蘭,約哈斯,世襲：長子,,探病臨終以利沙並按意擊地三下，應驗三勝亞蘭；曾南下攻破猶大耶路撒冷並劫掠聖殿。
-12,782,753,29,special,13. 耶羅波安二世,41年,收復失土國力極盛,約阿施,,阿摩司/何西阿,依約拿預言恢復以色列北方邊界；經濟空前繁榮，但社會道德極度腐敗、欺壓貧寒。
-13,753,753,0.5,evil,14. 撒迦利亞,6個月,行惡被叛殺絕嗣,耶羅波安二世,,,在百姓面前被沙龍公開刺殺，應驗神曾向耶戶應許「子孫坐位直到四代」的預言終結。
-14,752,752,0.5,evil,15. 沙龍,1個月,篡位一月被擊殺,雅比,,,篡位僅一個月，即被從得撒上來的米拿現攻入撒瑪利亞王宮擊殺，政權極其短命。
-15,752,742,10,bad,16. 米拿現,10年,殘暴向亞述進貢,迦底,,,攻打提弗薩殘忍剖開孕婦；向亞述王普勒進貢千他連得銀子以換取亞述扶持其王位。
-16,742,740,2,evil,17. 比加轄,2年,行惡遭政變殺害,米拿現,世襲：長子,,在撒瑪利亞王宮中，被將領利瑪利的兒子比加率領 50 人謀殺篡位。
-17,740,732,8,bad,18. 比加,20年,聯亞蘭對抗亞述失利,利瑪利,,,與亞蘭結盟攻猶大失敗；引來亞述王提革拉毗列薩大規模入侵，北方大片領土淪陷。
-18,732,722,10,collapse,19. 何細亞,9年,末代背叛亞述亡國,以拉,💀 北國滅亡,,聯合埃及暗中背叛亞述；遭亞述王撒缦以色圍城三年，撒瑪利亞淪陷，以色列人被擄異鄉。`;
+    // 絕對時間軸基準：起始 930 BC，結束 586 BC，總計 344 年。畫面總高度設定為 860px（每單元年分佔 2.5px）
+    const BASE_START_YEAR = 930;
+    const TOTAL_YEARS = 344;
+    const TRACK_HEIGHT = 860;
 
-const csvSouthData = `index,start_year,end_year,duration,justice_tier,name,reign_info,title_tag,father,relatives,prophet,summary
-0,930,913,17,bad,1. 羅波安,17年,剛愎自用國勢衰弱,所羅門,母親：拿瑪,示瑪雅,年41歲登基；因拒絕老臣建議導致王國分裂；先知示瑪雅預言阻內戰；第5年遭埃及王示撒掠奪聖殿財寶。
-1,913,911,2,bad,2. 亞比央/亞比雅,3年,步父後塵靠神大勝,羅波安,母親：瑪迦,,登基年齡未記；在洗瑪音山面臨百萬敵軍時，因呼求神而大敗耶羅波安，斬敵五十萬。
-2,911,870,41,good,3. ⭐ 亞撒,41年,行善大革新除偶像,亞比央,母親：瑪迦,亞撒利雅,廢祖母瑪迦太后並燒毀偶像；大敗古實王謝拉百萬大軍；晚年腳患病僅求醫生未求問神。
-3,870,848,22,good,4. ⭐ 約沙法,25年,效法大衛教導律法,亞撒,母親：阿蘇巴,耶戶,年35歲登基；差利未人全國教導律法；組建詩班讚美隊不費刀兵大勝摩押與亞捫聯軍。
-4,848,841,7,bad,5. 約蘭,8年,娶亞哈女行惡屠弟,約沙法,世襲：長子/妻：亞他利雅,以利亞,年32歲登基；娶亞哈女兒引進邪拜並殺盡諸弟；以利亞信函預言其腸病痛苦死亡。
-5,841,841,0.5,bad,6. 亞哈謝,1年,隨從亞哈家惡行,約蘭,母親：亞他利雅,,年22歲登基；隨從母系家族惡行；探視受傷的北國約蘭時，遭耶戶奉神命追殺身亡。
-6,841,835,6,evil,7. 亞他利雅,女王6年,血腥篡位滅絕王室,亞哈之女,,,亞哈謝死後直接篡位自立為女王；血腥屠殺大衛王室企圖滅絕血脈；後於馬門被處決。
-7,835,796,39,good,8. 約阿施,40年,早年行善修殿晚年背道,亞哈謝,母親：西比亞,撒迦利亞,年7歲登基；大舉奉獻修繕聖殿；晚年背道下令用石頭打死祭司之子撒迦利亞，後被臣下謀殺。
-8,796,767,29,bad,9. 亞瑪謝,29年,心不專誠拜以東偶像,約阿施,母親：約耶坦,,年25歲登基；擊敗以東卻反拜以東神像；挑戰北國約阿施慘敗，耶路撒冷城牆被拆毀百餘尺。
-9,767,740,27,good,10. ⭐ 烏西雅/亞撒利雅,52年,強盛發明戰具,亞瑪謝,母親：耶可利雅,以賽亞/何西阿,年16歲登基；築城牆、發明強大機械；因擅入聖殿香壇燒香，額上當場長大麻瘋，終身隔離。
-10,740,732,8,good,11. ⭐ 約坦,16年,行正道日漸強盛,烏西雅,母親：耶魯沙,彌迦/以賽亞,年25歲登基；建立耶和華殿的上門；築亞們山城的牆與城堡，擊敗以他們納貢，國力日漸強盛。
-11,732,716,16,bad,12. 亞哈斯,16年,焚燒親子獻祭求救亞述,約坦,母親：亞比,以賽亞/彌迦,年20歲登基；仿異教將兒子經火焚燒；改造聖殿格局並向亞述稱臣求救，致國力陷入極度屈辱。
-12,716,687,29,good,13. ⭐ 希西家,29年,極大復興神蹟拯救,亞哈斯,母親：亞比,以賽亞/彌迦,年25歲登基；潔淨聖殿、守逾越節、砸銅蛇；挖西羅亞引水隧道；切實禱告令亞述大軍一夜潰敗。
-13,687,642,45,evil,14. 瑪拿西,55年,極邪惡流無辜血後悔改,希西家,母親：希弗巴,那鴻(?),年12歲登基；作惡極端流無辜血；被亞述鐵鍊鎖往巴比倫後痛悔蒙赦免，回國後大力潔淨聖殿。
-14,642,640,2,bad,15. 亞們,2年,行惡不改遭刺殺,瑪拿西,母親：米舒利密,西番雅/耶利米,年22歲登基；未效法父親晚期悔改，加倍犯罪祭拜偶像，僅執政兩年內即被宮臣聯手刺殺。
-15,640,609,31,good,16. ⭐ 約西亞,31年,8歲即位全面大改革,亞們,母親：耶底大,耶利米等,年8歲登基；修理聖殿尋獲律法書引發全國大革新；米吉多戰場盲目攔阻埃及尼哥不幸陣亡。
-16,609,609,0.5,bad,17. 約哈斯,3個月,行惡被廢黜流亡,約西亞,母親：哈慕達,耶利米,年23歲登基；登基僅三個月即遭埃及法老尼哥廢黜鎖禁，罰巨額罰金並解送到埃及客死他鄉。
-17,609,598,11,bad,18. 約雅敬,11年,暴虐焚燒先知書卷,約西亞,母親：西烏達,耶利米,年25歲登基；親手割破並火燒耶利米神聖書卷；遭巴比倫尼布甲尼薩捆鎖並掠奪聖殿器皿。
-18,597,597,0.5,evil,19. 約雅斤/哥尼雅,3個月,行惡投降被擄,約雅敬,母親：尼護施達,耶利米/以西結,年18歲登基；向巴比倫王投降後，聖殿與王宮所有財寶及金器全被運往巴比倫，本人長年囚禁。
-19,597,586,11,collapse,20. 西底家,11年,末代行惡不聽勸告,約西亞,母親：哈慕達,耶利米/以西結,年21歲登基；背叛巴比倫引致慘烈圍城；城破逃跑被獲，眼見眾子被殺後被挖雙眼鎖往巴比倫。
-20,586,586,0.5,collapse,21. 亡國與被擄時期,586 BC,聖殿被毀南國滅亡,,,耶利米等,尼布撒拉旦率軍徹底焚燒聖殿與城牆，器皿砸碎運走，百姓被擄至巴比倫，大衛王朝正式中斷。`;
+    const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,bloodline,prophet,summary
+0,930,909,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八(以法蓮支派撒利達人),無記錄,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂。
+1,909,908,evil,2. 拿答,2年,行惡陷家絕,耶羅波安一世,無記錄,無,率軍圍攻非利士基比吐頓時，遭部下巴沙叛變刺殺，全家遭殘酷滅絕，應驗亞希雅預言。
+2,908,886,bad,3. 巴沙,24年,篡位步前王後塵,亞希雅(以薩迦支派),無記錄,耶戶,建立新政權；築拉瑪封鎖猶大；受先知耶戶嚴厲審判，預言其後代同遭刀殺滅絕。
+3,886,885,evil,4. 以拉,2年,荒淫酗酒遭滅,巴沙,無記錄,無,在得撒家宰亞比達家中飲酒大醉時，被戰車長官心利趁隙暗殺，宗族全數被斬草除根。
+4,885,885,evil,5. 心利,7日,閃電篡位僅7天,無記錄,無,無,叛變殺以拉自立；以色列軍民隨即擁立暗利反攻並圍城得撒，心利絕望放火自焚於王宮。
+5,885,874,bad,6. 暗利,12年,軍閥奪權惡過前人,無記錄,無,無,內戰擊敗提比尼登基；買撒瑪利亞山建立堅固新首都撒瑪利亞，政治手腕強但行惡極甚。
+6,874,853,evil,7. 亞哈,22年,引進巴力崇拜極惡,暗利,妻：耶洗別(西頓王謁巴力之女),以利亞,娶西頓王之女耶洗別使拜巴力合法化；迦密山大賽火燒祭壇；因貪奪拿伯葡萄園遭審判；基列拉末戰役中箭身亡。
+7,853,852,evil,8. 亞哈謝,2年,隨從父母拜巴力,亞哈,母親：耶洗別(西頓王謁巴力之女),無,宮中格欄跌傷求問巴力西卜，以利亞從天降火宣告其必死，病發無子而亡。
+8,852,841,bad,9. 約蘭,12年,除巴力柱仍拜金牛,亞哈,母親：耶洗別(西頓王謁巴力之女),以利沙,經歷以利沙多次神蹟；與猶大約沙法聯手打摩押；後在米斯黑受傷回耶斯列，遭耶戶叛箭射殺。
+9,841,814,good,10. 耶戶,28年,血洗亞哈家立大功,寧示,無記錄,以利沙,奉神命肅清亞哈王室與巴力先知，改巴力廟為廁所；雖激進執行神旨意，但自身仍未離棄金牛犢。
+10,814,798,bad,11. 約哈斯,17年,遭亞蘭欺壓窘迫,耶戶,無記錄,無,國力衰弱，遭亞蘭王哈薛與便哈達欺壓至僅剩極少兵力；哀求耶和華，神垂聽並賜拯救者脫困。
+11,798,782,bad,12. 約阿施,16年,行惡但三勝亞蘭,約哈斯,無記錄,以利沙,探病臨終以利沙並按意擊地三下，應驗三勝亞蘭；曾南下攻破猶大耶路撒冷並劫掠聖殿。
+12,782,753,special,13. 耶羅波安二世,41年,收復失土國力極盛,約阿施,無記錄,阿摩司/何西阿,依約拿預言恢復以色列北方邊界；經濟空前繁榮，但社會道德極度腐敗、欺壓貧寒。
+13,753,753,evil,14. 撒迦利亞,6個月,行惡被叛殺絕嗣,耶羅波安二世,無記錄,無,在百姓面前被沙龍公開刺殺，應驗神曾向耶戶應許「子孫坐位直到四代」的預言終結。
+14,752,752,evil,15. 沙龍,1個月,篡位一月被擊殺,雅比,無記錄,無,篡位僅一個月，即被從得撒上來的米拿現攻入撒瑪利亞王宮擊殺，政權極其短命。
+15,752,742,bad,16. 米拿現,10年,殘暴向亞述進貢,迦底,無記錄,無,攻打提弗薩殘忍剖開孕婦；向亞述王普勒進貢千他連得銀子以換取亞述扶持其王位。
+16,742,740,evil,17. 比加轄,2年,行惡遭政變殺害,米拿現,無記錄,無,在撒瑪利亞王宮中，被將領利瑪利的兒子比加率領 50 人謀殺篡位。
+17,740,732,bad,18. 比加,20年,聯亞蘭對抗亞述失利,利瑪利,無記錄,無,與亞蘭結盟攻猶大失敗；引來亞述王提革拉毗列薩大規模入侵，北方大片領土淪陷。
+18,732,722,collapse,19. 何細亞,9年,末代背叛亞述亡國,以拉,無記錄,無,💀 北國滅亡：聯合埃及暗中背叛亞述；遭亞述王撒缦以色圍城三年，撒瑪利亞淪陷，以色列人被擄異鄉。`;
 
-    // ==========================================
-    // 四、 CSV 解析與動態渲染引擎
-    // ==========================================
+const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,bloodline,prophet,summary
+0,930,913,bad,1. 羅波安,17年,剛愎自用國勢衰弱,所羅門,母親：拿瑪(亞們人女子的王后),示瑪雅,年41歲登基；因拒絕老臣建議導致王國分裂；先知示瑪雅預言阻內戰；第5年遭埃及王示撒掠奪聖殿財寶。
+1,913,911,bad,2. 亞比央/亞比雅,3年,步父後塵靠神大勝,羅波安,母親：瑪迦(亞比沙龍的女兒/孫女米該亞),無,登基年齡未記;在洗瑪音山面臨百萬敵軍時，因呼求神而大敗耶羅波安，斬敵五十萬。
+2,911,870,good,3. ⭐ 亞撒,41年,行善大革新除偶像,亞比央,母親：瑪迦(亞比沙龍的女兒/孫女),亞撒利雅/哈拿尼,廢祖母瑪迦太后並燒毀偶像；大敗古實王謝拉百萬大軍；晚年腳患病僅求醫生未求問神。
+3,870,848,good,4. ⭐ 約沙法,25年,效法大衛教導律法,亞撒,母親：阿蘇巴(詩利孩的女兒),耶戶,年35歲登基；差利未人全國教導律法；組建詩班讚美隊不費刀兵大勝摩押與亞捫聯軍。
+4,848,841,bad,5. 約蘭,8年,娶亞哈女行惡屠弟,約沙法,妻：亞他利雅(北國亞哈與耶洗別之女),以利亞,年32歲登基；因娶北國亞哈之女亞他利雅陷入拜偶像，殺盡諸弟；以利亞信函預言其腸病痛苦死亡。
+5,841,841,bad,6. 亞哈謝,1年,隨從亞哈家惡行,約蘭,母親：亞他利雅(北國亞哈與耶洗別之女),無,年22歲登基；隨從母系亞哈家族惡行；探視受傷的北國約蘭時，遭耶戶奉神命追殺身亡。
+6,841,835,evil,7. 亞他利雅,女王6年,血腥篡位滅絕王室,北國亞哈之女(母為耶洗別),無,無,亞哈謝死後直接篡位自立為女王；血腥屠殺大衛王室企圖滅絕血脈；後於馬門被處決。
+7,835,796,good,8. 約阿施,40年,早年行善修殿晚年背道,亞哈謝,母親：西比亞(別是巴人),撒迦利亞(祭司耶何耶大之子),年7歲登基；大舉奉獻修繕聖殿；晚年背道下令用石頭打死祭司之子撒迦利亞，後被臣下謀殺。
+8,796,767,bad,9. 亞瑪謝,29年,心不專誠拜以東偶像,約阿施,母親：約耶坦(耶路撒冷人),無,年25歲登基；擊敗以東卻反拜以東神像；挑戰北國約阿施慘敗，耶路撒冷城牆被拆毀百餘尺。
+9,767,740,good,10. ⭐ 烏西雅/亞撒利雅,52年,強盛發明戰具,亞瑪謝,母親：耶可利雅(耶路撒冷人),以賽亞/何西阿,年16歲登基；築城牆、發明強大機械；因擅入聖殿香壇燒香，額上當場長大麻瘋，終身隔離。
+10,740,732,good,11. ⭐ 約坦,16年,行正道日漸強盛,烏西雅,母親：耶魯沙(撒督的女兒),彌迦/以賽亞,年25歲登基；建立耶和華殿的上門；築亞們山城的牆與城堡，擊敗以他們納貢，國力日漸強盛。
+11,732,716,bad,12. 亞哈斯,16年,焚燒親子獻祭求救亞述,約坦,母親：亞比(撒迦利亞的女兒),以賽亞/彌迦,年20歲登基；仿異教將兒子經火焚燒；改造聖殿格局並向亞述稱臣求救，致國力陷入極度屈辱。
+12,716,687,good,13. ⭐ 希西家,29年,極大復興神蹟拯救,亞哈斯,母親：亞比(撒迦利亞的女兒),以賽亞/彌迦,年25歲登基；潔淨聖殿、守逾越節、砸銅蛇；挖西羅亞引水隧道；切實禱告令亞述大軍一夜潰敗。
+13,687,642,evil,14. 瑪拿西,55年,極邪惡流無辜血後悔改,希西家,母親：希弗巴,那鴻(?),年12歲登基；作惡極端流無辜血；被亞述鐵鍊鎖往巴比倫後痛悔蒙赦免，回國後大力潔淨聖殿。
+14,642,640,bad,15. 亞們,2年,行惡不改遭刺殺,瑪拿西,母親：米舒利密(約巴拿哈斯之女哈魯特人),西番雅/耶利米,年22歲登基；未效法父親晚期悔改，加倍犯罪祭拜偶像，僅執政兩年內即被宮臣聯手刺殺。
+15,640,609,good,16. ⭐ 約西亞,31年,8歲即位全面大改革,亞們,母親：耶底大(拔疊人亞大雅的女兒),耶利米等,年8歲登基；修理聖殿尋獲律法書引發全國大革新；米吉多戰場盲目攔阻埃及尼哥不幸陣亡。
+16,609,609,bad,17. 約哈斯,3個月,行惡被廢黜流亡,約西亞,母親：哈慕達(立拿人耶利米的女兒),耶利米,年23歲登基；登基僅三個月即遭埃及法老尼哥廢黜鎖禁，罰巨額罰金並解送到埃及客死他鄉。
+17,609,598,bad,18. 約雅敬,11年,暴虐焚燒先知書卷,約西亞,母親：西烏達(魯瑪人毗大雅的女兒),耶利米,年25歲登基；親手割破並火燒耶利米神聖書卷；遭巴比倫尼布甲尼薩捆鎖並掠奪聖殿器皿。
+18,597,597,evil,19. 約雅斤/哥尼雅,3個月,行惡投降被擄,約雅敬,母親：尼護施達(耶路撒冷人以利拿坦的女兒),耶利米/以西結,年18歲登基；向巴比倫王投降後，聖殿與王宮所有財寶及金器全被運往巴比倫，本人長年囚禁。
+19,597,586,collapse,20. 西底家,11年,末代行惡不聽勸告,約西亞,母親：哈慕達(立拿人耶利米的女兒),耶利米/以西結,年21歲登基；背叛巴比倫引致慘烈圍城；城破逃跑被獲，眼見眾子被殺後被挖雙眼鎖往巴比倫。
+20,586,586,collapse,21. 亡國與被擄時期,586 BC,聖殿被毀南國滅亡,,,耶利米等,尼布撒拉旦率軍徹底焚燒聖殿與城牆，器皿砸碎運走，百姓被擄至巴比倫，大衛王朝正式中斷。`;
+
     function parseCSV(csvText) {
         const lines = csvText.trim().split('\n');
         const headers = lines[0].split(',');
         const result = [];
-
         for (let i = 1; i < lines.length; i++) {
             const obj = {};
-            let currentline = lines[i].split(','); // 簡單逗號分割（若欄位含逗號可根據需要擴充正規表示式）
+            let currentline = lines[i].split(',');
             for (let j = 0; j < headers.length; j++) {
                 obj[headers[j]] = currentline[j] ? currentline[j].replace(/^["']|["']$/g, '') : '';
             }
@@ -202,87 +195,60 @@ const csvSouthData = `index,start_year,end_year,duration,justice_tier,name,reign
         const northTrack = document.getElementById('northTrack');
         const southTrack = document.getElementById('southTrack');
 
-        // 渲染北國卡片與色帶
-        northData.forEach((item, idx) => {
-            // 1. 卡片 HTML
-            const card = document.createElement('div');
-            card.className = `king-card north-card tier-${item.justice_tier}`;
-            card.setAttribute('data-side', 'north');
-            card.setAttribute('data-index', idx);
-            card.setAttribute('data-start', item.start_year);
-            card.setAttribute('data-end', item.end_year);
-            card.innerHTML = `
-                <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
-                <div>✨ 特質：<span>${item.title_tag}</span> | 👨 父親：${item.father || '無'} ${item.relatives ? '| 👑 ' + item.relatives : ''} ${item.prophet ? '| 📜 先知：<span class="prophet">' + item.prophet + '</span>' : ''}</div>
-                <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
-            `;
-            northCardsContainer.appendChild(card);
+        function processTrack(data, side, cardsContainer, trackContainer) {
+            data.forEach((item, idx) => {
+                const start = parseInt(item.start_year);
+                const end = parseInt(item.end_year);
+                
+                // 1. 卡片 HTML
+                const card = document.createElement('div');
+                card.className = `king-card ${side}-card tier-${item.justice_tier}`;
+                card.setAttribute('data-side', side);
+                card.setAttribute('data-index', idx);
+                card.setAttribute('data-start', start);
+                card.setAttribute('data-end', end);
+                card.innerHTML = `
+                    <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
+                    <div>✨ 特質：<span>${item.title_tag}</span></div>
+                    <div>👨 父親：${item.father || '無'} ${item.bloodline ? '| <span class="bloodline">' + item.bloodline + '</span>' : ''} ${item.prophet ? '| 📜 先知：<span class="prophet">' + item.prophet + '</span>' : ''}</div>
+                    <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
+                `;
+                cardsContainer.appendChild(card);
 
-            // 2. 色帶 Segment (動態計算高度：每單位年分對應 2.22px)
-            const seg = document.createElement('div');
-            seg.className = 'bar-segment';
-            seg.setAttribute('data-side', 'north');
-            seg.setAttribute('data-index', idx);
-            seg.setAttribute('data-start', item.start_year);
-            seg.setAttribute('data-end', item.end_year);
-            
-            const pxHeight = parseFloat(item.duration) * 2.22;
-            seg.style.height = `${Math.max(pxHeight, 2)}px`; // 確保極短年分至少有 2px 可點擊
-            
-            // 依照正義級別給予漸層色
-            if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
-            else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
-            else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
-            else if(item.justice_tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
-            else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
-            else seg.style.background = '#922b21';
+                // 2. 色帶 Segment (依絕對時間軸精準定位 top 與 height)
+                const seg = document.createElement('div');
+                seg.className = 'bar-segment';
+                seg.setAttribute('data-side', side);
+                seg.setAttribute('data-index', idx);
+                seg.setAttribute('data-start', start);
+                seg.setAttribute('data-end', end);
 
-            northTrack.appendChild(seg);
-        });
+                // 計算絕對座標：(930 - startYear) 對應像素頂端位置
+                const topOffset = (BASE_START_YEAR - start) * (TRACK_HEIGHT / TOTAL_YEARS);
+                const durationYears = Math.abs(start - end);
+                const segHeight = Math.max(durationYears * (TRACK_HEIGHT / TOTAL_YEARS), 3); // 確保極短年分至少 3px
 
-        // 渲染南國卡片與色帶
-        southData.forEach((item, idx) => {
-            // 1. 卡片 HTML
-            const card = document.createElement('div');
-            card.className = `king-card south-card tier-${item.justice_tier}`;
-            card.setAttribute('data-side', 'south');
-            card.setAttribute('data-index', idx);
-            card.setAttribute('data-start', item.start_year);
-            card.setAttribute('data-end', item.end_year);
-            card.innerHTML = `
-                <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
-                <div>✨ 特質：<span>${item.title_tag}</span></div>
-                <div>👨 父親：${item.father || '無'} ${item.relatives ? '| ' + item.relatives : ''} ${item.prophet ? '| 📜 先知：<span class="prophet">' + item.prophet + '</span>' : ''}</div>
-                <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
-            `;
-            southCardsContainer.appendChild(card);
+                seg.style.top = `${topOffset}px`;
+                seg.style.height = `${segHeight}px`;
 
-            // 2. 色帶 Segment
-            const seg = document.createElement('div');
-            seg.className = 'bar-segment';
-            seg.setAttribute('data-side', 'south');
-            seg.setAttribute('data-index', idx);
-            seg.setAttribute('data-start', item.start_year);
-            seg.setAttribute('data-end', item.end_year);
-            
-            const pxHeight = parseFloat(item.duration) * 2.22;
-            seg.style.height = `${Math.max(pxHeight, 2)}px`;
+                // 色彩樣式設定
+                if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
+                else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
+                else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
+                else if(item.justice_tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
+                else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
+                else seg.style.background = side === 'north' ? '#c0392b' : '#27ae60';
 
-            if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
-            else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
-            else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
-            else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
-            else seg.style.background = '#27ae60';
+                trackContainer.appendChild(seg);
+            });
+        }
 
-            southTrack.appendChild(seg);
-        });
+        processTrack(northData, 'north', northCardsContainer, northTrack);
+        processTrack(southData, 'south', southCardsContainer, southTrack);
 
         initInteractive();
     }
 
-    // ==========================================
-    // 五、 互動聯動與 SVG 連線演算法
-    // ==========================================
     function drawLines(activeSide = null, activeIndex = null, overlapSet = new Set()) {
         const container = document.getElementById('layoutContainer').getBoundingClientRect();
         const svg = document.getElementById('linkSvg');
@@ -291,76 +257,41 @@ const csvSouthData = `index,start_year,end_year,duration,justice_tier,name,reign
             svg.removeChild(svg.lastChild);
         }
 
-        // 北國連線
-        document.querySelectorAll('#northCardsContainer .king-card').forEach(card => {
-            const index = card.getAttribute('data-index');
-            const segment = document.querySelector(`#northTrack .bar-segment[data-side="north"][data-index="${index}"]`);
-            if (segment) {
-                const cardRect = card.getBoundingClientRect();
-                const segRect = segment.getBoundingClientRect();
+        ['north', 'south'].forEach(side => {
+            document.querySelectorAll(`#${side}CardsContainer .king-card`).forEach(card => {
+                const index = card.getAttribute('data-index');
+                const segment = document.querySelector(`#${side}Track .bar-segment[data-side="${side}"][data-index="${index}"]`);
+                if (segment) {
+                    const cardRect = card.getBoundingClientRect();
+                    const segRect = segment.getBoundingClientRect();
 
-                const x1 = cardRect.right - container.left;
-                const y1 = cardRect.top + cardRect.height / 2 - container.top;
-                const x2 = segRect.left - container.left;
-                const y2 = segRect.top + segRect.height / 2 - container.top;
+                    const x1 = side === 'north' ? (cardRect.right - container.left) : (cardRect.left - container.left);
+                    const y1 = cardRect.top + cardRect.height / 2 - container.top;
+                    const x2 = side === 'north' ? (segRect.left - container.left) : (segRect.right - container.left);
+                    const y2 = segRect.top + segRect.height / 2 - container.top;
 
-                const isMain = (activeSide === 'north' && activeIndex === index);
-                const isOverlap = overlapSet.has(`north-${index}`);
+                    const isMain = (activeSide === side && activeIndex === index);
+                    const isOverlap = overlapSet.has(`${side}-${index}`);
 
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
-                
-                if (isMain) {
-                    path.setAttribute('stroke', '#b9770e');
-                    path.setAttribute('stroke-width', '3');
-                    path.setAttribute('opacity', '1');
-                } else if (isOverlap) {
-                    path.setAttribute('stroke', '#f39c12');
-                    path.setAttribute('stroke-width', '2');
-                    path.setAttribute('opacity', '0.95');
-                } else {
-                    path.setAttribute('stroke', '#e74c3c');
-                    path.setAttribute('stroke-width', '1.2');
-                    path.setAttribute('opacity', '0.8');
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+                    
+                    if (isMain) {
+                        path.setAttribute('stroke', '#b9770e');
+                        path.setAttribute('stroke-width', '3');
+                        path.setAttribute('opacity', '1');
+                    } else if (isOverlap) {
+                        path.setAttribute('stroke', '#f39c12');
+                        path.setAttribute('stroke-width', '2');
+                        path.setAttribute('opacity', '0.95');
+                    } else {
+                        path.setAttribute('stroke', side === 'north' ? '#e74c3c' : '#27ae60');
+                        path.setAttribute('stroke-width', '1.2');
+                        path.setAttribute('opacity', '0.8');
+                    }
+                    svg.appendChild(path);
                 }
-                svg.appendChild(path);
-            }
-        });
-
-        // 南國連線
-        document.querySelectorAll('#southCardsContainer .king-card').forEach(card => {
-            const index = card.getAttribute('data-index');
-            const segment = document.querySelector(`#southTrack .bar-segment[data-side="south"][data-index="${index}"]`);
-            if (segment) {
-                const cardRect = card.getBoundingClientRect();
-                const segRect = segment.getBoundingClientRect();
-
-                const x1 = cardRect.left - container.left;
-                const y1 = cardRect.top + cardRect.height / 2 - container.top;
-                const x2 = segRect.right - container.left;
-                const y2 = segRect.top + segRect.height / 2 - container.top;
-
-                const isMain = (activeSide === 'south' && activeIndex === index);
-                const isOverlap = overlapSet.has(`south-${index}`);
-
-                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
-
-                if (isMain) {
-                    path.setAttribute('stroke', '#b9770e');
-                    path.setAttribute('stroke-width', '3');
-                    path.setAttribute('opacity', '1');
-                } else if (isOverlap) {
-                    path.setAttribute('stroke', '#f39c12');
-                    path.setAttribute('stroke-width', '2');
-                    path.setAttribute('opacity', '0.95');
-                } else {
-                    path.setAttribute('stroke', '#27ae60');
-                    path.setAttribute('stroke-width', '1.2');
-                    path.setAttribute('opacity', '0.8');
-                }
-                svg.appendChild(path);
-            }
+            });
         });
     }
 
@@ -384,7 +315,8 @@ const csvSouthData = `index,start_year,end_year,duration,justice_tier,name,reign
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // 判斷時空交集（BC紀元：數值越小越接近現代，故重疊邏輯為 max(end) <= min(start)）
+            // 嚴謹的絕對時間軸重疊判定：只要兩個時段有交集
+            // 北/南國統一採 BC 紀元邏輯：若 max(end) <= min(start) 即有交集
             const maxEnd = Math.max(end, cEnd);
             const minStart = Math.min(start, cStart);
 
