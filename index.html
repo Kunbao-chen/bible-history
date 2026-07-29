@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.12 資訊不截斷完整呈現版)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.13 先知獨立一行與完美對齊版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -11,7 +11,8 @@
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: center; position: relative; }
+        /* v3.13 修改：對齊方式改為 flex-start 讓北國與南國皆完美從頂部對齊排起 */
+        .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .north-header { background: #e74c3c; }
@@ -33,7 +34,7 @@
         .king-card.tier-evil { background: #fadbd8; }
         .king-card.tier-special { background: #fef9e7; }
         .king-card.tier-collapse { background: #641e16; color: #ffffff !important; }
-        .king-card.tier-collapse .king-name, .king-card.tier-collapse .detail-row, .king-card.tier-collapse .meta-row { color: #ffffff !important; }
+        .king-card.tier-collapse .king-name, .king-card.tier-collapse .detail-row, .king-card.tier-collapse .meta-row, .king-card.tier-collapse .prophet-row { color: #ffffff !important; }
 
         .king-card.highlight-main {
             background: #ffeb99 !important;
@@ -56,21 +57,33 @@
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
         
         .meta-row { 
-            white-space: normal; /* 已修復：允許自動換行，絕不截斷 */
+            white-space: normal; 
             word-break: break-all;
             color: #34495e; 
             font-size: 9.5pt; 
             margin: 2px 0;
-            line-height: 1.4;
+            line-height: 1.3;
+        }
+        /* v3.13 新增：先知專屬獨立行樣式 */
+        .prophet-row {
+            white-space: normal;
+            word-break: break-all;
+            color: #78281f;
+            font-size: 9.5pt;
+            font-weight: bold;
+            margin: 2px 0;
+            padding-top: 1px;
+            border-top: 1px dashed #fadbd8;
         }
         .prophet { font-weight: bold; color: #78281f; }
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
+        /* v3.13 修改：色帶與文字總高置中對齊（加上微調 margin-top 使其與卡片群高度完美契合） */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-            position: relative; align-self: center;
+            position: relative; align-self: flex-start; margin-top: 35px;
         }
         .bar-track-container { display: flex; gap: 4px; width: 100%; justify-content: center; }
         .bar-track { width: 20px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
@@ -102,8 +115,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.12 資訊不截斷完整呈現版)</h1>
-    <p class="subtitle">✨ 已進版至 v3.12，中繼欄位改為自動換行，所有先知與身分背景皆完整顯示不省略！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.13 先知獨立一行與完美對齊版)</h1>
+    <p class="subtitle">✨ 已進版至 v3.13，北國與南國完美置頂對齊，先知獨立一行顯示，色帶與卡片總高精準置中對齊！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -154,9 +167,9 @@
 15,752,742,bad,16. 米拿現,10年,殘暴向亞述進貢,迦底,,,攻打提弗薩殘忍剖開孕婦；向亞述王普勒進貢千他連得銀子以換取亞述扶持其王位。〔王下15〕
 16,742,740,evil,17. 比加轄,2年,行惡遭政變殺害,米拿現,,,在撒瑪利亞王宮中，被將領利瑪利的兒子比加率領五十人謀殺篡位。〔王下15〕
 17,740,732,bad,18. 比加,20年,聯亞蘭對抗亞述失利,利瑪利,,,與亞蘭結盟攻猶大失敗；引來亞述王提革拉毗列薩大規模入侵，北方大片領土淪陷。〔王下15-16; 代下28; 賽7〕
-18,732,722,collapse,19. 何細亞,9年,末代背叛亞述亡國,以拉,,,💀 北國滅亡：聯合埃及暗中背叛亞述；遭亞述王撒縵以色圍城三年，撒瑪利亞淪陷，以色列人被擄異鄉。〔王下17〕`;
+18,732,722,collapse,19. 何細亞,9年,末代背叛亞述亡國,i拉,,,💀 北國滅亡：聯合埃及暗中背叛亞述；遭亞述王撒縵以色圍城三年，撒瑪利亞淪陷，以色列人被擄異鄉。〔王下17〕`;
 
-const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
+    const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
 0,930,913,bad,1. 羅波安,17年,剛愎自用國勢衰弱,所羅門,母親：拿瑪(亞們人女子的王后),示瑪雅,年四十一歲登基；因拒絕老臣建議導致王國分裂；先知示瑪雅預言阻內戰；第五年遭埃及王示撒掠奪聖殿財寶。〔王上12, 14; 代下10-12〕
 1,913,911,bad,2. 亞比央,3年,步父後塵靠神大勝,羅波安,母親：瑪迦(押沙龍的女兒),,登基年齡未記；在洗瑪音山面臨百萬敵軍時，因呼求神而大敗耶羅波安，斬敵五十萬。〔王上15; 代下13〕
 2,911,870,good,3. ⭐ 亞撒,41年,行善大革新除偶像,亞比央,祖母：瑪迦(押沙龍的女兒),亞撒利雅/哈拿尼,廢祖母瑪迦太后並燒毀偶像；大敗古實王謝拉百萬大軍；晚年腳患病僅求醫生未求問神。〔王上15; 代下14-16〕
@@ -218,15 +231,17 @@ const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,tit
                 let fatherLabel = side === 'north' && idx === 4 ? '⚙️ 職務' : (side === 'north' && idx === 5 ? '⚙️ 身分' : '👨 父親');
                 let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
                 let femaleHtml = item.female_info ? `<span class="female-info">${item.female_info}</span>` : '';
-                let prophetHtml = item.prophet ? `📜 先知：<span class="prophet">${item.prophet}</span>` : '';
 
-                let middleParts = [fatherHtml, femaleHtml, prophetHtml].filter(p => p !== '').join(' | ');
+                // v3.13 修改：將父職與后妃保留在第一行，先知獨立拆行為第二行（若無先知則不顯示該行）
+                let middleParts = [fatherHtml, femaleHtml].filter(p => p !== '').join(' | ');
                 let middleRowHtml = middleParts ? `<div class="meta-row">${middleParts}</div>` : '';
+                let prophetRowHtml = item.prophet ? `<div class="prophet-row">📜 先知：<span class="prophet">${item.prophet}</span></div>` : '';
 
                 card.innerHTML = `
                     <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
                     <div class="meta-row">✨ 特質：<span>${item.title_tag}</span></div>
                     ${middleRowHtml}
+                    ${prophetRowHtml}
                     <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
                 `;
                 cardsContainer.appendChild(card);
