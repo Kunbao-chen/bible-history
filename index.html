@@ -2,27 +2,28 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.05 和合本錯字完全修正與字體放大版)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.06 字體全面放大與色帶等比例加長版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 5.5pt; }
+        /* 基礎字體由 5.5pt 提升至 7pt */
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 7pt; }
         .notebook-container { max-width: 1150px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
-        h1 { text-align: center; font-size: 9.5pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
-        p.subtitle { text-align: center; font-size: 5.5pt; margin: 0 0 6px 0; color: #7f8c8d; }
+        h1 { text-align: center; font-size: 11pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
+        p.subtitle { text-align: center; font-size: 7pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
         .main-layout { display: grid; grid-template-columns: 370px 50px 370px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
-        .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 6.5pt; color: white; margin-bottom: 3px; }
+        .column-header { text-align: center; font-weight: bold; padding: 4px; border-radius: 3px; font-size: 8pt; color: white; margin-bottom: 4px; }
         .north-header { background: #e74c3c; }
         .south-header { background: #27ae60; }
 
-        .cards-side { display: flex; flex-direction: column; gap: 3px; position: relative; }
+        .cards-side { display: flex; flex-direction: column; gap: 4px; position: relative; }
 
         .king-card {
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
-            padding: 3px 5px; font-size: 4.8pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            line-height: 1.15; position: relative; cursor: pointer;
+            padding: 4px 6px; font-size: 6.2pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            line-height: 1.2; position: relative; cursor: pointer;
             transition: all 0.2s ease;
         }
         .north-card { border-left: 3px solid #e74c3c; }
@@ -53,11 +54,11 @@
             color: #111111 !important;
         }
 
-        .king-name { font-weight: bold; color: #2c3e50; font-size: 5.2pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
+        .king-name { font-weight: bold; color: #2c3e50; font-size: 7pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
         .prophet { font-weight: bold; color: #78281f; }
         .female-info { color: #566573; font-weight: normal; }
-        /* 核心事件字體放大至 5.2pt，提升可讀性 */
-        .detail-row { color: #566573; margin-top: 1px; font-size: 5.2pt; border-top: 1px dotted #f2f4f4; padding-top: 1px; }
+        /* 核心事件字體放大至 6.5pt */
+        .detail-row { color: #566573; margin-top: 2px; font-size: 6.5pt; border-top: 1px dotted #f2f4f4; padding-top: 2px; }
 
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
@@ -94,8 +95,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.05 和合本錯字完全修正與字體放大版)</h1>
-    <p class="subtitle">✨ 已進版至 v3.05，核心事件字體已放大，並全面完成和合本錯字修正（含亞她利雅、尼布甲尼撒等）！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.06 字體放大與色帶等比例加長版)</h1>
+    <p class="subtitle">✨ 已進版至 v3.06，在卡片寬度不變的前提下，全體字體已顯著放大，且時間軸色帶已等比例加長以完美對齊！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -109,8 +110,8 @@
         <!-- 中間比例色帶區 (絕對時間軸) -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
-                <div class="bar-track" id="northTrack" style="height: 860px;"></div>
-                <div class="bar-track" id="southTrack" style="height: 860px;"></div>
+                <div class="bar-track" id="northTrack" style="height: 1150px;"></div>
+                <div class="bar-track" id="southTrack" style="height: 1150px;"></div>
             </div>
         </div>
 
@@ -125,7 +126,7 @@
 <script>
     const BASE_START_YEAR = 930;
     const TOTAL_YEARS = 344;
-    const TRACK_HEIGHT = 860;
+    const TRACK_HEIGHT = 1150; // 色帶等比例加長至 1150px
 
     const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
 0,930,909,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八(以法蓮支派撒利達人),,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂。
