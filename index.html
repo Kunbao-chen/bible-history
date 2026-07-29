@@ -2,17 +2,17 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.07 字體加大至10pt以上與色帶拉長版)</title>
+    <title>分裂王國年代表 (v3.08)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
-        /* 基礎字體提升至 10pt */
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
-        .notebook-container { max-width: 1200px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        .notebook-container { max-width: 1350px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        .main-layout { display: grid; grid-template-columns: 370px 50px 370px; justify-content: center; gap: 20px; align-items: start; position: relative; }
+        /* 拉開卡片與色帶間距：增加左右欄與中間色帶的間距 */
+        .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .north-header { background: #e74c3c; }
@@ -23,7 +23,7 @@
         .king-card {
             background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
             padding: 6px 8px; font-size: 10pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-            line-height: 1.3; position: relative; cursor: pointer;
+            line-height: 1.35; position: relative; cursor: pointer;
             transition: all 0.2s ease;
         }
         .north-card { border-left: 4px solid #e74c3c; }
@@ -34,7 +34,7 @@
         .king-card.tier-evil { background: #fadbd8; }
         .king-card.tier-special { background: #fef9e7; }
         .king-card.tier-collapse { background: #641e16; color: #ffffff !important; }
-        .king-card.tier-collapse .king-name, .king-card.tier-collapse .detail-row { color: #ffffff !important; }
+        .king-card.tier-collapse .king-name, .king-card.tier-collapse .detail-row, .king-card.tier-collapse .meta-row { color: #ffffff !important; }
 
         .king-card.highlight-main {
             background: #ffeb99 !important;
@@ -54,8 +54,17 @@
             color: #111111 !important;
         }
 
-        /* 標題與內文字體全面大於 10pt */
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
+        
+        /* 確保先知與父親/女性資訊不被摺疊換行 */
+        .meta-row { 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            color: #34495e; 
+            font-size: 9.5pt; 
+            margin: 1px 0;
+        }
         .prophet { font-weight: bold; color: #78281f; }
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
@@ -65,8 +74,8 @@
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative; margin-top: 15px;
         }
-        .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
-        .bar-track { width: 18px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
+        .bar-track-container { display: flex; gap: 4px; width: 100%; justify-content: center; }
+        .bar-track { width: 20px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
@@ -95,8 +104,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.07 字體大於10pt與色帶拉長版)</h1>
-    <p class="subtitle">✨ 已進版至 v3.07，全體字體皆已調整至 10pt 以上，且色帶已拉長至與擴充後卡片高度同高！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.08 先知不斷行與拉開間距版)</h1>
+    <p class="subtitle">✨ 已進版至 v3.08，先知與背景資訊已獨立不斷行，且卡片與色帶間距已拉開，線條更加清晰舒適！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -126,7 +135,7 @@
 <script>
     const BASE_START_YEAR = 930;
     const TOTAL_YEARS = 344;
-    const TRACK_HEIGHT = 2800; // 色帶同步拉長至 2800px 以對齊放大後的卡片高度
+    const TRACK_HEIGHT = 2800;
 
     const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
 0,930,909,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八(以法蓮支派撒利達人),,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂。
@@ -213,11 +222,11 @@ const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,tit
                 let prophetHtml = item.prophet ? `📜 先知：<span class="prophet">${item.prophet}</span>` : '';
 
                 let middleParts = [fatherHtml, femaleHtml, prophetHtml].filter(p => p !== '').join(' | ');
-                let middleRowHtml = middleParts ? `<div>${middleParts}</div>` : '';
+                let middleRowHtml = middleParts ? `<div class="meta-row">${middleParts}</div>` : '';
 
                 card.innerHTML = `
                     <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
-                    <div>✨ 特質：<span>${item.title_tag}</span></div>
+                    <div class="meta-row">✨ 特質：<span>${item.title_tag}</span></div>
                     ${middleRowHtml}
                     <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
                 `;
