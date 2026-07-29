@@ -1,343 +1,550 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.4</title>
+    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.31</title>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            
-            --north-color: #f97316; /* 北國：橙色系 */
-            --north-glow: rgba(249, 115, 22, 0.4);
-            --south-color: #38bdf8; /* 南國：藍色系 */
-            --south-glow: rgba(56, 189, 248, 0.4);
-            
-            --highlight-color: #eab308; /* 點擊連動：黃金光芒 */
-            --highlight-glow: rgba(234, 179, 8, 0.6);
-        }
+        @page { size: A4 portrait; margin: 4mm; }
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6pt; }
+        .notebook-container { max-width: 1080px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        
+        h1 { text-align: center; font-size: 9.5pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
+        p.subtitle { text-align: center; font-size: 5.5pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        .main-layout { display: grid; grid-template-columns: 355px 50px 355px; justify-content: center; gap: 20px; align-items: start; position: relative; }
+        
+        .column-header { text-align: center; font-weight: bold; padding: 3px; border-radius: 3px; font-size: 6.5pt; color: white; margin-bottom: 4px; }
+        .north-header { background: #e74c3c; }
+        .south-header { background: #27ae60; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 20px;
-            line-height: 1.5;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-            background: linear-gradient(to right, #38bdf8, #818cf8, #f97316);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        header p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .kingdom-column {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        .kingdom-title {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .kingdom-title.north { border-color: var(--north-color); color: var(--north-color); }
-        .kingdom-title.south { border-color: var(--south-color); color: var(--south-color); }
-
-        .king-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        .cards-side { display: flex; flex-direction: column; gap: 4px; position: relative; }
 
         .king-card {
-            background-color: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 10px 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
+            background: #ffffff; border: 1px solid #bdc3c7; border-radius: 3px;
+            padding: 4px 6px; font-size: 5pt; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            line-height: 1.15; position: relative; cursor: pointer;
             transition: all 0.2s ease;
+        }
+        .north-card { border-left: 3px solid #e74c3c; }
+        .south-card { border-left: 3px solid #27ae60; }
+        
+        /* 點亮互動效果 (強效對比) */
+        .king-card.highlight-main {
+            background: #fff2ac !important;
+            border: 2px solid #d35400 !important;
+            border-left: 6px solid #e67e22 !important;
+            box-shadow: 0 0 10px rgba(230, 126, 34, 0.9);
+            transform: scale(1.01);
+            z-index: 25;
+        }
+        .king-card.highlight-overlap {
+            background: #fef9e7 !important;
+            border: 2px solid #f1c40f !important;
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.7);
+            z-index: 20;
+        }
+
+        .king-name { font-weight: bold; color: #2c3e50; font-size: 5.5pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 1px; margin-bottom: 1px; }
+        .bad { color: #c0392b; }
+        .good { color: #27ae60; }
+        .prophet { font-weight: bold; color: #111111; }
+        .detail-row { color: #566573; margin-top: 1px; font-size: 4.5pt; border-top: 1px dotted #f2f4f4; padding-top: 1px; }
+
+        .timeline-center { 
+            display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
+            padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative;
+            margin-top: 120px; 
+        }
+        .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
+        
+        .bar-track { width: 18px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; }
+        .bar-segment { 
+            width: 100%; border-bottom: 1px solid #000000; box-sizing: border-box; 
+            transition: all 0.2s ease; cursor: pointer; position: relative;
+        }
+        
+        /* 高度比例分配 */
+        #northTrack .bar-segment[data-index="0"] { height: calc(22 * 1.8px); }
+        #northTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
+        #northTrack .bar-segment[data-index="2"] { height: calc(22 * 1.8px); }
+        #northTrack .bar-segment[data-index="3"] { height: calc(2 * 1.8px); }
+        #northTrack .bar-segment[data-index="4"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="5"] { height: calc(11 * 1.8px); }
+        #northTrack .bar-segment[data-index="6"] { height: calc(21 * 1.8px); }
+        #northTrack .bar-segment[data-index="7"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="8"] { height: calc(11 * 1.8px); }
+        #northTrack .bar-segment[data-index="9"] { height: calc(27 * 1.8px); }
+        #northTrack .bar-segment[data-index="10"] { height: calc(16 * 1.8px); }
+        #northTrack .bar-segment[data-index="11"] { height: calc(16 * 1.8px); }
+        #northTrack .bar-segment[data-index="12"] { height: calc(29 * 1.8px); }
+        #northTrack .bar-segment[data-index="13"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="14"] { height: calc(1 * 1.8px); }
+        #northTrack .bar-segment[data-index="15"] { height: calc(10 * 1.8px); }
+        #northTrack .bar-segment[data-index="16"] { height: calc(2 * 1.8px); }
+        #northTrack .bar-segment[data-index="17"] { height: calc(8 * 1.8px); }
+        #northTrack .bar-segment[data-index="18"] { height: calc(10 * 1.8px); }
+
+        #southTrack .bar-segment[data-index="0"] { height: calc(17 * 1.8px); }
+        #southTrack .bar-segment[data-index="1"] { height: calc(2 * 1.8px); }
+        #southTrack .bar-segment[data-index="2"] { height: calc(41 * 1.8px); }
+        #southTrack .bar-segment[data-index="3"] { height: calc(22 * 1.8px); }
+        #southTrack .bar-segment[data-index="4"] { height: calc(7 * 1.8px); }
+        #southTrack .bar-segment[data-index="5"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="6"] { height: calc(6 * 1.8px); }
+        #southTrack .bar-segment[data-index="7"] { height: calc(39 * 1.8px); }
+        #southTrack .bar-segment[data-index="8"] { height: calc(29 * 1.8px); }
+        #southTrack .bar-segment[data-index="9"] { height: calc(27 * 1.8px); }
+        #southTrack .bar-segment[data-index="10"] { height: calc(8 * 1.8px); }
+        #southTrack .bar-segment[data-index="11"] { height: calc(16 * 1.8px); }
+        #southTrack .bar-segment[data-index="12"] { height: calc(29 * 1.8px); }
+        #southTrack .bar-segment[data-index="13"] { height: calc(55 * 1.8px); }
+        #southTrack .bar-segment[data-index="14"] { height: calc(2 * 1.8px); }
+        #southTrack .bar-segment[data-index="15"] { height: calc(31 * 1.8px); }
+        #southTrack .bar-segment[data-index="16"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="17"] { height: calc(11 * 1.8px); }
+        #southTrack .bar-segment[data-index="18"] { height: calc(1 * 1.8px); }
+        #southTrack .bar-segment[data-index="19"] { height: calc(11 * 1.8px); }
+        #southTrack .bar-segment[data-index="20"] { height: calc(1 * 1.8px); }
+
+        /* 色帶點亮效果 */
+        .bar-segment.highlight-main {
+            border: 2px solid #d35400 !important;
+            filter: brightness(1.35);
+            box-shadow: 0 0 10px #e67e22;
+            z-index: 25;
+        }
+        .bar-segment.highlight-overlap {
+            border: 2px solid #f1c40f !important;
+            filter: brightness(1.2);
+            box-shadow: 0 0 6px #f1c40f;
+            z-index: 20;
         }
 
-        .king-card:hover {
-            border-color: var(--text-muted);
-            transform: translateY(-1px);
-        }
-
-        /* 點擊後的高亮互動狀態 */
-        .king-card.active-target {
-            border-color: var(--highlight-color);
-            box-shadow: 0 0 12px var(--highlight-glow);
-            background-color: rgba(234, 179, 8, 0.1);
-        }
-
-        .king-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .king-name {
-            font-weight: bold;
-            font-size: 1.05rem;
-        }
-
-        .king-meta {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .king-years {
-            font-family: monospace;
-            font-size: 0.9rem;
-            background-color: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* 色段標記 */
-        .king-card.north-side .king-name { color: var(--north-color); }
-        .king-card.south-side .king-name { color: var(--south-color); }
-
-        .controls {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        button.reset-btn {
-            background-color: var(--border-color);
-            color: var(--text-main);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background-color 0.2s;
-        }
-
-        button.reset-btn:hover {
-            background-color: var(--text-muted);
-            color: var(--bg-color);
+        .svg-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>聖經南北王國・全 39 位君王獨立對照筆記圖</h1>
-        <p>點擊任意君王卡片，將精確連動並點亮跨王國年份重疊對象（v2.4 邏輯優化版）</p>
-    </header>
+<div class="notebook-container">
+    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.3)</h1>
+    <p class="subtitle">✨ 雙向極致點亮：點選「左/右卡片」或「中間色帶」，即刻高亮主體與所有平行歷史時空重疊之君王卡片與色段！</p>
 
-    <div class="container">
-        <!-- 北國區塊 -->
-        <div class="kingdom-column">
-            <div class="kingdom-title north">
-                <span>以色列（北國）</span>
-                <span style="font-size: 0.85rem; font-weight: normal;">19 位君王</span>
-            </div>
-            <div class="king-list" id="north-list">
-                <!-- 動態生成北國君王 -->
+    <div class="main-layout" id="layoutContainer">
+        
+        <svg class="svg-overlay" id="linkSvg">
+            <defs>
+                <marker id="arrow-north" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+                    <path d="M0,0 L5,2.5 L0,5 Z" fill="#e74c3c" />
+                </marker>
+                <marker id="arrow-south" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+                    <path d="M0,0 L5,2.5 L0,5 Z" fill="#27ae60" />
+                </marker>
+            </defs>
+        </svg>
+
+        <!-- 1. 北國以色列 19 王 -->
+        <div>
+            <div class="column-header north-header">北國以色列 (19王全展開)</div>
+            <div class="cards-side" id="northCards">
+                <div class="king-card north-card" data-side="north" data-index="0" data-start="930" data-end="909">
+                    <div class="king-name">1. 耶羅波安一世 (22年, 930-909 BC)</div>
+                    <div>✨ 特質：<span class="bad">行惡，設金牛犢</span> | 👨 父親：尼八 | 📜 當代先知：<span class="prophet">亞希雅</span></div>
+                    <div class="detail-row">登基年齡未記；在伯特利與但設金牛犢；神人預言其祭壇破裂、手枯乾又復原之兆頭；築示劍與毗努伊勒。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="1" data-start="909" data-end="908">
+                    <div class="king-name">2. 拿答 (2年, 909-908 BC)</div>
+                    <div>✨ 特質：<span class="bad">行惡</span> | 👨 父親：耶羅波安一世 | 👑排行：長子繼位</div>
+                    <div class="detail-row">登基年齡未記；率軍圍攻非利士基比吐頓時，遭巴沙背叛殺害，全家遭亞希雅預言之審判而滅絕。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="2" data-start="908" data-end="886">
+                    <div class="king-name">3. 巴沙 (24年, 908-886 BC)</div>
+                    <div>✨ 特質：<span class="bad">步後塵</span> | 👨 父親：亞希雅(以薩迦) | 📜 當代先知：<span class="prophet">耶戶</span></div>
+                    <div class="detail-row">登基年齡未記；定都得撒；築拉瑪封鎖猶大邊境；受先知耶戶審判預言其後代如耶羅波安遭毀滅。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="3" data-start="886" data-end="885">
+                    <div class="king-name">4. 以拉 (2年, 886-885 BC)</div>
+                    <div>✨ 特質：<span class="bad">荒淫酗酒</span> | 👨 父親：巴沙 | 👑排行：長子繼位</div>
+                    <div class="detail-row">登基年齡未記；在得撒家宰亞比達家中飲酒醉時，被戰車長官心利趁機刺殺滅族。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="4" data-start="885" data-end="885" style="background: #fadbd8;">
+                    <div class="king-name">5. 心利 (7日, 885 BC)</div>
+                    <div>✨ 特質：<span class="bad">篡位僅7天</span> | 📌 身分：管理車輛一半的長官</div>
+                    <div class="detail-row">登基年齡未記；叛變殺以拉登基；以色列軍民聞訊擁立暗利圍攻得撒，心利絕望放火自焚於王宮。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="5" data-start="885" data-end="874">
+                    <div class="king-name">6. 暗利 (12年, 885-874 BC)</div>
+                    <div>✨ 特質：<span class="bad">惡過前王</span> | 📌 身分：原以色列軍長</div>
+                    <div class="detail-row">登基年齡未記；平定內亂後，買撒瑪利亞山建新首都撒瑪利亞，行惡比前人更甚。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="6" data-start="874" data-end="853">
+                    <div class="king-name">7. 亞哈 (22年, 874-853 BC)</div>
+                    <div>✨ 特質：<span class="bad">極度行惡</span> | 👨 父親：暗利 | 👑妻：耶洗別 | 📜 當代先知：<span class="prophet">以利亞</span></div>
+                    <div class="detail-row">登基年齡未記；迦密山大賽火燒祭壇與三年半乾旱兆頭；聖殿變更：在撒瑪利亞為巴力築壇造廟；因奪拿伯葡萄園遭預言。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="7" data-start="853" data-end="852">
+                    <div class="king-name">8. 亞哈謝 (2年, 853-852 BC)</div>
+                    <div>✨ 特質：<span class="bad">隨從父母拜巴力</span> | 👨 父親：亞哈 | 👩 母親：耶洗別 | 👑排行：長子</div>
+                    <div class="detail-row">登基年齡未記；宮中格欄跌傷求問巴力西卜，以利亞從天降火審判其必死，病發無子而亡。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="8" data-start="852" data-end="841">
+                    <div class="king-name">9. 約蘭 (12年, 852-841 BC)</div>
+                    <div>✨ 特質：除巴力柱像但仍拜金牛犢 | 👨 父親：亞哈 | 👑排行：次子 | 📜 當代先知：<span class="prophet">以利沙</span></div>
+                    <div class="detail-row">登基年齡未記；除其父所造巴力柱像；經歷以利沙使亞蘭盲軍迷路、撒瑪利亞解圍神蹟；後被耶戶射殺於拿伯田間。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="9" data-start="841" data-end="814">
+                    <div class="king-name">10. 耶戶 (28年, 841-814 BC)</div>
+                    <div>✨ 特質：<span class="good">殲滅亞哈家</span> | 👨 父親：寧示 | 📜 當代先知：<span class="prophet">以利沙</span></div>
+                    <div class="detail-row">登基年齡未記；奉神命肅清亞哈家族與巴力先知，拆毀巴力廟改作廁所；但未離棄伯特利金牛犢罪。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="10" data-start="814" data-end="798">
+                    <div class="king-name">11. 約哈斯 (17年, 814-798 BC)</div>
+                    <div>✨ 特質：<span class="bad">受亞蘭欺壓</span> | 👨 父親：耶戶 | 👑排行：長子繼位</div>
+                    <div class="detail-row">登基年齡未記；受亞蘭王哈薛欺壓至極其窘迫（僅剩50騎兵、10輛戰車）；哀求神，神賜拯救者脫困。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="11" data-start="798" data-end="782">
+                    <div class="king-name">12. 約阿施 (16年, 798-782 BC)</div>
+                    <div>✨ 特質：行惡但三勝亞蘭 | 👨 父親：約哈斯 | 👑排行：長子繼位</div>
+                    <div class="detail-row">登基年齡未記；探病以利沙並按其意擊地三下應驗三勝亞蘭；攻破耶路撒冷拆毀城牆並奪走聖殿金銀。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="12" data-start="782" data-end="753" style="background: #fef9e7;">
+                    <div class="king-name">13. 耶羅波安二世 (41年, 782-753 BC)</div>
+                    <div>✨ 特質：<span class="good">收復失土極盛</span> | 👨 父親：約阿施 | 📜 當代先知：<span class="prophet">阿摩司</span>、<span class="prophet">何西阿</span></div>
+                    <div class="detail-row">登基年齡未記；依約拿預言恢復以色列邊界（從哈馬口到亞拉巴海），國力極盛但社會道德腐敗。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="13" data-start="753" data-end="753" style="background: #fadbd8;">
+                    <div class="king-name">14. 撒迦利亞 (6個月, 753 BC)</div>
+                    <div>✨ 特質：行惡，被沙龍背叛刺殺 | 👨 父親：耶羅波安二世</div>
+                    <div class="detail-row">登基年齡未記；耶戶王朝最後一王，在百姓面前被沙龍公開刺殺，應驗神向耶戶「子孫坐位到四代」之預言。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="14" data-start="752" data-end="752" style="background: #fadbd8;">
+                    <div class="king-name">15. 沙龍 (1個月, 752 BC)</div>
+                    <div>✨ 特質：篡位一個月被米拿現擊殺 | 👨 父親：雅比</div>
+                    <div class="detail-row">登基年齡未記；篡位僅一個月，即被從得撒上來的米拿現攻入撒瑪利亞擊殺。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="15" data-start="752" data-end="742">
+                    <div class="king-name">16. 米拿現 (10年, 752-742 BC)</div>
+                    <div>✨ 特質：<span class="bad">極其殘暴</span> | 👨 父親：迦底</div>
+                    <div class="detail-row">登基年齡未記；攻打提弗薩殘忍剖開孕婦；向亞述王普勒進貢千他連得銀子以堅固國位。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="16" data-start="742" data-end="740" style="background: #fadbd8;">
+                    <div class="king-name">17. 比加轄 (2年, 742-740 BC)</div>
+                    <div>✨ 特質：行惡，被比加政變殺害 | 👨 父親：米拿現 | 👑排行：長子繼位</div>
+                    <div class="detail-row">登基年齡未記；在撒瑪利亞王宮護衛長中，被將領利瑪利的兒子比加率50人謀殺。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="17" data-start="740" data-end="732">
+                    <div class="king-name">18. 比加 (20年, 740-732 BC)</div>
+                    <div>✨ 特質：結盟亞蘭對抗亞述 | 👨 父親：利瑪利 | 📌 身分：原軍長政變</div>
+                    <div class="detail-row">登基年齡未記；與亞蘭結盟攻猶大未果；引來亞述王提革拉毗列薩入侵，失去加利利、拿弗他利與約旦河東大片領土。</div>
+                </div>
+                <div class="king-card north-card" data-side="north" data-index="18" data-start="732" data-end="722" style="background: #e74c3c; color: white;">
+                    <div class="king-name" style="color: white;">19. 何細亞 (9年, 732-722 BC)</div>
+                    <div>✨ 特質：末代背叛亞述 | 👨 父親：以拉 | 💀 <span style="color: #f9e79f;">722 BC 北國滅亡</span></div>
+                    <div class="detail-row" style="color: #fce4ec;">登基年齡未記；暗殺比加登基；聯合埃及王梭背叛亞述；被亞述王撒曼以色圍攻三年，撒瑪利亞淪陷，以色列人被擄至亞述。</div>
+                </div>
             </div>
         </div>
 
-        <!-- 南國區塊 -->
-        <div class="kingdom-column">
-            <div class="kingdom-title south">
-                <span>猶大（南國）</span>
-                <span style="font-size: 0.85rem; font-weight: normal;">20 位君王（含女王）</span>
-            </div>
-            <div class="king-list" id="south-list">
-                <!-- 動態生成南國君王 -->
+        <!-- 2. 中間比例色帶 -->
+        <div class="timeline-center" id="timelineCenter">
+            <div class="bar-track-container">
+                <div class="bar-track" id="northTrack">
+                    <div class="bar-segment" data-side="north" data-index="0" data-start="930" data-end="909" style="background: linear-gradient(to bottom, #d98880, #c0392b);"></div>
+                    <div class="bar-segment" data-side="north" data-index="1" data-start="909" data-end="908" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="2" data-start="908" data-end="886" style="background: linear-gradient(to bottom, #c0392b, #b03a2e);"></div>
+                    <div class="bar-segment" data-side="north" data-index="3" data-start="886" data-end="885" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="4" data-start="885" data-end="885" style="background: #e6b0aa;"></div>
+                    <div class="bar-segment" data-side="north" data-index="5" data-start="885" data-end="874" style="background: #b03a2e;"></div>
+                    <div class="bar-segment" data-side="north" data-index="6" data-start="874" data-end="853" style="background: linear-gradient(to bottom, #b03a2e, #922b21);"></div>
+                    <div class="bar-segment" data-side="north" data-index="7" data-start="853" data-end="852" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="8" data-start="852" data-end="841" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="9" data-start="841" data-end="814" style="background: linear-gradient(to bottom, #52be80, #e74c3c);"></div>
+                    <div class="bar-segment" data-side="north" data-index="10" data-start="814" data-end="798" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="11" data-start="798" data-end="782" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="12" data-start="782" data-end="753" style="background: linear-gradient(to bottom, #f9e79f, #f1c40f);"></div>
+                    <div class="bar-segment" data-side="north" data-index="13" data-start="753" data-end="753" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="14" data-start="752" data-end="752" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="15" data-start="752" data-end="742" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="16" data-start="742" data-end="740" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="north" data-index="17" data-start="740" data-end="732" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="north" data-index="18" data-start="732" data-end="722" style="background: #641e16;"></div>
+                </div>
+                <div class="bar-track" id="southTrack">
+                    <div class="bar-segment" data-side="south" data-index="0" data-start="930" data-end="913" style="background: linear-gradient(to bottom, #a9dfbf, #7dcea0);"></div>
+                    <div class="bar-segment" data-side="south" data-index="1" data-start="913" data-end="911" style="background: #fcf3cf;"></div>
+                    <div class="bar-segment" data-side="south" data-index="2" data-start="911" data-end="870" style="background: linear-gradient(to bottom, #52be80, #1e8449);"></div>
+                    <div class="bar-segment" data-side="south" data-index="3" data-start="870" data-end="848" style="background: linear-gradient(to bottom, #52be80, #27ae60);"></div>
+                    <div class="bar-segment" data-side="south" data-index="4" data-start="848" data-end="841" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="5" data-start="841" data-end="841" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="6" data-start="841" data-end="835" style="background: #e6b0aa;"></div>
+                    <div class="bar-segment" data-side="south" data-index="7" data-start="835" data-end="796" style="background: linear-gradient(to bottom, #27ae60, #c0392b);"></div>
+                    <div class="bar-segment" data-side="south" data-index="8" data-start="796" data-end="767" style="background: linear-gradient(to bottom, #f5b7b1, #e74c3c);"></div>
+                    <div class="bar-segment" data-side="south" data-index="9" data-start="767" data-end="740" style="background: linear-gradient(to bottom, #27ae60, #f39c12);"></div>
+                    <div class="bar-segment" data-side="south" data-index="10" data-start="740" data-end="732" style="background: linear-gradient(to bottom, #52be80, #27ae60);"></div>
+                    <div class="bar-segment" data-side="south" data-index="11" data-start="732" data-end="716" style="background: linear-gradient(to bottom, #c0392b, #922b21);"></div>
+                    <div class="bar-segment" data-side="south" data-index="12" data-start="716" data-end="687" style="background: linear-gradient(to bottom, #27ae60, #196f3d);"></div>
+                    <div class="bar-segment" data-side="south" data-index="13" data-start="687" data-end="642" style="background: linear-gradient(to bottom, #c0392b, #52be80);"></div>
+                    <div class="bar-segment" data-side="south" data-index="14" data-start="642" data-end="640" style="background: #c0392b;"></div>
+                    <div class="bar-segment" data-side="south" data-index="15" data-start="640" data-end="609" style="background: linear-gradient(to bottom, #27ae60, #145a32);"></div>
+                    <div class="bar-segment" data-side="south" data-index="16" data-start="609" data-end="609" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="17" data-start="609" data-end="598" style="background: #c0392b;"></div>
+                    <div class="bar-segment" data-side="south" data-index="18" data-start="597" data-end="597" style="background: #f5b7b1;"></div>
+                    <div class="bar-segment" data-side="south" data-index="19" data-start="597" data-end="586" style="background: #922b21;"></div>
+                    <div class="bar-segment" data-side="south" data-index="20" data-start="586" data-end="586" style="background: #641e16;"></div>
+                </div>
             </div>
         </div>
+
+        <!-- 3. 南國猶大 20 位統治者 + 亡國時期 -->
+        <div>
+            <div class="column-header south-header">南國猶大 (20位統治者 + 亡國時期)</div>
+            <div class="cards-side" id="southCards">
+                <div class="king-card south-card" data-side="south" data-index="0" data-start="930" data-end="913">
+                    <div class="king-name">1. 羅波安 (17年, 930-913 BC)</div>
+                    <div>✨ 特質：<span class="bad">離棄神國勢衰弱</span> | 👨 父親：所羅門 | 👩 母親：拿瑪 | 📜 當代先知：<span class="prophet">示瑪雅</span></div>
+                    <div class="detail-row">登基年齡：41歲；聖殿變更：殿內財寶被埃及掠奪；先知示瑪雅攔阻內戰；築15座防衛城池（如伯利恆、希伯崙）。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="1" data-start="913" data-end="911">
+                    <div class="king-name">2. 亞比央 / 亞比雅 (3年, 913-911 BC)</div>
+                    <div>✨ 特質：<span class="bad">步父後塵</span> | 👨 父親：羅波安 | 👩 母親：瑪迦（亞沙蘭的女兒） | ⚡ 靠神大勝</div>
+                    <div class="detail-row">登基年齡未記；王上作亞比央，代下作亞比雅；在洗瑪音山靠呼求神大敗耶羅波安百萬大軍，斬敵五十萬。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="2" data-start="911" data-end="870" style="background: #eafaf1;">
+                    <div class="king-name">3. ⭐ 亞撒 (41年, 911-870 BC)</div>
+                    <div>✨ 特質：<span class="good">行善大革新、除偶像</span> | 👨 父親：亞比央 | 👩 母親/祖母：瑪迦（亞沙蘭的女兒） | 📜 當代先知：<span class="prophet">亞撒利雅</span></div>
+                    <div class="detail-row">登基年齡未記；聖殿變更：將先前父親與自己分別為聖的金銀聖物迎回並奉獻到耶和華殿中；廢祖母瑪迦太后並砍斷其偶像燒毀；大敗古實王謝拉百萬大軍。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="3" data-start="870" data-end="848" style="background: #eafaf1;">
+                    <div class="king-name">4. ⭐ 約沙法 (25年, 870-848 BC)</div>
+                    <div>✨ 特質：<span class="good">效法大衛、教導律法</span> | 👨 父親：亞撒 | 👩 母親：阿蘇巴 | 📜 當代先知：<span class="prophet">耶戶</span></div>
+                    <div class="detail-row">登基年齡：35歲；差利未人全國教導律法；大敗摩押與亞捫聯軍（歌唱讚美兵不血刃兆頭）；建造城堡與積貨城。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="4" data-start="848" data-end="841">
+                    <div class="king-name">5. 約蘭 (8年, 848-841 BC)</div>
+                    <div>✨ 特質：<span class="bad">娶亞哈女行惡</span> | 👨 父親：約沙法 | 👑排行：長子 | 👑妻：亞他利雅 | 📜 當代先知：<span class="prophet">以利亞</span></div>
+                    <div class="detail-row">登基年齡：32歲；聖殿變更：在猶大諸山築邱壇使民行淫；以利亞信封預言其腸病劇痛死亡；以東與立拿背叛脫離統治。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="5" data-start="841" data-end="841">
+                    <div class="king-name">6. 亞哈謝 (1年, 841 BC)</div>
+                    <div>✨ 特質：<span class="bad">隨從惡行</span> | 👨 父親：約蘭 | 👩 母親：亞他利雅（暗利的孫女） | 👑排行：幼子</div>
+                    <div class="detail-row">登基年齡：22歲；隨北國約蘭探病，遭耶戶奉神命追殺身亡於米吉多。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="6" data-start="841" data-end="835" style="background: #fadbd8;">
+                    <div class="king-name">7. 亞她利雅 (女王6年, 841-835 BC)</div>
+                    <div>✨ 特質：<span class="bad">侵害王室企圖滅大衛家</span> | 👨/👑 父/祖父：暗利（或譯亞哈的女兒/孫女）</div>
+                    <div class="detail-row">登基年齡未記；聖殿變更：拆毀神殿並將聖殿聖物移去給巴力；剿滅大衛王室，僅幼子約阿施獲祭司藏於聖殿。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="7" data-start="835" data-end="796" style="background: #eafaf1;">
+                    <div class="king-name">8. 約阿施 (40年, 835-796 BC)</div>
+                    <div>✨ 特質：早年行善修殿，晚年背道</div>
+                    <div>👨 父親：亞哈謝 | 👩 母親：西比亞 | 📜 當代先知：<span class="prophet">撒迦利亞</span>(祭司)</div>
+                    <div class="detail-row">登基年齡：7歲；聖殿變更：大舉奉獻銀子修繕聖殿；晚年背道殺祭司耶何耶大之子撒迦利亞；被亞蘭王哈薛威脅納聖殿金庫財寶。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="8" data-start="796" data-end="767" style="background: #f2f3f4;">
+                    <div class="king-name">9. 亞瑪謝 (29年, 796-767 BC)</div>
+                    <div>✨ 特質：心不專誠，拜以東偶像</div>
+                    <div>👨 父親：約阿施 | 👩 母親：約耶坦</div>
+                    <div class="detail-row">登基年齡：25歲；擊敗以東卻將以東神像帶回叩拜，致神震怒遣先知斥責；挑戰北國約阿施大敗，耶路撒冷城牆被拆毀四百肘並被掠聖殿財寶。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="9" data-start="767" data-end="740" style="background: #eafaf1;">
+                    <div class="king-name">10. ⭐ 烏西雅 / 亞撒利雅 (52年, 767-740 BC)</div>
+                    <div>✨ 特質：<span class="good">強盛發明戰具</span> | 👨 父親：亞瑪謝 | 👩 母親：耶可利雅 | 📜 當代先知：<span class="prophet">以賽亞</span>、<span class="prophet">何西阿</span></div>
+                    <div class="detail-row">登基年齡：16歲；築耶路撒冷城角門、谷門與角樓；因擅入聖殿香壇燒香，額上當場長大麻瘋至死隔離。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="10" data-start="740" data-end="732" style="background: #eafaf1;">
+                    <div class="king-name">11. ⭐ 約坦 (16年, 740-732 BC)</div>
+                    <div>✨ 特質：<span class="good">行正道日漸強盛</span> | 👨 父親：烏西雅 | 👩 母親：耶魯沙 | 📜 當代先知：<span class="prophet">彌迦</span>、<span class="prophet">以賽亞</span></div>
+                    <div class="detail-row">登基年齡：25歲；聖殿變更：建立耶和華殿的上門；築亞們山城的牆、樹林中的宮殿與城堡。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="11" data-start="732" data-end="716">
+                    <div class="king-name">12. 亞哈斯 (16年, 732-716 BC)</div>
+                    <div>✨ 特質：<span class="bad">焚燒親子獻祭、向亞述求救</span> | 👨 父親：約坦 | 👩 母親：亞比/亞比雅 | 📜 當代先知：<span class="prophet">以賽亞</span>、<span class="prophet">彌迦</span></div>
+                    <div class="detail-row">登基年齡：20歲；聖殿變更：仿大馬色祭壇改造聖殿格局、搬移銅海與移走殿內器皿；將兒子經火焚燒；向亞述求救致國力屈辱。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="12" data-start="716" data-end="687" style="background: #eafaf1;">
+                    <div class="king-name">13. ⭐ 希西家 (29年, 716-687 BC)</div>
+                    <div>✨ 特質：<span class="good">極大復興</span> | 👨 父親：亞哈斯 | 👩 母親：亞比/亞比雅 | 📜 當代先知：<span class="prophet">以賽亞</span>、<span class="prophet">彌迦</span></div>
+                    <div class="detail-row">登基年齡：25歲；聖殿變更：潔淨聖殿恢復利未事奉與全國逾越節；砸毀摩西銅蛇；日影退回十度兆頭；禱告令亞述西拿基立185萬大軍潰敗。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="13" data-start="687" data-end="642" style="background: #fadbd8;">
+                    <div class="king-name">14. 瑪拿西 (55年, 687-642 BC)</div>
+                    <div>✨ 特質：<span class="bad">極邪惡流無辜血，後悔改</span> | 👨 父親：希西家 | 👩 母親：希弗巴 | 📜 當代先知：<span class="prophet">那鴻</span>(?)</div>
+                    <div class="detail-row">登基年齡：12歲；聖殿變更：在聖殿兩院築異教星宿壇；被亞述鐵鍊鎖往巴比倫後痛悔蒙神赦免回國，潔淨聖殿並重修城牆。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="14" data-start="642" data-end="640">
+                    <div class="king-name">15. 亞們 (2年, 642-640 BC)</div>
+                    <div>✨ 特質：<span class="bad">行惡不悔改</span> | 👨 父親：瑪拿西 | 👩 母親：米舒利密 | 📜 當代先知：<span class="prophet">西番雅</span>、<span class="prophet">耶利米</span></div>
+                    <div class="detail-row">登基年齡：22歲；未效法父親晚期悔改，反而加倍犯罪，祭拜其父所造的雕像，兩年內被宮臣合謀刺殺於宮中。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="15" data-start="640" data-end="609" style="background: #eafaf1;">
+                    <div class="king-name">16. ⭐ 約西亞 (31年, 640-609 BC)</div>
+                    <div>✨ 特質：<span class="good">8歲即位全面大改革</span> | 👨 父親：亞們 | 👩 母親：耶底大 | 📜 當代先知：<span class="prophet">耶利米</span>、<span class="prophet">西番雅</span>、<span class="prophet">戶勒大</span></div>
+                    <div class="detail-row">登基年齡：8歲；聖殿變更：修理聖殿尋獲律法書引發全國大革新；拆毀所羅門為淫婦所建之邱壇；在米吉多戰場攔阻埃及尼哥陣亡。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="16" data-start="609" data-end="609">
+                    <div class="king-name">17. 約哈斯 (3個月, 609 BC)</div>
+                    <div>✨ 特質：行惡 | 👨 父親：約西亞 | 👩 母親：哈慕達 | 👑排行：次子 | 📜 當代先知：<span class="prophet">耶利米</span></div>
+                    <div class="detail-row">登基年齡：23歲；登基三個月即被埃及法老尼哥廢黜鎖禁，罰金百他連得銀子與一他連得金子，解送到埃及客死。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="17" data-start="609" data-end="598">
+                    <div class="king-name">18. 約雅敬 (11年, 609-598 BC)</div>
+                    <div>✨ 特質：<span class="bad">暴虐、焚燒先知書卷</span> | 👨 父親：約西亞 | 👩 母親：西烏達/尼護施達 | 👑排行：長子 | 📜 當代先知：<span class="prophet">耶利米</span>、<span class="prophet">烏利亞</span></div>
+                    <div class="detail-row">登基年齡：25歲；強徵民役建宮殿不給工價；親手割破並火燒耶利米先知書卷；遭巴比倫尼布甲尼薩捆鎖並掠奪部分聖殿器皿。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="18" data-start="597" data-end="597" style="background: #fadbd8;">
+                    <div class="king-name">19. 約雅斤 / 哥尼雅 (3個月, 597 BC)</div>
+                    <div>✨ 特質：行惡 | 👨 父親：約雅敬 | 👩 母親：尼護施達 | 👑排行：長子 | 📜 當代先知：<span class="prophet">耶利米</span>、<span class="prophet">以西結</span></div>
+                    <div class="detail-row">登基年齡：18歲（代下36:9作8歲）；聖殿變更：向巴比倫王投降後，聖殿與王宮所有財寶及金器全被砍下運往巴比倫。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="19" data-start="597" data-end="586" style="background: #e74c3c; color: white;">
+                    <div class="king-name" style="color: white;">20. 西底家 (11年, 597-586 BC)</div>
+                    <div>✨ 特質：末代行惡君王，不聽勸告 | 👨 父親：約西亞 | 👩 母親：哈慕達 | 📜 當代先知：<span class="prophet">耶利米</span>、<span class="prophet">以西結</span></div>
+                    <div class="detail-row" style="color: #fce4ec;">登基年齡：21歲；原名「瑪坦雅」；背叛巴比倫引致慘烈圍城；城破逃跑被獲，眼見眾子被殺後被挖雙眼用銅鏈鎖往巴比倫。</div>
+                </div>
+                <div class="king-card south-card" data-side="south" data-index="20" data-start="586" data-end="586" style="background: #78281f; color: white;">
+                    <div class="king-name" style="color: white;">21. 亡國與被擄時期 (586 BC)</div>
+                    <div>💀 <span style="color: #f9e79f;">聖殿被毀、南國滅亡</span> | 📜 當代先知：<span class="prophet" style="color: #f9e79f;">耶利米</span>、<span class="prophet" style="color: #f9e79f;">但以理</span>、<span class="prophet" style="color: #f9e79f;">以西結</span></div>
+                    <div class="detail-row" style="color: #fce4ec;">尼布撒拉旦率軍焚燒聖殿、王宮與耶路撒冷城牆，將柱子器皿全數砸碎運走，百姓被擄至巴比倫，大衛王朝暫告中斷。</div>
+                </div>
+            </div>
+        </div>
+
     </div>
+</div>
 
-    <div class="controls">
-        <button class="reset-btn" onclick="resetHighlight()">清除選取狀態</button>
-    </div>
-
-    <script>
-        // 39位君王完整資料庫 (包含名稱、王國、在位起始年、結束年、以及代表性備註)
-        const kingsData = [
-            // 北國 (19位)
-            { id: "n1", name: "耶羅波安一世", kingdom: "north", start: 931, end: 910, note: "金牛犢事件" },
-            { id: "n2", name: "拿答", kingdom: "north", start: 910, end: 909, note: "耶羅波安之子" },
-            { id: "n3", name: "巴沙", kingdom: "north", start: 909, end: 886, note: "篡位建立新勢力" },
-            { id: "n4", name: "以拉", kingdom: "north", start: 886, end: 885, note: "被心利殺害" },
-            { id: "n5", name: "心利", kingdom: "north", start: 885, end: 885, note: "在位僅7天" },
-            { id: "n6", name: "暗利", kingdom: "north", start: 885, end: 874, note: "定都撒瑪利亞" },
-            { id: "n7", name: "亞哈", kingdom: "north", start: 874, end: 853, note: "娶耶洗別，對抗以利亞" },
-            { id: "n8", name: "亞哈謝", kingdom: "north", start: 853, end: 852, note: "跌傷致死" },
-            { id: "n9", name: "約蘭", kingdom: "north", start: 852, end: 841, note: "被耶戶所殺" },
-            { id: "n10", name: "耶戶", kingdom: "north", start: 841, end: 814, note: "血洗亞哈家" },
-            { id: "n11", name: "約哈斯", kingdom: "north", start: 814, end: 798, note: "受亞蘭欺壓" },
-            { id: "n12", name: "約阿施 (北)", kingdom: "north", start: 798, end: 782, note: "擊敗亞瑪謝" },
-            { id: "n13", name: "耶羅波安二世", kingdom: "north", start: 782, end: 753, note: "北國極盛時期" },
-            { id: "n14", name: "撒迦利亞", kingdom: "north", start: 753, end: 752, note: "在位6個月" },
-            { id: "n15", name: "沙龍", kingdom: "north", start: 752, end: 752, note: "在位1個月" },
-            { id: "n16", name: "米拿現", kingdom: "north", start: 752, end: 742, note: "殘暴苛政" },
-            { id: "n17", name: "比加轄", kingdom: "north", start: 742, end: 740, note: "被比加殺害" },
-            { id: "n18", name: "比加", kingdom: "north", start: 740, end: 732, note: "亞述入侵奪地" },
-            { id: "n19", name: "何細亞", kingdom: "north", start: 732, end: 722, note: "北國亡國之君" },
-
-            // 南國 (20位)
-            { id: "s1", name: "羅波安", kingdom: "south", start: 931, end: 913, note: "所羅門之子" },
-            { id: "s2", name: "亞比央", kingdom: "south", start: 913, end: 911, note: "與北國爭戰" },
-            { id: "s3", name: "亞撒", kingdom: "south", start: 911, end: 870, note: "宗教改革" },
-            { id: "s4", name: "約沙法", kingdom: "south", start: 870, end: 848, note: "與亞哈結盟" },
-            { id: "s5", name: "約蘭 (南)", kingdom: "south", start: 848, end: 841, note: "娶亞哈女兒亞她利雅" },
-            { id: "s6", name: "亞哈謝 (南)", kingdom: "south", start: 841, end: 841, note: "被耶戶所殺" },
-            { id: "s7", name: "亞她利雅", kingdom: "south", start: 841, end: 835, note: "篡位為王（女王）" },
-            { id: "s8", name: "約阿施 (南)", kingdom: "south", start: 835, end: 796, note: "耶何耶大扶持" },
-            { id: "s9", name: "亞瑪謝", kingdom: "south", start: 796, end: 767, note: "擊敗以東後驕傲" },
-            { id: "s10", name: "烏西雅 (亞撒利雅)", kingdom: "south", start: 767, end: 740, note: "長壽強盛" },
-            { id: "s11", name: "約坦", kingdom: "south", start: 740, end: 732, note: "行耶和華眼中看為正的事" },
-            { id: "s12", name: "亞哈斯", kingdom: "south", start: 732, end: 716, note: "投降亞述" },
-            { id: "s13", name: "希西家", kingdom: "south", start: 716, end: 687, note: "度過亞述危機" },
-            { id: "s14", name: "瑪拿西", kingdom: "south", start: 687, end: 642, note: "在位最久、作惡極大" },
-            { id: "s15", name: "亞們", kingdom: "south", start: 642, end: 640, note: "臣僕背叛被殺" },
-            { id: "s16", name: "約西亞", kingdom: "south", start: 640, end: 609, note: "最後的大復興" },
-            { id: "s17", name: "約哈斯 (南)", kingdom: "south", start: 609, end: 609, note: "在位3個月被擄" },
-            { id: "s18", name: "約雅敬", kingdom: "south", start: 609, end: 598, note: "受巴比倫控制" },
-            { id: "s19", name: "約雅斤", kingdom: "south", start: 598, end: 598, note: "在位3個月被擄" },
-            { id: "s20", name: "西底家", kingdom: "south", start: 598, end: 586, note: "南國亡國之君" }
-        ];
-
-        // 初始化渲染介面
-        function renderKings() {
-            const northList = document.getElementById('north-list');
-            const southList = document.getElementById('south-list');
-
-            northList.innerHTML = '';
-            southList.innerHTML = '';
-
-            kingsData.forEach(king => {
-                const card = document.createElement('div');
-                card.className = `king-card ${king.kingdom}-side`;
-                card.setAttribute('data-id', king.id);
-                card.setAttribute('data-kingdom', king.kingdom);
-                card.setAttribute('data-start', king.start);
-                card.setAttribute('data-end', king.end);
-
-                card.innerHTML = `
-                    <div class="king-info">
-                        <span class="king-name">${king.name}</span>
-                        <span class="king-meta">${king.note}</span>
-                    </div>
-                    <div class="king-years">BC ${king.start} - ${king.end}</div>
-                `;
-
-                // 綁定點擊事件（依 v2.4 步驟執行）
-                card.addEventListener('click', () => handleKingClick(king));
-
-                if (king.kingdom === 'north') {
-                    northList.appendChild(card);
-                } else {
-                    southList.appendChild(card);
-                }
-            });
+<script>
+    function drawLines() {
+        const container = document.getElementById('layoutContainer').getBoundingClientRect();
+        const svg = document.getElementById('linkSvg');
+        
+        while (svg.childNodes.length > 3) {
+            svg.removeChild(svg.lastChild);
         }
 
-        // v2.4 核心邏輯：點擊判斷步驟
-        function handleKingClick(selectedKing) {
-            // 步驟 1：確認點擊卡片色段，確認所屬王國與年份
-            const targetKingdom = selectedKing.kingdom;
-            const targetStart = selectedKing.start;
-            const targetEnd = selectedKing.end;
+        // 北國斜直線箭頭
+        const northCards = document.querySelectorAll('#northCards .king-card');
+        northCards.forEach(card => {
+            const index = card.getAttribute('data-index');
+            const segment = document.querySelector(`#northTrack .bar-segment[data-side="north"][data-index="${index}"]`);
+            if (segment) {
+                const cardRect = card.getBoundingClientRect();
+                const segRect = segment.getBoundingClientRect();
 
-            // 清除先前所有高亮狀態
-            document.querySelectorAll('.king-card').forEach(c => {
-                c.classList.remove('active-target');
-            });
+                const x1 = cardRect.right - container.left;
+                const y1 = cardRect.top + cardRect.height / 2 - container.top;
+                const x2 = segRect.left - container.left;
+                const y2 = segRect.top + segRect.height / 2 - container.top;
 
-            // 將當前點擊的卡片點亮
-            const currentCard = document.querySelector(`[data-id="${selectedKing.id}"]`);
-            if (currentCard) {
-                currentCard.classList.add('active-target');
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+                path.setAttribute('stroke', '#e74c3c');
+                path.setAttribute('stroke-width', '1.2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('marker-end', 'url(#arrow-north)');
+                path.setAttribute('opacity', '0.8');
+                svg.appendChild(path);
             }
+        });
 
-            // 步驟 2 & 3：全域搜尋年份重疊者，並「嚴格剔除同國的」
-            kingsData.forEach(king => {
-                // 若為同國君王，直接跳過（不點亮）
-                if (king.kingdom === targetKingdom) return;
+        // 南國斜直線箭頭
+        const southCards = document.querySelectorAll('#southCards .king-card');
+        southCards.forEach(card => {
+            const index = card.getAttribute('data-index');
+            const segment = document.querySelector(`#southTrack .bar-segment[data-side="south"][data-index="${index}"]`);
+            if (segment) {
+                const cardRect = card.getBoundingClientRect();
+                const segRect = segment.getBoundingClientRect();
 
-                // 判斷年份是否重疊：(StartA <= EndB) 且 (EndA >= StartB)
-                const isOverlap = (targetStart >= king.end) && (targetEnd <= king.start);
-                // 由於年份為 BC（倒數計算），正確的區間交集公式為：
-                // 兩段時間 [start1, end1] 與 [start2, end2] 重疊條件：Math.max(start1, start2) >= Math.min(end1, end2)
-                // 這裡簡化為直覺的 BC 年份判定：
-                const overlap = (targetStart >= king.end && targetEnd <= king.start); 
-                // 註：在位期間重疊邏輯 (Max(start) >= Min(end)) -> 這裡採用標準交集判定：
-                const hasOverlap = Math.max(targetStart, king.start) >= Math.min(targetEnd, king.end);
+                const x1 = cardRect.left - container.left;
+                const y1 = cardRect.top + cardRect.height / 2 - container.top;
+                const x2 = segRect.right - container.left;
+                const y2 = segRect.top + segRect.height / 2 - container.top;
 
-                if (hasOverlap) {
-                    const targetCard = document.querySelector(`[data-id="${king.id}"]`);
-                    if (targetCard) {
-                        targetCard.classList.add('active-target');
-                    }
-                }
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+                path.setAttribute('stroke', '#27ae60');
+                path.setAttribute('stroke-width', '1.2');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('marker-end', 'url(#arrow-south)');
+                path.setAttribute('opacity', '0.8');
+                svg.appendChild(path);
+            }
+        });
+    }
+
+    // 嚴格點亮互動邏輯（依據新的判斷步驟修正）
+    function triggerHighlight(start, end, mainSide, mainIndex) {
+        // 清除先前點亮
+        document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
+            el.classList.remove('highlight-main', 'highlight-overlap');
+        });
+
+        // 步驟 1：確認點擊卡片色段，確認所屬王國與年份
+        const mainCard = document.querySelector(`.king-card[data-side="${mainSide}"][data-index="${mainIndex}"]`);
+        const mainSeg = document.querySelector(`.bar-segment[data-side="${mainSide}"][data-index="${mainIndex}"]`);
+        if (mainCard) mainCard.classList.add('highlight-main');
+        if (mainSeg) mainSeg.classList.add('highlight-main');
+
+        // 步驟 2 & 3：全域搜尋年份找出重疊的，並嚴格剔除同國的
+        const allCards = document.querySelectorAll('.king-card');
+        allCards.forEach(card => {
+            const cSide = card.getAttribute('data-side');
+            const cIndex = card.getAttribute('data-index');
+
+            // 步驟 3：剔除同國的
+            if (cSide === mainSide) return;
+
+            const cStart = parseInt(card.getAttribute('data-start'));
+            const cEnd = parseInt(card.getAttribute('data-end'));
+
+            // 步驟 2：檢驗年份重疊交集 (Math.min(A起, B起) - Math.max(A結, B結) >= 0)
+            const overlapStart = Math.min(start, cStart);
+            const overlapEnd = Math.max(end, cEnd);
+
+            if (overlapStart - overlapEnd >= 0) {
+                card.classList.add('highlight-overlap');
+                const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
+                if (seg) seg.classList.add('highlight-overlap');
+            }
+        });
+    }
+
+    function initInteractive() {
+        // A. 點選左/右君王卡片點亮
+        document.querySelectorAll('.king-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const start = parseInt(card.getAttribute('data-start'));
+                const end = parseInt(card.getAttribute('data-end'));
+                const side = card.getAttribute('data-side');
+                const index = card.getAttribute('data-index');
+                triggerHighlight(start, end, side, index);
             });
-        }
+        });
 
-        // 清除高亮
-        function resetHighlight() {
-            document.querySelectorAll('.king-card').forEach(c => {
-                c.classList.remove('active-target');
+        // B. 點選中間色帶點亮
+        document.querySelectorAll('.bar-segment').forEach(seg => {
+            seg.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const start = parseInt(seg.getAttribute('data-start'));
+                const end = parseInt(seg.getAttribute('data-end'));
+                const side = seg.getAttribute('data-side');
+                const index = seg.getAttribute('data-index');
+                triggerHighlight(start, end, side, index);
             });
-        }
+        });
+    }
 
-        // 頁面載入後自動渲染
-        window.addEventListener('DOMContentLoaded', renderKings);
-    </script>
+    window.addEventListener('load', () => {
+        drawLines();
+        initInteractive();
+    });
+    window.addEventListener('resize', drawLines);
+    setTimeout(drawLines, 100);
+</script>
+
 </body>
 </html>
+```[cite: 4]
