@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.13 先知獨立一行與完美對齊版)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.14 先知字體放大與清晰版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -11,7 +11,6 @@
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        /* v3.13 修改：對齊方式改為 flex-start 讓北國與南國皆完美從頂部對齊排起 */
         .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
@@ -64,22 +63,24 @@
             margin: 2px 0;
             line-height: 1.3;
         }
-        /* v3.13 新增：先知專屬獨立行樣式 */
+        
+        /* v3.14 修改：先知字體放大至 11pt（與國王標題同大小），並加強視覺獨立性與對比 */
         .prophet-row {
             white-space: normal;
             word-break: break-all;
             color: #78281f;
-            font-size: 9.5pt;
+            font-size: 11pt;
             font-weight: bold;
-            margin: 2px 0;
-            padding-top: 1px;
+            margin: 3px 0;
+            padding-top: 2px;
             border-top: 1px dashed #fadbd8;
         }
-        .prophet { font-weight: bold; color: #78281f; }
+        .prophet { font-weight: bold; color: #922b21; }
+        .tier-collapse .prophet { color: #f9e79f !important; } /* 崩潰卡片上的先知改用亮金色強化辨識度 */
+        
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
-        /* v3.13 修改：色帶與文字總高置中對齊（加上微調 margin-top 使其與卡片群高度完美契合） */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
@@ -115,8 +116,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.13 先知獨立一行與完美對齊版)</h1>
-    <p class="subtitle">✨ 已進版至 v3.13，北國與南國完美置頂對齊，先知獨立一行顯示，色帶與卡片總高精準置中對齊！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.14 先知字體放大與清晰版)</h1>
+    <p class="subtitle">✨ 已進版至 v3.14，先知字體全面放大至 11pt，並優化深色卡片與各項顯示對比！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -159,7 +160,7 @@
 7,853,852,evil,8. 亞哈謝,2年,隨從父母拜巴力,亞哈,母親：耶洗別(西頓王謁巴力之女),,宮中格子欄跌傷求問巴力西卜，以利亞從天降火宣告其必死，病發無子而亡。〔王上22; 王下1〕
 8,852,841,bad,9. 約蘭,12年,除巴力柱仍拜金牛,亞哈,母親：耶洗別(西頓王謁巴力之女),以利沙,經歷以利沙多次神蹟；與猶大約沙法聯手打摩押；後在耶斯列養傷，遭耶戶叛箭射殺。〔王下3, 8-9〕
 9,841,814,good,10. 耶戶,28年,血洗亞哈家立大功,寧示,,以利沙,奉神命肅清亞哈王室與巴力先知，改巴力廟為廁所；雖激進執行神旨意，但自身仍未離棄金牛犢。〔王下9-10; 代下22〕
-10,814,798,bad,11. 約哈斯,17年,遭亞蘭欺壓窘迫,耶戶,,,國力衰弱，遭亞蘭王哈薛與便哈達欺壓至僅剩極少兵力；哀求耶和華，神垂聽並賜拯救者脫困。〔王下13〕
+10,814,798,bad,11. 約哈斯,17年,遭亞蘭欺壓窘敗,耶戶,,,國力衰弱，遭亞蘭王哈薛與便哈達欺壓至僅剩極少兵力；哀求耶和華，神垂聽並賜拯救者脫困。〔王下13〕
 11,798,782,bad,12. 約阿施,16年,行惡但三勝亞蘭,約哈斯,,以利沙,探病臨終以利沙並按意擊地三下，應驗三勝亞蘭；曾南下攻破猶大耶路撒冷並劫掠聖殿。〔王下13; 代下25〕
 12,782,753,special,13. 耶羅波安二世,41年,收復失土國力極盛,約阿施,,阿摩司/何西阿,依約拿預言恢復以色列北方邊界；經濟空前繁榮，但社會道德極度腐敗、欺壓貧寒。〔王下14; 摩1-7; 何1-4〕
 13,753,753,evil,14. 撒迦利亞,6個月,行惡被叛殺絕嗣,耶羅波安二世,,,在百姓面前被沙龍公開刺殺，應驗神曾向耶戶應許「子孫坐位直到四代」的預言終結。〔王下15〕
@@ -232,9 +233,10 @@
                 let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
                 let femaleHtml = item.female_info ? `<span class="female-info">${item.female_info}</span>` : '';
 
-                // v3.13 修改：將父職與后妃保留在第一行，先知獨立拆行為第二行（若無先知則不顯示該行）
                 let middleParts = [fatherHtml, femaleHtml].filter(p => p !== '').join(' | ');
                 let middleRowHtml = middleParts ? `<div class="meta-row">${middleParts}</div>` : '';
+                
+                // v3.14：先知獨立行，確保字體大小與國王一致並具備高度辨識度
                 let prophetRowHtml = item.prophet ? `<div class="prophet-row">📜 先知：<span class="prophet">${item.prophet}</span></div>` : '';
 
                 card.innerHTML = `
