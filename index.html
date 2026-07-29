@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.11 錯誤欄位修正與核心事件補齊版)</title>
+    <title>聖經歷史・跨文明多軌對照筆記圖 (v3.12 資訊不截斷完整呈現版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -56,12 +56,12 @@
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
         
         .meta-row { 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
+            white-space: normal; /* 已修復：允許自動換行，絕不截斷 */
+            word-break: break-all;
             color: #34495e; 
             font-size: 9.5pt; 
-            margin: 1px 0;
+            margin: 2px 0;
+            line-height: 1.4;
         }
         .prophet { font-weight: bold; color: #78281f; }
         .female-info { color: #566573; font-weight: normal; }
@@ -102,8 +102,8 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.11 錯誤欄位修正與核心事件補齊版)</h1>
-    <p class="subtitle">✨ 已進版至 v3.11，心利與暗利之職務標籤已修正，且所有國王之核心事件與經文出處皆完整填入！</p>
+    <h1>✏️ 聖經歷史・跨文明多軌對照筆記圖 (v3.12 資訊不截斷完整呈現版)</h1>
+    <p class="subtitle">✨ 已進版至 v3.12，中繼欄位改為自動換行，所有先知與身分背景皆完整顯示不省略！</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
