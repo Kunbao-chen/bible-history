@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.38</title>
+    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.39</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6pt; }
@@ -59,6 +59,7 @@
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative;
+            margin-top: 13px; /* v2.39 微調：讓色帶整體向下位移，完美對齊南國底部 */
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
         
@@ -69,50 +70,50 @@
         }
         
         /* 
-          v2.38 修正：將基準單位調整為 2.18px / 年，
-          並讓色帶整體向下延伸，完美對齊南國字卡總高度與底部！
+          v2.39 修正：將比例基準微調為 2.22px / 年，
+          搭配 timeline-center 的 margin-top，使色帶總長與底部與南國完全切齊。
         */
-        #northTrack .bar-segment[data-index="0"] { height: calc(22 * 2.18px); }
-        #northTrack .bar-segment[data-index="1"] { height: calc(1 * 2.18px); }
-        #northTrack .bar-segment[data-index="2"] { height: calc(22 * 2.18px); }
-        #northTrack .bar-segment[data-index="3"] { height: calc(1 * 2.18px); }
-        #northTrack .bar-segment[data-index="4"] { height: calc(0.5 * 2.18px); }
-        #northTrack .bar-segment[data-index="5"] { height: calc(11 * 2.18px); }
-        #northTrack .bar-segment[data-index="6"] { height: calc(21 * 2.18px); }
-        #northTrack .bar-segment[data-index="7"] { height: calc(1 * 2.18px); }
-        #northTrack .bar-segment[data-index="8"] { height: calc(11 * 2.18px); }
-        #northTrack .bar-segment[data-index="9"] { height: calc(27 * 2.18px); }
-        #northTrack .bar-segment[data-index="10"] { height: calc(16 * 2.18px); }
-        #northTrack .bar-segment[data-index="11"] { height: calc(16 * 2.18px); }
-        #northTrack .bar-segment[data-index="12"] { height: calc(29 * 2.18px); }
-        #northTrack .bar-segment[data-index="13"] { height: calc(0.5 * 2.18px); }
-        #northTrack .bar-segment[data-index="14"] { height: calc(0.5 * 2.18px); }
-        #northTrack .bar-segment[data-index="15"] { height: calc(10 * 2.18px); }
-        #northTrack .bar-segment[data-index="16"] { height: calc(2 * 2.18px); }
-        #northTrack .bar-segment[data-index="17"] { height: calc(8 * 2.18px); }
-        #northTrack .bar-segment[data-index="18"] { height: calc(10 * 2.18px); }
+        #northTrack .bar-segment[data-index="0"] { height: calc(22 * 2.22px); }
+        #northTrack .bar-segment[data-index="1"] { height: calc(1 * 2.22px); }
+        #northTrack .bar-segment[data-index="2"] { height: calc(22 * 2.22px); }
+        #northTrack .bar-segment[data-index="3"] { height: calc(1 * 2.22px); }
+        #northTrack .bar-segment[data-index="4"] { height: calc(0.5 * 2.22px); }
+        #northTrack .bar-segment[data-index="5"] { height: calc(11 * 2.22px); }
+        #northTrack .bar-segment[data-index="6"] { height: calc(21 * 2.22px); }
+        #northTrack .bar-segment[data-index="7"] { height: calc(1 * 2.22px); }
+        #northTrack .bar-segment[data-index="8"] { height: calc(11 * 2.22px); }
+        #northTrack .bar-segment[data-index="9"] { height: calc(27 * 2.22px); }
+        #northTrack .bar-segment[data-index="10"] { height: calc(16 * 2.22px); }
+        #northTrack .bar-segment[data-index="11"] { height: calc(16 * 2.22px); }
+        #northTrack .bar-segment[data-index="12"] { height: calc(29 * 2.22px); }
+        #northTrack .bar-segment[data-index="13"] { height: calc(0.5 * 2.22px); }
+        #northTrack .bar-segment[data-index="14"] { height: calc(0.5 * 2.22px); }
+        #northTrack .bar-segment[data-index="15"] { height: calc(10 * 2.22px); }
+        #northTrack .bar-segment[data-index="16"] { height: calc(2 * 2.22px); }
+        #northTrack .bar-segment[data-index="17"] { height: calc(8 * 2.22px); }
+        #northTrack .bar-segment[data-index="18"] { height: calc(10 * 2.22px); }
 
-        #southTrack .bar-segment[data-index="0"] { height: calc(17 * 2.18px); }
-        #southTrack .bar-segment[data-index="1"] { height: calc(2 * 2.18px); }
-        #southTrack .bar-segment[data-index="2"] { height: calc(41 * 2.18px); }
-        #southTrack .bar-segment[data-index="3"] { height: calc(22 * 2.18px); }
-        #southTrack .bar-segment[data-index="4"] { height: calc(7 * 2.18px); }
-        #southTrack .bar-segment[data-index="5"] { height: calc(0.5 * 2.18px); }
-        #southTrack .bar-segment[data-index="6"] { height: calc(6 * 2.18px); }
-        #southTrack .bar-segment[data-index="7"] { height: calc(39 * 2.18px); }
-        #southTrack .bar-segment[data-index="8"] { height: calc(29 * 2.18px); }
-        #southTrack .bar-segment[data-index="9"] { height: calc(27 * 2.18px); }
-        #southTrack .bar-segment[data-index="10"] { height: calc(8 * 2.18px); }
-        #southTrack .bar-segment[data-index="11"] { height: calc(16 * 2.18px); }
-        #southTrack .bar-segment[data-index="12"] { height: calc(29 * 2.18px); }
-        #southTrack .bar-segment[data-index="13"] { height: calc(45 * 2.18px); }
-        #southTrack .bar-segment[data-index="14"] { height: calc(2 * 2.18px); }
-        #southTrack .bar-segment[data-index="15"] { height: calc(31 * 2.18px); }
-        #southTrack .bar-segment[data-index="16"] { height: calc(0.5 * 2.18px); }
-        #southTrack .bar-segment[data-index="17"] { height: calc(11 * 2.18px); }
-        #southTrack .bar-segment[data-index="18"] { height: calc(0.5 * 2.18px); }
-        #southTrack .bar-segment[data-index="19"] { height: calc(11 * 2.18px); }
-        #southTrack .bar-segment[data-index="20"] { height: calc(0.5 * 2.18px); }
+        #southTrack .bar-segment[data-index="0"] { height: calc(17 * 2.22px); }
+        #southTrack .bar-segment[data-index="1"] { height: calc(2 * 2.22px); }
+        #southTrack .bar-segment[data-index="2"] { height: calc(41 * 2.22px); }
+        #southTrack .bar-segment[data-index="3"] { height: calc(22 * 2.22px); }
+        #southTrack .bar-segment[data-index="4"] { height: calc(7 * 2.22px); }
+        #southTrack .bar-segment[data-index="5"] { height: calc(0.5 * 2.22px); }
+        #southTrack .bar-segment[data-index="6"] { height: calc(6 * 2.22px); }
+        #southTrack .bar-segment[data-index="7"] { height: calc(39 * 2.22px); }
+        #southTrack .bar-segment[data-index="8"] { height: calc(29 * 2.22px); }
+        #southTrack .bar-segment[data-index="9"] { height: calc(27 * 2.22px); }
+        #southTrack .bar-segment[data-index="10"] { height: calc(8 * 2.22px); }
+        #southTrack .bar-segment[data-index="11"] { height: calc(16 * 2.22px); }
+        #southTrack .bar-segment[data-index="12"] { height: calc(29 * 2.22px); }
+        #southTrack .bar-segment[data-index="13"] { height: calc(45 * 2.22px); }
+        #southTrack .bar-segment[data-index="14"] { height: calc(2 * 2.22px); }
+        #southTrack .bar-segment[data-index="15"] { height: calc(31 * 2.22px); }
+        #southTrack .bar-segment[data-index="16"] { height: calc(0.5 * 2.22px); }
+        #southTrack .bar-segment[data-index="17"] { height: calc(11 * 2.22px); }
+        #southTrack .bar-segment[data-index="18"] { height: calc(0.5 * 2.22px); }
+        #southTrack .bar-segment[data-index="19"] { height: calc(11 * 2.22px); }
+        #southTrack .bar-segment[data-index="20"] { height: calc(0.5 * 2.22px); }
 
         /* 色帶點亮效果 */
         .bar-segment.highlight-main {
@@ -137,13 +138,13 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.38)</h1>
+    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.39)</h1>
     <p class="subtitle">✨ 雙向極致聯動：點選「左/右卡片」或「中間色帶」，即刻高亮主體、對應純線條與所有平行時空重疊之君王卡片與色段！</p>
 
     <div class="main-layout" id="layoutContainer">
         
         <svg class="svg-overlay" id="linkSvg">
-            <!-- v2.38 已移除所有箭標頭定義，改為純線條呈現 -->
+            <!-- v2.39 純線條呈現 -->
         </svg>
 
         <!-- 1. 北國以色列 19 王 -->
@@ -248,7 +249,7 @@
             </div>
         </div>
 
-        <!-- 2. 中間比例色帶 -->
+        <!-- 2. 中間比例色帶 (v2.39 已加上 margin-top 精準對齊南國底部) -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
                 <div class="bar-track" id="northTrack">
@@ -416,7 +417,7 @@
 </div>
 
 <script>
-    // 繪製純線條連結函式（支援動態高亮狀態，已移除所有箭標頭）
+    // 繪製純線條連結函式（支援動態高亮狀態）
     function drawLines(activeSide = null, activeIndex = null, overlapSet = new Set()) {
         const container = document.getElementById('layoutContainer').getBoundingClientRect();
         const svg = document.getElementById('linkSvg');
@@ -533,7 +534,6 @@
             }
         });
 
-        // 同步重繪純線條高亮狀態
         drawLines(mainSide, mainIndex, overlapSet);
     }
 
