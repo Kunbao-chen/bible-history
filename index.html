@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.31</title>
+    <title>聖經南北王國・全 39 位君王獨立對照筆記圖 v2.32</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 6pt; }
@@ -54,7 +54,7 @@
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative;
-            margin-top: 120px; 
+            margin-top: 0px; 
         }
         .bar-track-container { display: flex; gap: 3px; width: 100%; justify-content: center; }
         
@@ -130,7 +130,7 @@
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.3)</h1>
+    <h1>✏️ 舊約南北王國・全 39 位君王獨立對照筆記圖 (v2.32)</h1>
     <p class="subtitle">✨ 雙向極致點亮：點選「左/右卡片」或「中間色帶」，即刻高亮主體與所有平行歷史時空重疊之君王卡片與色段！</p>
 
     <div class="main-layout" id="layoutContainer">
@@ -475,7 +475,7 @@
         });
     }
 
-    // 嚴格點亮互動邏輯（依據新的判斷步驟修正）
+    // 嚴格點亮互動邏輯（修正公元前交集判斷：MaxEnd <= MinStart）
     function triggerHighlight(start, end, mainSide, mainIndex) {
         // 清除先前點亮
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
@@ -500,11 +500,11 @@
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
 
-            // 步驟 2：檢驗年份重疊交集 (Math.min(A起, B起) - Math.max(A結, B結) >= 0)
-            const overlapStart = Math.min(start, cStart);
-            const overlapEnd = Math.max(end, cEnd);
+            // 步驟 2：檢驗公元前年份重疊交集 (MaxEnd <= MinStart)
+            const maxEnd = Math.max(end, cEnd);
+            const minStart = Math.min(start, cStart);
 
-            if (overlapStart - overlapEnd >= 0) {
+            if (maxEnd <= minStart) {
                 card.classList.add('highlight-overlap');
                 const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
                 if (seg) seg.classList.add('highlight-overlap');
@@ -547,4 +547,3 @@
 
 </body>
 </html>
-```[cite: 4]
