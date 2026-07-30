@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.42 嚴格依序對齊版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.43 四步驟嚴格對齊版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -76,7 +76,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.42 嚴格依序對齊運算中</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.43 四步驟嚴格對齊運算中</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -102,7 +102,8 @@
 
 <script>
     const TOP_BASE_YEAR = 1050; 
-    const TOTAL_YEARS = 464;    
+    const BOTTOM_TARGET_YEAR = 586;
+    const TOTAL_YEARS = TOP_BASE_YEAR - BOTTOM_TARGET_YEAR; // 464 年
 
     function parseCSV(text) {
         let lines = text.trim().split('\n');
@@ -146,8 +147,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.42)";
-            let mainSub = "✨ 嚴格依序對齊版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.43)";
+            let mainSub = "✨ 四步驟嚴格對齊版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -172,28 +173,34 @@
             const rightTrackEl = document.getElementById('rightTrack');
             const timelineCenterEl = document.getElementById('timelineCenter');
 
-            // 1. 渲染左右側文字卡
+            // 【步驟二】字卡緊密排列不分散，計算每側總高
             renderCards(leftData, 'left', leftCardsEl);
             renderCards(rightData, 'right', rightCardsEl);
 
-            // 2. 步驟一與二：計算原始色帶與兩側文字卡總高度
             const leftCardsHeight = leftCardsEl.offsetHeight;
             const rightCardsHeight = rightCardsEl.offsetHeight;
             const maxCardsHeight = Math.max(leftCardsHeight, rightCardsHeight, 800);
 
-            // 設定統一時間軸總高度
+            // 統一中央時間軸高度，對齊最高側文字卡總高
             leftTrackEl.style.height = `${maxCardsHeight}px`;
             rightTrackEl.style.height = `${maxCardsHeight}px`;
             timelineCenterEl.style.height = `${maxCardsHeight}px`;
 
+            // 【步驟一】計算絕對年數定義色帶統一比例尺
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            // 3. 步驟三：精確計算兩側色帶原始範圍，並對「較短的一側」進行等比例拉長與平移，使其對齊該側文字卡總高
-            processAndRenderTrack(leftData, 'left', leftTrackEl, leftCardsEl, basePxPerYear);
-            processAndRenderTrack(rightData, 'right', rightTrackEl, rightCardsEl, basePxPerYear);
+            // 【步驟三】色帶區域總高適應文字卡最高側高度，兩側色帶等比例縮放
+            renderAndScaleTracks(leftData, 'left', leftTrackEl, basePxPerYear, maxCardsHeight);
+            renderAndScaleTracks(rightData, 'right', rightTrackEl, basePxPerYear, maxCardsHeight);
+
+            // 【步驟四】非最高側的文字卡與色帶群組做整體置中對齊
+            setTimeout(() => {
+                applyGroupCenterAlignment(leftCardsEl, leftTrackEl, leftCardsHeight, maxCardsHeight);
+                applyGroupCenterAlignment(rightCardsEl, rightTrackEl, rightCardsHeight, maxCardsHeight);
+                drawLines();
+            }, 60);
 
             initInteractive();
-            drawLines();
         } catch (e) {
             console.error("初始化失敗：", e);
         }
@@ -227,32 +234,31 @@
         });
     }
 
-    function processAndRenderTrack(data, sideName, trackContainer, cardsContainer, pxPerYear) {
-        // 第一步：算出色帶長度與相對位置
+    function renderAndScaleTracks(data, sideName, trackContainer, basePxPerYear, targetHeight) {
+        trackContainer.innerHTML = '';
         let rawSegs = [];
-        let trackMinTop = Infinity;
-        let trackMaxBottom = -Infinity;
+        let minTop = Infinity;
+        let maxBottom = -Infinity;
 
+        // 1. 計算絕對時間定位
         data.forEach((item) => {
             const start = parseInt(item.start_year);
             const end = parseInt(item.end_year);
             if (isNaN(start) || isNaN(end)) return;
 
-            const topOffset = (TOP_BASE_YEAR - start) * pxPerYear;
+            const topOffset = (TOP_BASE_YEAR - start) * basePxPerYear;
             const duration = Math.abs(start - end);
-            const height = Math.max(duration * pxPerYear, 4);
+            const height = Math.max(duration * basePxPerYear, 4);
 
             rawSegs.push({ item, uniqueId: `${sideName}-${item.layout_order}`, start, end, top: topOffset, height });
-            if (topOffset < trackMinTop) trackMinTop = topOffset;
-            if ((topOffset + height) > trackMaxBottom) trackMaxBottom = (topOffset + height);
+            if (topOffset < minTop) minTop = topOffset;
+            if ((topOffset + height) > maxBottom) maxBottom = (topOffset + height);
         });
 
-        const rawClusterSpan = trackMaxBottom - trackMinTop;
-        const cardsHeight = cardsContainer.offsetHeight;
+        const rawSpan = maxBottom - minTop;
+        const scaleFactor = rawSpan > 0 ? (targetHeight / rawSpan) : 1;
 
-        // 第三步：若該側色帶總高與文字卡總高有落差，計算等比例縮放係數與平移量（保留您指定的完美比例）
-        const scaleFactor = rawClusterSpan > 0 ? (cardsHeight / rawClusterSpan) : 1;
-
+        // 2. 渲染並等比例縮放色帶
         rawSegs.forEach(s => {
             const seg = document.createElement('div');
             seg.className = 'bar-segment';
@@ -261,7 +267,7 @@
             seg.setAttribute('data-start', s.start);
             seg.setAttribute('data-end', s.end);
 
-            const finalTop = (s.top - trackMinTop) * scaleFactor;
+            const finalTop = (s.top - minTop) * scaleFactor;
             const finalHeight = Math.max(s.height * scaleFactor, 4);
 
             seg.style.top = `${finalTop}px`;
@@ -277,28 +283,16 @@
 
             trackContainer.appendChild(seg);
         });
+    }
 
-        // 第四步：短色帶所屬的文字卡向短色帶做置中對齊
-        setTimeout(() => {
-            const cards = cardsContainer.querySelectorAll('.king-card');
-            cards.forEach(card => {
-                const id = card.getAttribute('data-id');
-                const segment = trackContainer.querySelector(`.bar-segment[data-id="${id}"]`);
-                if (segment) {
-                    const cardRect = card.getBoundingClientRect();
-                    const segRect = segment.getBoundingClientRect();
+    function applyGroupCenterAlignment(cardsContainer, trackContainer, sideCardsHeight, targetHeight) {
+        // 【步驟四】將整側文字卡群組與色帶群組視為整體，向最高側中心點做統一垂直平移對齊
+        const heightDiff = targetHeight - sideCardsHeight;
+        const overallOffset = heightDiff / 2;
 
-                    const segCenterY = segRect.top + segRect.height / 2;
-                    const cardCenterY = cardRect.top + cardRect.height / 2;
-                    const diffY = segCenterY - cardCenterY;
-
-                    if (Math.abs(diffY) > 0.5) {
-                        card.style.transform = `translateY(${diffY}px)`;
-                    }
-                }
-            });
-            drawLines();
-        }, 60);
+        if (Math.abs(overallOffset) > 1) {
+            cardsContainer.style.transform = `translateY(${overallOffset}px)`;
+        }
     }
 
     function drawLines(activeSide = null, activeId = null, overlapSet = new Set()) {
