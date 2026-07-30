@@ -2,17 +2,17 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・以色列王國年表 (v4.30 聯合王國擴充對齊版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.40 絕對時間軸座標系精準對齊版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
-        .notebook-container { max-width: 1500px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        .notebook-container { max-width: 1550px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        /* 採用三欄式排版：左側北國 | 中央雙軌色帶 | 右側聯合+南國 */
-        .main-layout { display: grid; grid-template-columns: 400px 90px 400px; justify-content: center; gap: 30px; align-items: start; position: relative; }
+        /* 三欄式排版：左側北國 | 中央雙軌時間軸 | 右側聯合+南國 */
+        .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 30px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .left-header { background: #e74c3c; }
@@ -55,14 +55,14 @@
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
-        /* 中央時間軸：包含左右雙軌色帶 */
+        /* 中央時間軸：絕對高度對齊容器 */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 4px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative; align-self: flex-start;
         }
-        .bar-track-container { display: flex; gap: 6px; width: 100%; justify-content: center; position: relative; }
-        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
+        .bar-track-container { display: flex; gap: 6px; width: 100%; justify-content: center; position: relative; height: 100%; }
+        .bar-track { width: 24px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
@@ -78,7 +78,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ 正在解析聯合王國與動態座標對齊</p>
+    <p class="subtitle" id="appSubtitle">✨ 正在執行 v4.40 絕對時間軸座標系與對齊運算</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -103,8 +103,8 @@
 </div>
 
 <script>
-    const TOP_BASE_YEAR = 1050; // 時間軸最頂端年份（包含聯合王國起始）
-    const TOTAL_YEARS = 464;    // 從 1050 BC 到 586 BC 共 464 年
+    const TOP_BASE_YEAR = 1050; // 時間軸絕對頂端 (1050 BC)
+    const TOTAL_YEARS = 464;    // 總跨度：1050 至 586 BC
 
     function parseCSV(text) {
         let lines = text.trim().split('\n');
@@ -148,8 +148,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.30)";
-            let mainSub = "✨ 聯合王國擴充與動態座標對齊完成";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.40)";
+            let mainSub = "✨ 絕對時間軸座標系精準對齊版";
             let leftTitle = "左側直欄";
             let rightTitle = "右側直欄";
 
@@ -178,28 +178,20 @@
             renderCards(leftData, 'left', leftCardsEl);
             renderCards(rightData, 'right', rightCardsEl);
 
-            // 2. 【動態高度自適應計算】以右側卡片總高為基準
+            // 2. 【高度統一與絕對時間軸計算】
             const rightCardsHeight = rightCardsEl.offsetHeight;
-            const dynamicTrackHeight = Math.max(rightCardsHeight, 600);
+            const leftCardsHeight = leftCardsEl.offsetHeight;
+            const dynamicTrackHeight = Math.max(rightCardsHeight, leftCardsHeight, 700);
 
             leftTrackEl.style.height = `${dynamicTrackHeight}px`;
             rightTrackEl.style.height = `${dynamicTrackHeight}px`;
             timelineCenterEl.style.height = `${dynamicTrackHeight}px`;
 
-            // 3. 計算像素比例尺
             const pxPerYear = dynamicTrackHeight / TOTAL_YEARS;
 
-            // 4. 【北國色帶自動位移對齊】
-            // 北國起始於 930 BC。計算 930 BC 距離頂端 (1050 BC) 的像素差，作為北國軌道的頂部 Margin
-            const northOffsetYears = TOP_BASE_YEAR - 930;
-            const northTopOffsetPx = northOffsetYears * pxPerYear;
-            leftTrackEl.style.marginTop = `${northTopOffsetPx}px`;
-
-            // 5. 渲染色帶
-            renderSegments(rightData, 'right', rightTrackEl, pxPerYear, TOP_BASE_YEAR);
-            // 北國軌道扣除掉位移後的有效高度
-            const northTrackHeight = dynamicTrackHeight - northTopOffsetPx;
-            renderSegments(leftData, 'left', leftTrackEl, pxPerYear, 930, northTrackHeight);
+            // 3. 【絕對座標色帶渲染】（自動依據 1050 BC 基準計算，不產生位移錯亂）
+            renderSegments(leftData, 'left', leftTrackEl, pxPerYear);
+            renderSegments(rightData, 'right', rightTrackEl, pxPerYear);
 
             initInteractive();
             drawLines();
@@ -237,7 +229,7 @@
         });
     }
 
-    function renderSegments(data, sideName, trackContainer, pxPerYear, trackStartYear, customMaxHeight = null) {
+    function renderSegments(data, sideName, trackContainer, pxPerYear) {
         data.forEach((item) => {
             const start = parseInt(item.start_year);
             const end = parseInt(item.end_year);
@@ -251,7 +243,8 @@
             seg.setAttribute('data-start', start);
             seg.setAttribute('data-end', end);
 
-            const topOffset = (trackStartYear - start) * pxPerYear;
+            // 嚴格採用絕對時間軸公式：距離 1050 BC 的像素差
+            const topOffset = (TOP_BASE_YEAR - start) * pxPerYear;
             const durationYears = Math.abs(start - end);
             const segHeight = Math.max(durationYears * pxPerYear, 4);
 
