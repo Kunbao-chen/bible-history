@@ -2,16 +2,17 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.45 細節精修版)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聖經歷史・萬能呈現框架 (v4.46 動態自動偵測與RWD精修版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
-        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
-        .notebook-container { max-width: 1550px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
+        .notebook-container { max-width: 1550px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 12px 8px; background: #fffbf0; border-radius: 6px; box-sizing: border-box; }
         
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
-        p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
+        p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
-        .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 30px; align-items: start; position: relative; }
+        .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .left-header { background: #e74c3c; }
@@ -33,7 +34,6 @@
         .king-card.tier-evil { background: #fadbd8; }
         .king-card.tier-special { background: #fef9e7; }
         
-        /* 深度優化：深色/亡國字卡無論何種狀態，字體強制清晰可見 */
         .king-card.tier-collapse { background: #4a1512; color: #ffffff !important; }
         .king-card.tier-collapse .king-name { color: #fce4ec !important; border-bottom: 1px solid #8a3b38; }
         .king-card.tier-collapse .meta-row, 
@@ -42,7 +42,6 @@
         .king-card.tier-collapse .prophet-row { color: #ffadad !important; border-top: 1px dashed #8a3b38; }
         .king-card.tier-collapse .prophet { color: #ffebee !important; }
 
-        /* 點亮狀態保持深色字卡的文字對比度，絕不消失 */
         .king-card.highlight-main {
             background: #ffeb99 !important; border: 2px solid #b9770e !important;
             border-left: 6px solid #b9770e !important; box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
@@ -89,13 +88,22 @@
         .bar-segment.highlight-overlap { border: 2px solid #f39c12 !important; filter: brightness(1.25); box-shadow: 0 0 6px #f1c40f; z-index: 20; }
 
         .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+
+        /* 手機與窄螢幕動態響應優化：防止兩側太貼邊 */
+        @media screen and (max-width: 1000px) {
+            body { padding: 4px; }
+            .notebook-container { padding: 8px 4px; }
+            .main-layout { grid-template-columns: 1fr; gap: 15px; padding: 0 8px; }
+            .timeline-center { order: -1; margin-bottom: 10px; align-self: center; }
+            .svg-overlay { display: none; } /* 小螢幕隱藏連線以保持清爽 */
+        }
     </style>
 </head>
 <body>
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.45 細節精修版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.46 動態自動偵測與響應精修版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -120,10 +128,6 @@
 </div>
 
 <script>
-    const TOP_BASE_YEAR = 1050; 
-    const BOTTOM_TARGET_YEAR = 586;
-    const TOTAL_YEARS = TOP_BASE_YEAR - BOTTOM_TARGET_YEAR; // 464 年
-
     function parseCSV(text) {
         let lines = text.trim().split('\n');
         let headers = lines[0].split(',').map(h => h.trim());
@@ -166,8 +170,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.45)";
-            let mainSub = "✨ 細節精修與對比度完美版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.46)";
+            let mainSub = "✨ 動態時間軸與安全邊距優化版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -185,6 +189,19 @@
 
             const leftData = dataRows.filter(r => r.layout_side === 'left').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
             const rightData = dataRows.filter(r => r.layout_side === 'right').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
+
+            // 🚀 動態自動偵測時間軸範圍（不再寫死）
+            let allYears = [];
+            dataRows.forEach(item => {
+                let s = parseInt(item.start_year);
+                let e = parseInt(item.end_year);
+                if (!isNaN(s)) allYears.push(s);
+                if (!isNaN(e)) allYears.push(e);
+            });
+
+            const TOP_BASE_YEAR = allYears.length > 0 ? Math.max(...allYears) : 1050;
+            const BOTTOM_TARGET_YEAR = allYears.length > 0 ? Math.min(...allYears) : 516;
+            const TOTAL_YEARS = TOP_BASE_YEAR - BOTTOM_TARGET_YEAR;
 
             const leftCardsEl = document.getElementById('leftCardsContainer');
             const rightCardsEl = document.getElementById('rightCardsContainer');
@@ -205,8 +222,8 @@
 
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear);
-            renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear);
+            renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear, TOP_BASE_YEAR);
+            renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear, TOP_BASE_YEAR);
 
             setTimeout(() => {
                 applyGroupCenterAlignment(leftCardsEl, leftCardsHeight, maxCardsHeight);
@@ -248,7 +265,7 @@
         });
     }
 
-    function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear) {
+    function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear, topBaseYear) {
         trackContainer.innerHTML = '';
 
         data.forEach((item) => {
@@ -256,7 +273,7 @@
             const end = parseInt(item.end_year);
             if (isNaN(start) || isNaN(end)) return;
 
-            const topOffset = (TOP_BASE_YEAR - start) * basePxPerYear;
+            const topOffset = (topBaseYear - start) * basePxPerYear;
             const duration = Math.abs(start - end);
             const height = Math.max(duration * basePxPerYear, 4);
 
@@ -298,6 +315,9 @@
         while (svg.childNodes.length > 0) {
             svg.removeChild(svg.lastChild);
         }
+
+        // 手機版隱藏連線時不執行繪製
+        if (window.innerWidth <= 1000) return;
 
         ['left', 'right'].forEach(side => {
             document.querySelectorAll(`#${side}CardsContainer .king-card`).forEach(card => {
@@ -391,4 +411,3 @@
 
 </body>
 </html>
-```[cite: 1]
