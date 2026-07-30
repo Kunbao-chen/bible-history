@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.43 四步驟嚴格對齊版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.44 全局統一比例尺版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -76,7 +76,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.43 四步驟嚴格對齊運算中</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.44 全局統一比例尺版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -147,8 +147,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.43)";
-            let mainSub = "✨ 四步驟嚴格對齊版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.44)";
+            let mainSub = "✨ 全局統一比例尺版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -186,17 +186,16 @@
             rightTrackEl.style.height = `${maxCardsHeight}px`;
             timelineCenterEl.style.height = `${maxCardsHeight}px`;
 
-            // 【步驟一】計算絕對年數定義色帶統一比例尺
+            // 【步驟一 & 三】計算全域統一的像素/年比例尺，讓兩側色帶擁有完全一致的時間比例，並縮放適應最高側文字卡總高
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            // 【步驟三】色帶區域總高適應文字卡最高側高度，兩側色帶等比例縮放
-            renderAndScaleTracks(leftData, 'left', leftTrackEl, basePxPerYear, maxCardsHeight);
-            renderAndScaleTracks(rightData, 'right', rightTrackEl, basePxPerYear, maxCardsHeight);
+            renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear);
+            renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear);
 
             // 【步驟四】非最高側的文字卡與色帶群組做整體置中對齊
             setTimeout(() => {
-                applyGroupCenterAlignment(leftCardsEl, leftTrackEl, leftCardsHeight, maxCardsHeight);
-                applyGroupCenterAlignment(rightCardsEl, rightTrackEl, rightCardsHeight, maxCardsHeight);
+                applyGroupCenterAlignment(leftCardsEl, leftCardsHeight, maxCardsHeight);
+                applyGroupCenterAlignment(rightCardsEl, rightCardsHeight, maxCardsHeight);
                 drawLines();
             }, 60);
 
@@ -234,13 +233,10 @@
         });
     }
 
-    function renderAndScaleTracks(data, sideName, trackContainer, basePxPerYear, targetHeight) {
+    function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear) {
         trackContainer.innerHTML = '';
-        let rawSegs = [];
-        let minTop = Infinity;
-        let maxBottom = -Infinity;
 
-        // 1. 計算絕對時間定位
+        // 嚴格依據全域絕對年數基準 (1050 BC 開始) 計算位置，確保兩側比例尺百分之百相同
         data.forEach((item) => {
             const start = parseInt(item.start_year);
             const end = parseInt(item.end_year);
@@ -250,30 +246,17 @@
             const duration = Math.abs(start - end);
             const height = Math.max(duration * basePxPerYear, 4);
 
-            rawSegs.push({ item, uniqueId: `${sideName}-${item.layout_order}`, start, end, top: topOffset, height });
-            if (topOffset < minTop) minTop = topOffset;
-            if ((topOffset + height) > maxBottom) maxBottom = (topOffset + height);
-        });
-
-        const rawSpan = maxBottom - minTop;
-        const scaleFactor = rawSpan > 0 ? (targetHeight / rawSpan) : 1;
-
-        // 2. 渲染並等比例縮放色帶
-        rawSegs.forEach(s => {
             const seg = document.createElement('div');
             seg.className = 'bar-segment';
             seg.setAttribute('data-side', sideName);
-            seg.setAttribute('data-id', s.uniqueId);
-            seg.setAttribute('data-start', s.start);
-            seg.setAttribute('data-end', s.end);
+            seg.setAttribute('data-id', `${sideName}-${item.layout_order}`);
+            seg.setAttribute('data-start', start);
+            seg.setAttribute('data-end', end);
 
-            const finalTop = (s.top - minTop) * scaleFactor;
-            const finalHeight = Math.max(s.height * scaleFactor, 4);
+            seg.style.top = `${topOffset}px`;
+            seg.style.height = `${height}px`;
 
-            seg.style.top = `${finalTop}px`;
-            seg.style.height = `${finalHeight}px`;
-
-            const tier = s.item.justice_tier;
+            const tier = item.justice_tier;
             if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
             else if(tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
             else if(tier === 'evil') seg.style.background = '#f5b7b1';
@@ -285,8 +268,8 @@
         });
     }
 
-    function applyGroupCenterAlignment(cardsContainer, trackContainer, sideCardsHeight, targetHeight) {
-        // 【步驟四】將整側文字卡群組與色帶群組視為整體，向最高側中心點做統一垂直平移對齊
+    function applyGroupCenterAlignment(cardsContainer, sideCardsHeight, targetHeight) {
+        // 【步驟四】非最高側的群組整體置中對齊
         const heightDiff = targetHeight - sideCardsHeight;
         const overallOffset = heightDiff / 2;
 
