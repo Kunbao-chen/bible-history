@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聖經歷史・萬能呈現框架 (v4.48 智慧時間防呆與完整版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.49 色段全亮與標頭修正版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -42,6 +42,7 @@
         .king-card.tier-collapse .prophet-row { color: #ffadad !important; border-top: 1px dashed #8a3b38; }
         .king-card.tier-collapse .prophet { color: #ffebee !important; }
 
+        /* 主選中狀態：卡片與色段整條高亮 */
         .king-card.highlight-main {
             background: #ffeb99 !important; border: 2px solid #b9770e !important;
             border-left: 6px solid #b9770e !important; box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
@@ -54,6 +55,7 @@
         .king-card.highlight-main .prophet,
         .king-card.highlight-main span { color: #111111 !important; }
 
+        /* 重疊對應狀態 */
         .king-card.highlight-overlap {
             background: #fef9e7 !important; border: 2px solid #f39c12 !important;
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.8); z-index: 20; color: #111111 !important;
@@ -84,12 +86,27 @@
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
             transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0; right: 0;
         }
-        .bar-segment.highlight-main { border: 2px solid #b9770e !important; filter: brightness(1.4); box-shadow: 0 0 10px #d35400; z-index: 25; }
-        .bar-segment.highlight-overlap { border: 2px solid #f39c12 !important; filter: brightness(1.25); box-shadow: 0 0 6px #f1c40f; z-index: 20; }
+        
+        /* 整個色段主高亮：金黃色填滿 + 強烈外發光 */
+        .bar-segment.highlight-main { 
+            background: #ffcc00 !important; 
+            border: 2px solid #b9770e !important; 
+            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; 
+            z-index: 25; 
+            filter: none !important; 
+        }
+        
+        /* 整個色段重疊高亮：柔和亮黃色填滿 */
+        .bar-segment.highlight-overlap { 
+            background: #ffe066 !important; 
+            border: 2px solid #f39c12 !important; 
+            box-shadow: 0 0 8px #f1c40f !important; 
+            z-index: 20; 
+            filter: none !important; 
+        }
 
         .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
-        /* 手機與窄螢幕動態響應優化：防止兩側太貼邊 */
         @media screen and (max-width: 1000px) {
             body { padding: 4px; }
             .notebook-container { padding: 8px 4px; }
@@ -103,7 +120,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.48 智慧時間防呆與完整精修版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.49 色段全亮與標頭修正版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -170,19 +187,20 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.48)";
-            let mainSub = "✨ 具備智慧時間防呆與標題同步版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.49)";
+            let mainSub = "✨ 具備色段全亮與標頭同步版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
+            // 修正：meta 行的值實際上存在於 `name` 欄位中
             metaRows.forEach(m => {
-                if (m.key === 'app_title' && m.value && m.value !== '.') mainTitle = m.value;
-                if (m.key === 'app_subtitle' && m.value && m.value !== '.') mainSub = m.value;
-                if (m.key === 'left_header' && m.value && m.value !== '.') leftTitle = m.value;
-                if (m.key === 'right_header' && m.value && m.value !== '.') rightTitle = m.value;
+                let val = m.name || m.value;
+                if (m.key === 'app_title' && val && val !== '.') mainTitle = val;
+                if (m.key === 'app_subtitle' && val && val !== '.') mainSub = val;
+                if (m.key === 'left_header' && val && val !== '.') leftTitle = val;
+                if (m.key === 'right_header' && val && val !== '.') rightTitle = val;
             });
 
-            // 讓 CSV 內文的標題同步連動至瀏覽器分頁標題
             document.title = mainTitle;
             document.getElementById('appTitle').innerText = mainTitle;
             document.getElementById('appSubtitle').innerText = mainSub;
@@ -192,7 +210,6 @@
             const leftData = dataRows.filter(r => r.layout_side === 'left').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
             const rightData = dataRows.filter(r => r.layout_side === 'right').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
 
-            // 動態自動偵測時間軸範圍（完全不寫死，並具備防呆機制）
             let allYears = [];
             dataRows.forEach(item => {
                 let s = parseInt(item.start_year);
@@ -247,7 +264,7 @@
             card.className = `king-card side-${sideName}-card tier-${item.justice_tier || 'default'}`;
             card.setAttribute('data-side', sideName);
             card.setAttribute('data-id', uniqueId);
-            // 智慧防呆：自動取較大值作為起點、較小值作為終點
+            
             const rawS = parseInt(item.start_year);
             const rawE = parseInt(item.end_year);
             const cardStart = !isNaN(rawS) && !isNaN(rawE) ? Math.max(rawS, rawE) : item.start_year;
@@ -281,7 +298,6 @@
             const rawE = parseInt(item.end_year);
             if (isNaN(rawS) || isNaN(rawE)) return;
 
-            // 智慧防呆：確保 start 永遠是較大數（古老），end 永遠是較小數（近代）
             const start = Math.max(rawS, rawE);
             const end = Math.min(rawS, rawE);
 
