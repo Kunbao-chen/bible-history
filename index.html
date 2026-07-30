@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.40 絕對時間軸座標系精準對齊版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.41 精準比例與群組置中對齊版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -11,7 +11,6 @@
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        /* 三欄式排版：左側北國 | 中央雙軌時間軸 | 右側聯合+南國 */
         .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 30px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
@@ -55,7 +54,6 @@
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
-        /* 中央時間軸：絕對高度對齊容器 */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 4px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
@@ -78,7 +76,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ 正在執行 v4.40 絕對時間軸座標系與對齊運算</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.41 精準比例與群組置中對齊運算中</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -103,8 +101,8 @@
 </div>
 
 <script>
-    const TOP_BASE_YEAR = 1050; // 時間軸絕對頂端 (1050 BC)
-    const TOTAL_YEARS = 464;    // 總跨度：1050 至 586 BC
+    const TOP_BASE_YEAR = 1050; 
+    const TOTAL_YEARS = 464;    
 
     function parseCSV(text) {
         let lines = text.trim().split('\n');
@@ -148,16 +146,16 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.40)";
-            let mainSub = "✨ 絕對時間軸座標系精準對齊版";
-            let leftTitle = "左側直欄";
-            let rightTitle = "右側直欄";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.41)";
+            let mainSub = "✨ 比例補償與群組置中對齊版";
+            let leftTitle = "北國以色列 (19王全展開)";
+            let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
             metaRows.forEach(m => {
-                if (m.key === 'app_title') mainTitle = m.value;
-                if (m.key === 'app_subtitle') mainSub = m.value;
-                if (m.key === 'left_header') leftTitle = m.value;
-                if (m.key === 'right_header') rightTitle = m.value;
+                if (m.key === 'app_title' && m.value && m.value !== '.') mainTitle = m.value;
+                if (m.key === 'app_subtitle' && m.value && m.value !== '.') mainSub = m.value;
+                if (m.key === 'left_header' && m.value && m.value !== '.') leftTitle = m.value;
+                if (m.key === 'right_header' && m.value && m.value !== '.') rightTitle = m.value;
             });
 
             document.getElementById('appTitle').innerText = mainTitle;
@@ -178,30 +176,31 @@
             renderCards(leftData, 'left', leftCardsEl);
             renderCards(rightData, 'right', rightCardsEl);
 
-            // 2. 【高度統一與絕對時間軸計算】
-            const rightCardsHeight = rightCardsEl.offsetHeight;
+            // 2. 計算兩側文字卡的「總高度」
             const leftCardsHeight = leftCardsEl.offsetHeight;
-            const dynamicTrackHeight = Math.max(rightCardsHeight, leftCardsHeight, 700);
+            const rightCardsHeight = rightCardsEl.offsetHeight;
+            const maxCardsHeight = Math.max(leftCardsHeight, rightCardsHeight, 800);
 
-            leftTrackEl.style.height = `${dynamicTrackHeight}px`;
-            rightTrackEl.style.height = `${dynamicTrackHeight}px`;
-            timelineCenterEl.style.height = `${dynamicTrackHeight}px`;
+            // 統一中央時間軸高度，讓長軌道與最高文字卡等高
+            leftTrackEl.style.height = `${maxCardsHeight}px`;
+            rightTrackEl.style.height = `${maxCardsHeight}px`;
+            timelineCenterEl.style.height = `${maxCardsHeight}px`;
 
-            const pxPerYear = dynamicTrackHeight / TOTAL_YEARS;
+            const pxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            // 3. 【絕對座標色帶渲染】（自動依據 1050 BC 基準計算，不產生位移錯亂）
-            renderSegments(leftData, 'left', leftTrackEl, pxPerYear);
-            renderSegments(rightData, 'right', rightTrackEl, pxPerYear);
+            // 3. 依照您的演算法依序建構色帶與精準比例補償
+            renderAndScaleTracks(leftData, 'left', leftTrackEl, leftCardsEl, pxPerYear, maxCardsHeight);
+            renderAndScaleTracks(rightData, 'right', rightTrackEl, rightCardsEl, pxPerYear, maxCardsHeight);
 
             initInteractive();
             drawLines();
         } catch (e) {
-            console.error("無法讀取 CSV 檔案：", e);
-            alert("載入 CSV 失敗，請確認是否透過本機伺服器運行。");
+            console.error("初始化失敗：", e);
         }
     }
 
     function renderCards(data, sideName, container) {
+        container.innerHTML = '';
         data.forEach((item) => {
             const uniqueId = `${sideName}-${item.layout_order}`;
             const card = document.createElement('div');
@@ -211,8 +210,7 @@
             card.setAttribute('data-start', item.start_year);
             card.setAttribute('data-end', item.end_year);
 
-            let fatherLabel = '👨 父親';
-            let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
+            let fatherHtml = item.father ? `👨 父親：${item.father}` : '';
             let femaleHtml = item.female_info ? `<span class="female-info">${item.female_info}</span>` : '';
             let middleParts = [fatherHtml, femaleHtml].filter(p => p !== '').join(' | ');
             let middleRowHtml = middleParts ? `<div class="meta-row">${middleParts}</div>` : '';
@@ -229,37 +227,91 @@
         });
     }
 
-    function renderSegments(data, sideName, trackContainer, pxPerYear) {
+    function renderAndScaleTracks(data, sideName, trackContainer, cardsContainer, pxPerYear, totalTrackHeight) {
+        // A. 先初步算出各色帶的原始位置與長度
+        let rawSegments = [];
+        let minTop = Infinity;
+        let maxBottom = -Infinity;
+
         data.forEach((item) => {
             const start = parseInt(item.start_year);
             const end = parseInt(item.end_year);
             if (isNaN(start) || isNaN(end)) return;
 
-            const uniqueId = `${sideName}-${item.layout_order}`;
-            const seg = document.createElement('div');
-            seg.className = 'bar-segment';
-            seg.setAttribute('data-side', sideName);
-            seg.setAttribute('data-id', uniqueId);
-            seg.setAttribute('data-start', start);
-            seg.setAttribute('data-end', end);
-
-            // 嚴格採用絕對時間軸公式：距離 1050 BC 的像素差
             const topOffset = (TOP_BASE_YEAR - start) * pxPerYear;
             const durationYears = Math.abs(start - end);
             const segHeight = Math.max(durationYears * pxPerYear, 4);
 
-            seg.style.top = `${topOffset}px`;
-            seg.style.height = `${segHeight}px`;
+            rawSegments.push({
+                item,
+                uniqueId: `${sideName}-${item.layout_order}`,
+                start,
+                end,
+                rawTop: topOffset,
+                rawHeight: segHeight
+            });
 
-            if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
-            else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
-            else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
-            else if(item.justice_tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
-            else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
+            if (topOffset < minTop) minTop = topOffset;
+            if ((topOffset + segHeight) > maxBottom) maxBottom = (topOffset + segHeight);
+        });
+
+        const rawClusterHeight = maxBottom - minTop;
+        const cardsActualHeight = cardsContainer.offsetHeight;
+
+        // B. 計算等比例縮放係數 (Scale Factor) 使色帶區塊總高對齊該側文字卡總高
+        const scaleFactor = rawClusterHeight > 0 ? (cardsActualHeight / rawClusterHeight) : 1;
+
+        // C. 正式渲染色帶並進行等比例縮放與平移
+        rawSegments.forEach(segInfo => {
+            const seg = document.createElement('div');
+            seg.className = 'bar-segment';
+            seg.setAttribute('data-side', sideName);
+            seg.setAttribute('data-id', segInfo.uniqueId);
+            seg.setAttribute('data-start', segInfo.start);
+            seg.setAttribute('data-end', segInfo.end);
+
+            // 依照您的演算法：短色帶/群組等比例變更長度並同步平移高度
+            const scaledTop = (segInfo.rawTop - minTop) * scaleFactor;
+            const scaledHeight = Math.max(segInfo.rawHeight * scaleFactor, 4);
+
+            seg.style.top = `${scaledTop}px`;
+            seg.style.height = `${scaledHeight}px`;
+
+            const tier = segInfo.item.justice_tier;
+            if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
+            else if(tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
+            else if(tier === 'evil') seg.style.background = '#f5b7b1';
+            else if(tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
+            else if(tier === 'collapse') seg.style.background = '#641e16';
             else seg.style.background = sideName === 'left' ? '#e74c3c' : '#27ae60';
 
             trackContainer.appendChild(seg);
         });
+
+        // D. 執行「文字卡向對應色帶中心點做置中對齊」的動態微調
+        setTimeout(() => {
+            const cards = cardsContainer.querySelectorAll('.king-card');
+            cards.forEach(card => {
+                const id = card.getAttribute('data-id');
+                const segment = trackContainer.querySelector(`.bar-segment[data-id="${id}"]`);
+                if (segment) {
+                    const cardRect = card.getBoundingClientRect();
+                    const segRect = segment.getBoundingClientRect();
+                    const trackRect = trackContainer.getBoundingClientRect();
+
+                    // 計算色帶中心點相對於文字卡容器的偏移量，讓卡片完美對齊色帶中心
+                    const segCenterY = segRect.top + segRect.height / 2;
+                    const cardCenterY = cardRect.top + cardRect.height / 2;
+                    const diffY = segCenterY - cardCenterY;
+
+                    if (Math.abs(diffY) > 1) {
+                        const currentTransform = card.style.transform || '';
+                        card.style.transform = `translateY(${diffY}px)`;
+                    }
+                }
+            });
+            drawLines();
+        }, 50);
     }
 
     function drawLines(activeSide = null, activeId = null, overlapSet = new Set()) {
