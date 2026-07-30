@@ -2,11 +2,11 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・以色列猶大分裂王國年代表 (v3.14)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.10 純CSV驅動版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
-        .notebook-container { max-width: 1350px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        .notebook-container { max-width: 1400px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
@@ -14,8 +14,8 @@
         .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
-        .north-header { background: #e74c3c; }
-        .south-header { background: #27ae60; }
+        .left-header { background: #e74c3c; }
+        .right-header { background: #27ae60; }
 
         .cards-side { display: flex; flex-direction: column; gap: 6px; position: relative; }
 
@@ -25,8 +25,8 @@
             line-height: 1.35; position: relative; cursor: pointer;
             transition: all 0.2s ease;
         }
-        .north-card { border-left: 4px solid #e74c3c; }
-        .south-card { border-left: 4px solid #27ae60; }
+        .side-left-card { border-left: 4px solid #e74c3c; }
+        .side-right-card { border-left: 4px solid #27ae60; }
         
         .king-card.tier-good { background: #eafaf1; }
         .king-card.tier-bad { background: #fdfefe; }
@@ -54,30 +54,10 @@
         }
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
-        
-        .meta-row { 
-            white-space: normal; 
-            word-break: break-all;
-            color: #34495e; 
-            font-size: 9.5pt; 
-            margin: 2px 0;
-            line-height: 1.3;
-        }
-        
-        /* v3.14 */
-        .prophet-row {
-            white-space: normal;
-            word-break: break-all;
-            color: #78281f;
-            font-size: 11pt;
-            font-weight: bold;
-            margin: 3px 0;
-            padding-top: 2px;
-            border-top: 1px dashed #fadbd8;
-        }
+        .meta-row { white-space: normal; word-break: break-all; color: #34495e; font-size: 9.5pt; margin: 2px 0; line-height: 1.3; }
+        .prophet-row { white-space: normal; word-break: break-all; color: #78281f; font-size: 11pt; font-weight: bold; margin: 3px 0; padding-top: 2px; border-top: 1px dashed #fadbd8; }
         .prophet { font-weight: bold; color: #922b21; }
-        .tier-collapse .prophet { color: #f9e79f !important; } /* 崩潰卡片上的先知改用亮金色強化辨識度 */
-        
+        .tier-collapse .prophet { color: #f9e79f !important; }
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
@@ -93,53 +73,39 @@
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
             transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0; right: 0;
         }
+        .bar-segment.highlight-main { border: 2px solid #b9770e !important; filter: brightness(1.4); box-shadow: 0 0 10px #d35400; z-index: 25; }
+        .bar-segment.highlight-overlap { border: 2px solid #f39c12 !important; filter: brightness(1.25); box-shadow: 0 0 6px #f1c40f; z-index: 20; }
 
-        .bar-segment.highlight-main {
-            border: 2px solid #b9770e !important;
-            filter: brightness(1.4);
-            box-shadow: 0 0 10px #d35400;
-            z-index: 25;
-        }
-        .bar-segment.highlight-overlap {
-            border: 2px solid #f39c12 !important;
-            filter: brightness(1.25);
-            box-shadow: 0 0 6px #f1c40f;
-            z-index: 20;
-        }
-
-        .svg-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 10;
-        }
+        .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
     </style>
 </head>
 <body>
 
 <div class="notebook-container">
-    <h1>✏️ 聖經歷史・以色列猶大分裂王國年代表 (v3.14)</h1>
-    <p class="subtitle">✨ v3.14</p>
+    <h1 id="appTitle">載入中...</h1>
+    <p class="subtitle" id="appSubtitle">✨ 正在解析 CSV 呈現框架設定</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
 
-        <!-- 北國區 -->
+        <!-- 左側直欄 -->
         <div>
-            <div class="column-header north-header">北國以色列 (19王全展開)</div>
-            <div class="cards-side" id="northCardsContainer"></div>
+            <div class="column-header left-header" id="leftHeaderTitle">左側直欄</div>
+            <div class="cards-side" id="leftCardsContainer"></div>
         </div>
 
-        <!-- 中間比例色帶區 (絕對時間軸) -->
+        <!-- 中間時間軸 -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
-                <div class="bar-track" id="northTrack" style="height: 2750px;"></div>
-                <div class="bar-track" id="southTrack" style="height: 2750px;"></div>
+                <div class="bar-track" id="leftTrack" style="height: 2750px;"></div>
+                <div class="bar-track" id="rightTrack" style="height: 2750px;"></div>
             </div>
         </div>
 
-        <!-- 南國區 -->
+        <!-- 右側直欄 -->
         <div>
-            <div class="column-header south-header">南國猶大 (20位統治者 + 亡國時期)</div>
-            <div class="cards-side" id="southCardsContainer"></div>
+            <div class="column-header right-header" id="rightHeaderTitle">右側直欄</div>
+            <div class="cards-side" id="rightCardsContainer"></div>
         </div>
     </div>
 </div>
@@ -149,137 +115,125 @@
     const TOTAL_YEARS = 344;
     const TRACK_HEIGHT = 2750;
 
-    const csvNorthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
-0,930,909,bad,1. 耶羅波安一世,22年,政權奠基者設金牛犢,尼八(以法蓮支派撒利達人),,亞希雅,分國後於伯特利與但設金牛犢切斷聖殿向心力；神人預言其祭壇破裂。〔王上12-14; 代下10-13〕
-1,909,908,evil,2. 拿答,2年,行惡陷家絕,耶羅波安一世,,,率軍圍攻非利士基比頓時，遭部下巴沙叛變刺殺，全家遭殘酷滅絕，應驗亞希雅預言。〔王上15〕
-2,908,886,bad,3. 巴沙,24年,篡位步前王後塵,亞希亞(以薩迦支派),,耶戶,建立新政權；築拉瑪封鎖猶大；受先知耶戶嚴厲審判，預言其後代同遭刀殺滅絕。〔王上15-16; 代下16〕
-3,886,885,evil,4. 以拉,2年,荒淫酗酒遭滅,巴沙,,,在得撒家宰亞比達家中飲酒大醉時，被戰車長官心利趁隙暗殺，宗族全數被斬草除根。〔王上16〕
-4,885,885,evil,5. 心利,7日,閃電篡位僅7天,管理一半戰車長官,,,,,率戰車的一半兵力在得撒叛變刺殺以拉自立；以色列軍民隨即擁立暗利反攻並圍城，心利絕望放火自焚於王宮內結束短命政權。〔王上16〕
-5,885,874,bad,6. 暗利,12年,軍閥奪權惡過前人,軍長/資深統帥,,,內戰擊敗對手提比尼登基；買下撒瑪利亞山建立堅固新首都撒瑪利亞，行惡比前王更甚，奠定強悍軍閥統治。〔王上16〕
-6,874,853,evil,7. 亞哈,22年,引進巴力崇拜極惡,暗利,妻：耶洗別(西頓王謁巴力之女),以利亞,娶西頓王之女耶洗別使拜巴力合法化；迦密山大賽火燒祭壇；因貪奪拿伯葡萄園遭審判；基列拉末戰役中箭身亡。〔王上16-22; 代下18〕
-7,853,852,evil,8. 亞哈謝,2年,隨從父母拜巴力,亞哈,母親：耶洗別(西頓王謁巴力之女),,宮中格子欄跌傷求問巴力西卜，以利亞從天降火宣告其必死，病發無子而亡。〔王上22; 王下1〕
-8,852,841,bad,9. 約蘭,12年,除巴力柱仍拜金牛,亞哈,母親：耶洗別(西頓王謁巴力之女),以利沙,經歷以利沙多次神蹟；與猶大約沙法聯手打摩押；後在耶斯列養傷，遭耶戶叛箭射殺。〔王下3, 8-9〕
-9,841,814,good,10. 耶戶,28年,血洗亞哈家立大功,寧示,,以利沙,奉神命肅清亞哈王室與巴力先知，改巴力廟為廁所；雖激進執行神旨意，但自身仍未離棄金牛犢。〔王下9-10; 代下22〕
-10,814,798,bad,11. 約哈斯,17年,遭亞蘭欺壓窘敗,耶戶,,,國力衰弱，遭亞蘭王哈薛與便哈達欺壓至僅剩極少兵力；哀求耶和華，神垂聽並賜拯救者脫困。〔王下13〕
-11,798,782,bad,12. 約阿施,16年,行惡但三勝亞蘭,約哈斯,,以利沙,探病臨終以利沙並按意擊地三下，應驗三勝亞蘭；曾南下攻破猶大耶路撒冷並劫掠聖殿。〔王下13; 代下25〕
-12,782,753,special,13. 耶羅波安二世,41年,收復失土國力極盛,約阿施,,阿摩司/何西阿/約拿,依約拿預言恢復以色列北方邊界；經濟空前繁榮，但社會道德極度腐敗、欺壓貧寒。〔王下14; 摩1-7; 何1-4〕
-13,753,753,evil,14. 撒迦利亞,6個月,行惡被叛殺絕嗣,耶羅波安二世,,,在百姓面前被沙龍公開刺殺，應驗神曾向耶戶應許「子孫坐位直到四代」的預言終結。〔王下15〕
-14,752,752,evil,15. 沙龍,1個月,篡位一月被擊殺,雅比,,,篡位僅一個月，即被從得撒上來的米拿現攻入撒瑪利亞王宮擊殺，政權極其短命。〔王下15〕
-15,752,742,bad,16. 米拿現,10年,殘暴向亞述進貢,迦底,,,攻打提弗薩殘忍剖開孕婦；向亞述王普勒進貢千他連得銀子以換取亞述扶持其王位。〔王下15〕
-16,742,740,evil,17. 比加轄,2年,行惡遭政變殺害,米拿現,,,在撒瑪利亞王宮中，被將領利瑪利的兒子比加率領五十人謀殺篡位。〔王下15〕
-17,740,732,bad,18. 比加,20年,聯亞蘭對抗亞述失利,利瑪利,,,與亞蘭結盟攻猶大失敗；引來亞述王提革拉毗列薩大規模入侵，北方大片領土淪陷。〔王下15-16; 代下28; 賽7〕
-18,732,722,collapse,19. 何細亞,9年,末代背叛亞述亡國,i拉,,,💀 北國滅亡：聯合埃及暗中背叛亞述；遭亞述王撒縵以色圍城三年，撒瑪利亞淪陷，以色列人被擄異鄉。〔王下17〕`;
+    // 萬能 CSV 解析器 (支援引號內含逗號)
+    function parseCSV(text) {
+        let lines = text.trim().split('\n');
+        let headers = lines[0].split(',').map(h => h.trim());
+        let result = [];
 
-    const csvSouthData = `index,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
-0,930,913,bad,1. 羅波安,17年,剛愎自用國勢衰弱,所羅門,母親：拿瑪(亞們人女子的王后),示瑪雅,年四十一歲登基；因拒絕老臣建議導致王國分裂；先知示瑪雅預言阻內戰；第五年遭埃及王示撒掠奪聖殿財寶。〔王上12, 14; 代下10-12〕
-1,913,911,bad,2. 亞比央,3年,步父後塵靠神大勝,羅波安,母親：瑪迦(押沙龍的女兒),,登基年齡未記；在洗瑪音山面臨百萬敵軍時，因呼求神而大敗耶羅波安，斬敵五十萬。〔王上15; 代下13〕
-2,911,870,good,3. ⭐ 亞撒,41年,行善大革新除偶像,亞比央,祖母：瑪迦(押沙龍的女兒),亞撒利雅/哈拿尼,廢祖母瑪迦太后並燒毀偶像；大敗古實王謝拉百萬大軍；晚年腳患病僅求醫生未求問神。〔王上15; 代下14-16〕
-3,870,848,good,4. ⭐ 約沙法,25年,效法大衛教導律法,亞撒,母親：阿蘇巴(示利希的女兒),耶戶,年三十五歲登基；差利未人全國教導律法；組建詩班讚美隊不費刀兵大勝摩押與亞捫聯軍。〔王上22; 代下17-20〕
-4,848,841,bad,5. 約蘭,8年,娶亞哈女行惡屠弟,約沙法,妻:亞她利雅(北國亞哈與耶洗別之女),以利亞,年三十二歲登基；因娶北國亞哈之女亞她利雅陷入拜偶像，殺盡諸弟；以利亞信函預言其腸病痛苦死亡。〔王下8; 代下21〕
-5,841,841,bad,6. 亞哈謝,1年,隨從亞哈家惡行,約蘭,母親：亞她利雅(北國亞哈與耶洗別之女),,年二十二歲登基；隨從母系亞哈家族惡行；探視受傷的北國約蘭時，遭耶戶奉神命追殺身亡。〔王下8-9; 代下22〕
-6,841,835,evil,7. 亞她利雅,女王6年,血腥篡位滅絕王室,北國亞哈之女(母為耶洗別),,,亞她利雅死後直接篡位自立為女王；血腥屠殺大衛王室企圖滅絕血脈；後於馬門被處決。〔王下11; 代下22-23〕
-7,835,796,good,8. 約阿施,40年,早年行善修殿晚年背道,亞哈謝,母親：西比亞(別是巴人),撒迦利亞(祭司耶何耶大之子),年七歲登基；大舉奉獻修繕聖殿；晚年背道下令用石頭打死祭司之子撒迦利亞，後被臣下謀殺。〔王下11-12; 代下24〕
-8,796,767,bad,9. 亞瑪謝,29年,心不專誠拜以東偶像,約阿施,母親：約耶坦(耶路撒冷人),,年二十五歲登基；擊敗以東卻反拜以東神像；挑戰北國約阿施慘敗，耶路撒冷城牆被拆毀百餘尺。〔王下14; 代下25〕
-9,767,740,good,10. ⭐ 烏西雅,52年,強盛發明戰具,亞瑪謝,母親：耶可利雅(耶路撒冷人),以賽亞/何西阿,年十六歲登基；築城牆、發明強大機械；因擅入聖殿香壇燒香，額上當場長大麻瘋，終身隔離。〔王下15; 代下26; 賽6〕
-10,740,732,good,11. ⭐ 約坦,16年,行正道日漸強盛,烏西雅,母親：耶魯沙(撒督的女兒),彌迦/以賽亞,年二十五歲登基；建立耶和華殿的上門；築亞們山城的牆與城堡，擊敗亞捫人使其納貢，國力日漸強盛。〔王下15; 代下27; 彌1; 賽1〕
-11,732,716,bad,12. 亞哈斯,16年,焚燒親子獻祭求救亞述,約坦,母親：亞比(撒迦利亞的女兒),以賽亞/彌迦,年二十歲登基；仿異教將兒子經火焚燒；改造聖殿格局並向亞述稱臣求救，致國力陷入極度屈辱。〔王下16; 代下28; 賽7〕
-12,716,687,good,13. ⭐ 希西家,29年,極大復興神蹟拯救,亞哈斯,母親：亞比(撒迦利亞的女兒),以賽亞/彌迦,年二十五歲登基；潔淨聖殿、守逾越節、砸銅蛇；挖西羅亞引水隧道；切實禱告令亞述大軍一夜潰敗。〔王下18-20; 代下29-32; 賽36-39〕
-13,687,642,evil,14. 瑪拿西,55年,極邪惡流無辜血後悔改,希西家,母親：希弗巴,,年十二歲登基；作惡極端流無辜血；被亞述鐵鍊鎖往巴比倫後痛悔蒙赦免，回國後大力潔淨聖殿。〔王下21; 代下33〕
-14,642,640,bad,15. 亞們,2年,行惡不改遭刺殺,瑪拿西,母親：米舒利密(約巴拿哈斯之女哈魯特人),西番雅/耶利米,年二十二歲登基；未效法父親晚期悔改，加倍犯罪祭拜偶像，僅執政兩年內即被宮臣聯手刺殺。〔王下21; 代下33〕
-15,640,609,good,16. ⭐ 約西亞,31年,8歲即位全面大改革,亞們,母親：耶底大(拔疊人亞大雅的女兒),耶利米等,年八歲登基；修理聖殿尋獲律法書引發全國大革新；米吉多戰場盲目攔阻埃及尼哥不幸陣亡。〔王下22-23; 代下34-35; 耶1〕
-16,609,609,bad,17. 約哈斯,3個月,行惡被廢黜流亡,約西亞,母親：哈慕達(立拿人耶利米的女兒),耶利米,年二十三歲登基；登基僅三個月即遭埃及法老尼哥廢黜鎖禁，罰巨額罰金並解送到埃及客死他鄉。〔王下23; 代下36; 耶22〕
-17,609,598,bad,18. 約雅敬,11年,暴虐焚燒先知書卷,約西亞,母親：西烏達(魯瑪人毗大雅的女兒),耶利米,年二十五歲登基；親手割破並火燒耶利米神聖書卷；遭巴比倫尼布甲尼撒捆鎖並掠奪聖殿器皿。〔王下23-24; 代下36; 耶36〕
-18,597,597,evil,19. 約雅斤,3個月,行惡投降被擄,約雅敬,母親：尼護施達(耶路撒冷人以利拿坦的女兒),耶利米/以西結,年十八歲登基；向巴比倫王投降後，聖殿與王宮所有財寶及金器全被運往巴比倫，本人長年囚禁。〔王下24; 代下36; 結1〕
-19,597,586,collapse,20. 西底家,11年,末代行惡不聽勸告,約西亞,母親：哈慕達(立拿人耶利米的女兒),耶利米/以西結,年二十一歲登基；背叛巴比倫引致慘烈圍城；城破逃跑被獲，眼見眾子被殺後被挖雙眼鎖往巴比倫。〔王下24-25; 代下36; 耶39, 52; 結12〕
-20,586,586,collapse,21. 亡國與被擄時期,586 BC,聖殿被毀南國滅亡,,,耶利米等,尼布撒拉旦率軍徹底焚燒聖殿與城牆，器皿砸碎運走，百姓被擄至巴比倫，大衛王朝正式中斷。〔王下25; 代下36; 耶52〕`;
-
-    function parseCSV(csvText) {
-        const lines = csvText.trim().split('\n');
-        const headers = lines[0].split(',');
-        const result = [];
         for (let i = 1; i < lines.length; i++) {
-            const obj = {};
-            let currentline = lines[i].split(',');
+            let row = [];
+            let inQuotes = false;
+            let currentField = '';
+            let line = lines[i];
+
+            for (let c = 0; c < line.length; c++) {
+                let char = line[c];
+                if (char === '"' && (c === 0 || line[c-1] !== '\\')) {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    row.push(currentField.trim().replace(/^["']|["']$/g, ''));
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            row.push(currentField.trim().replace(/^["']|["']$/g, ''));
+
+            let obj = {};
             for (let j = 0; j < headers.length; j++) {
-                obj[headers[j]] = currentline[j] ? currentline[j].replace(/^["']|["']$/g, '') : '';
+                obj[headers[j]] = row[j] !== undefined ? row[j] : '';
             }
             result.push(obj);
         }
         return result;
     }
 
-    function renderSystem() {
-        const northData = parseCSV(csvNorthData);
-        const southData = parseCSV(csvSouthData);
+    async function initFramework() {
+        try {
+            // 讀取唯一的通用資料檔案
+            const res = await fetch('data_king_cards.csv');
+            const csvText = await res.text();
+            const rows = parseCSV(csvText);
 
-        const northCardsContainer = document.getElementById('northCardsContainer');
-        const southCardsContainer = document.getElementById('southCardsContainer');
-        const northTrack = document.getElementById('northTrack');
-        const southTrack = document.getElementById('southTrack');
+            // 讀取表頭設定 (取第一筆資料的中繼描述或預設)
+            document.getElementById('appTitle').innerText = "✏️ 聖經歷史・萬能呈現框架 (v4.10)";
+            document.getElementById('appSubtitle').innerText = "✨ 版面配置、左右側歸屬與年代座標全面由 CSV 錨定控制";
+            document.getElementById('leftHeaderTitle').innerText = "北國以色列 (19王全展開)";
+            document.getElementById('rightHeaderTitle').innerText = "南國猶大 (20位統治者 + 亡國時期)";
 
-        function processTrack(data, side, cardsContainer, trackContainer) {
-            data.forEach((item, idx) => {
-                const start = parseInt(item.start_year);
-                const end = parseInt(item.end_year);
-                
-                const card = document.createElement('div');
-                card.className = `king-card ${side}-card tier-${item.justice_tier}`;
-                card.setAttribute('data-side', side);
-                card.setAttribute('data-index', idx);
-                card.setAttribute('data-start', start);
-                card.setAttribute('data-end', end);
+            // 依 CSV 內的 layout_side 與 layout_order 排序
+            const leftData = rows.filter(r => r.layout_side === 'left').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
+            const rightData = rows.filter(r => r.layout_side === 'right').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
 
-                let fatherLabel = side === 'north' && idx === 4 ? '⚙️ 職務' : (side === 'north' && idx === 5 ? '⚙️ 身分' : '👨 父親');
-                let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
-                let femaleHtml = item.female_info ? `<span class="female-info">${item.female_info}</span>` : '';
+            renderSide(leftData, 'left', document.getElementById('leftCardsContainer'), document.getElementById('leftTrack'));
+            renderSide(rightData, 'right', document.getElementById('rightCardsContainer'), document.getElementById('rightTrack'));
 
-                let middleParts = [fatherHtml, femaleHtml].filter(p => p !== '').join(' | ');
-                let middleRowHtml = middleParts ? `<div class="meta-row">${middleParts}</div>` : '';
-                
-                // v3.14：先知獨立行，確保字體大小與國王一致並具備高度辨識度
-                let prophetRowHtml = item.prophet ? `<div class="prophet-row">📜 先知：<span class="prophet">${item.prophet}</span></div>` : '';
-
-                card.innerHTML = `
-                    <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
-                    <div class="meta-row">✨ 特質：<span>${item.title_tag}</span></div>
-                    ${middleRowHtml}
-                    ${prophetRowHtml}
-                    <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
-                `;
-                cardsContainer.appendChild(card);
-
-                const seg = document.createElement('div');
-                seg.className = 'bar-segment';
-                seg.setAttribute('data-side', side);
-                seg.setAttribute('data-index', idx);
-                seg.setAttribute('data-start', start);
-                seg.setAttribute('data-end', end);
-
-                const topOffset = (BASE_START_YEAR - start) * (TRACK_HEIGHT / TOTAL_YEARS);
-                const durationYears = Math.abs(start - end);
-                const segHeight = Math.max(durationYears * (TRACK_HEIGHT / TOTAL_YEARS), 4);
-
-                seg.style.top = `${topOffset}px`;
-                seg.style.height = `${segHeight}px`;
-
-                if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
-                else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
-                else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
-                else if(item.justice_tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
-                else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
-                else seg.style.background = side === 'north' ? '#c0392b' : '#27ae60';
-
-                trackContainer.appendChild(seg);
-            });
+            initInteractive();
+            drawLines();
+        } catch (e) {
+            console.error("無法讀取 CSV 檔案，請確認是否透過 Live Server 等本機伺服器運行：", e);
+            alert("載入 CSV 失敗，請確認是否透過本機伺服器 (如 VS Code Live Server)開啟網頁。");
         }
-
-        processTrack(northData, 'north', northCardsContainer, northTrack);
-        processTrack(southData, 'south', southCardsContainer, southTrack);
-
-        initInteractive();
     }
 
-    function drawLines(activeSide = null, activeIndex = null, overlapSet = new Set()) {
+    function renderSide(data, sideName, cardsContainer, trackContainer) {
+        data.forEach((item) => {
+            const start = parseInt(item.start_year);
+            const end = parseInt(item.end_year);
+            const uniqueId = `${sideName}-${item.layout_order}`;
+
+            // 建立文字卡片
+            const card = document.createElement('div');
+            card.className = `king-card side-${sideName}-card tier-${item.justice_tier}`;
+            card.setAttribute('data-side', sideName);
+            card.setAttribute('data-id', uniqueId);
+            card.setAttribute('data-start', start);
+            card.setAttribute('data-end', end);
+
+            let fatherLabel = sideName === 'left' && item.layout_order === '4' ? '⚙️ 職務' : (sideName === 'left' && item.layout_order === '5' ? '⚙️ 身分' : '👨 父親');
+            let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
+            let femaleHtml = item.female_info ? `<span class="female-info">${item.female_info}</span>` : '';
+            let middleParts = [fatherHtml, femaleHtml].filter(p => p !== '').join(' | ');
+            let middleRowHtml = middleParts ? `<div class="meta-row">${middleParts}</div>` : '';
+            let prophetRowHtml = item.prophet ? `<div class="prophet-row">📜 先知：<span class="prophet">${item.prophet}</span></div>` : '';
+
+            card.innerHTML = `
+                <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
+                <div class="meta-row">✨ 特質：<span>${item.title_tag}</span></div>
+                ${middleRowHtml}
+                ${prophetRowHtml}
+                <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
+            `;
+            cardsContainer.appendChild(card);
+
+            // 建立中央色帶區段 (依 start_year / end_year 絕對定位)
+            const seg = document.createElement('div');
+            seg.className = 'bar-segment';
+            seg.setAttribute('data-side', sideName);
+            seg.setAttribute('data-id', uniqueId);
+            seg.setAttribute('data-start', start);
+            seg.setAttribute('data-end', end);
+
+            const topOffset = (BASE_START_YEAR - start) * (TRACK_HEIGHT / TOTAL_YEARS);
+            const durationYears = Math.abs(start - end);
+            const segHeight = Math.max(durationYears * (TRACK_HEIGHT / TOTAL_YEARS), 4);
+
+            seg.style.top = `${topOffset}px`;
+            seg.style.height = `${segHeight}px`;
+
+            if(item.justice_tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
+            else if(item.justice_tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
+            else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
+            else if(item.justice_tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
+            else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
+            else seg.style.background = sideName === 'left' ? '#c0392b' : '#27ae60';
+
+            trackContainer.appendChild(seg);
+        });
+    }
+
+    function drawLines(activeSide = null, activeId = null, overlapSet = new Set()) {
         const container = document.getElementById('layoutContainer').getBoundingClientRect();
         const svg = document.getElementById('linkSvg');
         
@@ -287,21 +241,21 @@
             svg.removeChild(svg.lastChild);
         }
 
-        ['north', 'south'].forEach(side => {
+        ['left', 'right'].forEach(side => {
             document.querySelectorAll(`#${side}CardsContainer .king-card`).forEach(card => {
-                const index = card.getAttribute('data-index');
-                const segment = document.querySelector(`#${side}Track .bar-segment[data-side="${side}"][data-index="${index}"]`);
+                const id = card.getAttribute('data-id');
+                const segment = document.querySelector(`#${side}Track .bar-segment[data-side="${side}"][data-id="${id}"]`);
                 if (segment) {
                     const cardRect = card.getBoundingClientRect();
                     const segRect = segment.getBoundingClientRect();
 
-                    const x1 = side === 'north' ? (cardRect.right - container.left) : (cardRect.left - container.left);
+                    const x1 = side === 'left' ? (cardRect.right - container.left) : (cardRect.left - container.left);
                     const y1 = cardRect.top + cardRect.height / 2 - container.top;
-                    const x2 = side === 'north' ? (segRect.left - container.left) : (segRect.right - container.left);
+                    const x2 = side === 'left' ? (segRect.left - container.left) : (segRect.right - container.left);
                     const y2 = segRect.top + segRect.height / 2 - container.top;
 
-                    const isMain = (activeSide === side && activeIndex === index);
-                    const isOverlap = overlapSet.has(`${side}-${index}`);
+                    const isMain = (activeSide === side && activeId === id);
+                    const isOverlap = overlapSet.has(id);
 
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
@@ -315,7 +269,7 @@
                         path.setAttribute('stroke-width', '2');
                         path.setAttribute('opacity', '0.95');
                     } else {
-                        path.setAttribute('stroke', side === 'north' ? '#e74c3c' : '#27ae60');
+                        path.setAttribute('stroke', side === 'left' ? '#e74c3c' : '#27ae60');
                         path.setAttribute('stroke-width', '1.2');
                         path.setAttribute('opacity', '0.8');
                     }
@@ -325,20 +279,20 @@
         });
     }
 
-    function triggerHighlight(start, end, mainSide, mainIndex) {
+    function triggerHighlight(start, end, mainSide, mainId) {
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
             el.classList.remove('highlight-main', 'highlight-overlap');
         });
 
-        const mainCard = document.querySelector(`.king-card[data-side="${mainSide}"][data-index="${mainIndex}"]`);
-        const mainSeg = document.querySelector(`.bar-segment[data-side="${mainSide}"][data-index="${mainIndex}"]`);
+        const mainCard = document.querySelector(`.king-card[data-side="${mainSide}"][data-id="${mainId}"]`);
+        const mainSeg = document.querySelector(`.bar-segment[data-side="${mainSide}"][data-id="${mainId}"]`);
         if (mainCard) mainCard.classList.add('highlight-main');
         if (mainSeg) mainSeg.classList.add('highlight-main');
 
         const overlapSet = new Set();
         document.querySelectorAll('.king-card').forEach(card => {
             const cSide = card.getAttribute('data-side');
-            const cIndex = card.getAttribute('data-index');
+            const cId = card.getAttribute('data-id');
 
             if (cSide === mainSide) return;
 
@@ -350,13 +304,13 @@
 
             if (maxEnd <= minStart) {
                 card.classList.add('highlight-overlap');
-                const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-index="${cIndex}"]`);
+                const seg = document.querySelector(`.bar-segment[data-side="${cSide}"][data-id="${cId}"]`);
                 if (seg) seg.classList.add('highlight-overlap');
-                overlapSet.add(`${cSide}-${cIndex}`);
+                overlapSet.add(cId);
             }
         });
 
-        drawLines(mainSide, mainIndex, overlapSet);
+        drawLines(mainSide, mainId, overlapSet);
     }
 
     function initInteractive() {
@@ -366,18 +320,14 @@
                 const start = parseInt(el.getAttribute('data-start'));
                 const end = parseInt(el.getAttribute('data-end'));
                 const side = el.getAttribute('data-side');
-                const index = el.getAttribute('data-index');
-                triggerHighlight(start, end, side, index);
+                const id = el.getAttribute('data-id');
+                triggerHighlight(start, end, side, id);
             });
         });
     }
 
-    window.addEventListener('load', () => {
-        renderSystem();
-        drawLines();
-    });
+    window.addEventListener('load', () => initFramework());
     window.addEventListener('resize', () => drawLines());
-    setTimeout(() => drawLines(), 150);
 </script>
 
 </body>
