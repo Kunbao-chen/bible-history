@@ -1,6 +1,6 @@
 type,key,layout_side,layout_order,start_year,end_year,justice_tier,name,reign_info,title_tag,father,female_info,prophet,summary
-meta,app_title,,,.,.,.,✏️ 聖經歷史・萬能呈現框架 (v4.30 聯合王國擴充版),.,.,.,.,.,.
-meta,app_subtitle,,,.,.,.,✨ 聯合王國史與南國整合、雙軌色帶自動位移對齊、精準像素比例縮放,.,.,.,.,.,.
+meta,app_title,,,.,.,.,✏️ 聖經歷史・萬能呈現框架 (v4.40 絕對時間軸精準對齊版),.,.,.,.,.,.
+meta,app_subtitle,,,.,.,.,✨ 聯合王國與南國整合、雙軌色帶採用 1050 BC 絕對時間座標系精準對齊,.,.,.,.,.,.
 meta,left_header,,,.,.,.,北國以色列 (19王全展開),.,.,.,.,.,.
 meta,right_header,,,.,.,.,聯合王國 + 南國猶大 (統治者與亡國),.,.,.,.,.,.
 data,,right,0,1050,1010,special,0a. 掃羅,40年,以色列首任君王,基士(便雅憫支派),,撒母耳,以色列民要求立王下的首位君王；早期謙卑，後因多次違背神命、嫉妒大衛，終在基利波山戰役戰敗自盡。〔撒上9-31; 代上10〕
