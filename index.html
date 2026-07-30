@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.44 全局統一比例尺版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.45 細節精修版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -32,25 +32,44 @@
         .king-card.tier-bad { background: #fdfefe; }
         .king-card.tier-evil { background: #fadbd8; }
         .king-card.tier-special { background: #fef9e7; }
-        .king-card.tier-collapse { background: #641e16; color: #ffffff !important; }
-        .king-card.tier-collapse .king-name, .king-card.tier-collapse .detail-row, .king-card.tier-collapse .meta-row, .king-card.tier-collapse .prophet-row { color: #ffffff !important; }
+        
+        /* 深度優化：深色/亡國字卡無論何種狀態，字體強制清晰可見 */
+        .king-card.tier-collapse { background: #4a1512; color: #ffffff !important; }
+        .king-card.tier-collapse .king-name { color: #fce4ec !important; border-bottom: 1px solid #8a3b38; }
+        .king-card.tier-collapse .meta-row, 
+        .king-card.tier-collapse .detail-row, 
+        .king-card.tier-collapse .female-info { color: #f5c6cb !important; }
+        .king-card.tier-collapse .prophet-row { color: #ffadad !important; border-top: 1px dashed #8a3b38; }
+        .king-card.tier-collapse .prophet { color: #ffebee !important; }
 
+        /* 點亮狀態保持深色字卡的文字對比度，絕不消失 */
         .king-card.highlight-main {
             background: #ffeb99 !important; border: 2px solid #b9770e !important;
             border-left: 6px solid #b9770e !important; box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
             transform: scale(1.015); z-index: 25; color: #111111 !important;
         }
-        .king-card.highlight-main *, .king-card.highlight-overlap * { color: #111111 !important; }
+        .king-card.highlight-main .king-name,
+        .king-card.highlight-main .meta-row,
+        .king-card.highlight-main .detail-row,
+        .king-card.highlight-main .prophet-row,
+        .king-card.highlight-main .prophet,
+        .king-card.highlight-main span { color: #111111 !important; }
+
         .king-card.highlight-overlap {
             background: #fef9e7 !important; border: 2px solid #f39c12 !important;
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.8); z-index: 20; color: #111111 !important;
         }
+        .king-card.highlight-overlap .king-name,
+        .king-card.highlight-overlap .meta-row,
+        .king-card.highlight-overlap .detail-row,
+        .king-card.highlight-overlap .prophet-row,
+        .king-card.highlight-overlap .prophet,
+        .king-card.highlight-overlap span { color: #111111 !important; }
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
         .meta-row { white-space: normal; word-break: break-all; color: #34495e; font-size: 9.5pt; margin: 2px 0; line-height: 1.3; }
         .prophet-row { white-space: normal; word-break: break-all; color: #78281f; font-size: 11pt; font-weight: bold; margin: 3px 0; padding-top: 2px; border-top: 1px dashed #fadbd8; }
         .prophet { font-weight: bold; color: #922b21; }
-        .tier-collapse .prophet { color: #f9e79f !important; }
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
@@ -76,7 +95,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.44 全局統一比例尺版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.45 細節精修版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -147,8 +166,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.44)";
-            let mainSub = "✨ 全局統一比例尺版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.45)";
+            let mainSub = "✨ 細節精修與對比度完美版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -173,7 +192,6 @@
             const rightTrackEl = document.getElementById('rightTrack');
             const timelineCenterEl = document.getElementById('timelineCenter');
 
-            // 【步驟二】字卡緊密排列不分散，計算每側總高
             renderCards(leftData, 'left', leftCardsEl);
             renderCards(rightData, 'right', rightCardsEl);
 
@@ -181,18 +199,15 @@
             const rightCardsHeight = rightCardsEl.offsetHeight;
             const maxCardsHeight = Math.max(leftCardsHeight, rightCardsHeight, 800);
 
-            // 統一中央時間軸高度，對齊最高側文字卡總高
             leftTrackEl.style.height = `${maxCardsHeight}px`;
             rightTrackEl.style.height = `${maxCardsHeight}px`;
             timelineCenterEl.style.height = `${maxCardsHeight}px`;
 
-            // 【步驟一 & 三】計算全域統一的像素/年比例尺，讓兩側色帶擁有完全一致的時間比例，並縮放適應最高側文字卡總高
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
             renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear);
             renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear);
 
-            // 【步驟四】非最高側的文字卡與色帶群組做整體置中對齊
             setTimeout(() => {
                 applyGroupCenterAlignment(leftCardsEl, leftCardsHeight, maxCardsHeight);
                 applyGroupCenterAlignment(rightCardsEl, rightCardsHeight, maxCardsHeight);
@@ -236,7 +251,6 @@
     function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear) {
         trackContainer.innerHTML = '';
 
-        // 嚴格依據全域絕對年數基準 (1050 BC 開始) 計算位置，確保兩側比例尺百分之百相同
         data.forEach((item) => {
             const start = parseInt(item.start_year);
             const end = parseInt(item.end_year);
@@ -261,7 +275,7 @@
             else if(tier === 'bad') seg.style.background = 'linear-gradient(to bottom, #d98880, #c0392b)';
             else if(tier === 'evil') seg.style.background = '#f5b7b1';
             else if(tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
-            else if(tier === 'collapse') seg.style.background = '#641e16';
+            else if(tier === 'collapse') seg.style.background = '#4a1512';
             else seg.style.background = sideName === 'left' ? '#e74c3c' : '#27ae60';
 
             trackContainer.appendChild(seg);
@@ -269,7 +283,6 @@
     }
 
     function applyGroupCenterAlignment(cardsContainer, sideCardsHeight, targetHeight) {
-        // 【步驟四】非最高側的群組整體置中對齊
         const heightDiff = targetHeight - sideCardsHeight;
         const overallOffset = heightDiff / 2;
 
