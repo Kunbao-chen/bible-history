@@ -2,16 +2,17 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.20 動態適應版)</title>
+    <title>聖經歷史・以色列王國年表 (v4.30 聯合王國擴充對齊版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
-        .notebook-container { max-width: 1400px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
+        .notebook-container { max-width: 1500px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 8px; background: #fffbf0; border-radius: 6px; }
         
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 6px 0; color: #7f8c8d; }
 
-        .main-layout { display: grid; grid-template-columns: 400px 60px 400px; justify-content: center; gap: 40px; align-items: start; position: relative; }
+        /* 採用三欄式排版：左側北國 | 中央雙軌色帶 | 右側聯合+南國 */
+        .main-layout { display: grid; grid-template-columns: 400px 90px 400px; justify-content: center; gap: 30px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .left-header { background: #e74c3c; }
@@ -54,13 +55,14 @@
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
+        /* 中央時間軸：包含左右雙軌色帶 */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
-            padding: 4px 2px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-            position: relative; align-self: flex-start; margin-top: 35px;
+            padding: 4px 4px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            position: relative; align-self: flex-start;
         }
-        .bar-track-container { display: flex; gap: 4px; width: 100%; justify-content: center; }
-        .bar-track { width: 20px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
+        .bar-track-container { display: flex; gap: 6px; width: 100%; justify-content: center; position: relative; }
+        .bar-track { width: 22px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
@@ -76,7 +78,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ 正在解析 CSV 中繼設定與動態排版</p>
+    <p class="subtitle" id="appSubtitle">✨ 正在解析聯合王國與動態座標對齊</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -101,8 +103,8 @@
 </div>
 
 <script>
-    const BASE_START_YEAR = 930;
-    const TOTAL_YEARS = 344;
+    const TOP_BASE_YEAR = 1050; // 時間軸最頂端年份（包含聯合王國起始）
+    const TOTAL_YEARS = 464;    // 從 1050 BC 到 586 BC 共 464 年
 
     function parseCSV(text) {
         let lines = text.trim().split('\n');
@@ -143,13 +145,11 @@
             const csvText = await res.text();
             const rows = parseCSV(csvText);
 
-            // 分離中繼資料 (meta) 與主體資料 (data)
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            // 動態載入標題設定
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.20)";
-            let mainSub = "✨ 檢索中繼設定與自動化對齊完成";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.30)";
+            let mainSub = "✨ 聯合王國擴充與動態座標對齊完成";
             let leftTitle = "左側直欄";
             let rightTitle = "右側直欄";
 
@@ -172,28 +172,40 @@
             const rightCardsEl = document.getElementById('rightCardsContainer');
             const leftTrackEl = document.getElementById('leftTrack');
             const rightTrackEl = document.getElementById('rightTrack');
+            const timelineCenterEl = document.getElementById('timelineCenter');
 
-            // 渲染文字卡片
+            // 1. 渲染左右側文字卡
             renderCards(leftData, 'left', leftCardsEl);
             renderCards(rightData, 'right', rightCardsEl);
 
-            // 【自動化高度計算】讓色帶總高精確配合文字卡容器的實際高度
-            const leftCardsHeight = leftCardsEl.offsetHeight;
+            // 2. 【動態高度自適應計算】以右側卡片總高為基準
             const rightCardsHeight = rightCardsEl.offsetHeight;
-            const dynamicTrackHeight = Math.max(leftCardsHeight, rightCardsHeight, 500);
+            const dynamicTrackHeight = Math.max(rightCardsHeight, 600);
 
             leftTrackEl.style.height = `${dynamicTrackHeight}px`;
             rightTrackEl.style.height = `${dynamicTrackHeight}px`;
+            timelineCenterEl.style.height = `${dynamicTrackHeight}px`;
 
-            // 渲染色帶 (具備未定年代空欄位保護機制)
-            renderSegments(leftData, 'left', leftTrackEl, dynamicTrackHeight);
-            renderSegments(rightData, 'right', rightTrackEl, dynamicTrackHeight);
+            // 3. 計算像素比例尺
+            const pxPerYear = dynamicTrackHeight / TOTAL_YEARS;
+
+            // 4. 【北國色帶自動位移對齊】
+            // 北國起始於 930 BC。計算 930 BC 距離頂端 (1050 BC) 的像素差，作為北國軌道的頂部 Margin
+            const northOffsetYears = TOP_BASE_YEAR - 930;
+            const northTopOffsetPx = northOffsetYears * pxPerYear;
+            leftTrackEl.style.marginTop = `${northTopOffsetPx}px`;
+
+            // 5. 渲染色帶
+            renderSegments(rightData, 'right', rightTrackEl, pxPerYear, TOP_BASE_YEAR);
+            // 北國軌道扣除掉位移後的有效高度
+            const northTrackHeight = dynamicTrackHeight - northTopOffsetPx;
+            renderSegments(leftData, 'left', leftTrackEl, pxPerYear, 930, northTrackHeight);
 
             initInteractive();
             drawLines();
         } catch (e) {
             console.error("無法讀取 CSV 檔案：", e);
-            alert("載入 CSV 失敗，請確認是否透過本機伺服器 (如 VS Code Live Server)開啟網頁。");
+            alert("載入 CSV 失敗，請確認是否透過本機伺服器運行。");
         }
     }
 
@@ -207,7 +219,7 @@
             card.setAttribute('data-start', item.start_year);
             card.setAttribute('data-end', item.end_year);
 
-            let fatherLabel = sideName === 'left' && item.layout_order === '4' ? '⚙️ 職務' : (sideName === 'left' && item.layout_order === '5' ? '⚙️ 身分' : '👨 父親');
+            let fatherLabel = '👨 父親';
             let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
             let femaleHtml = item.female_info ? `<span class="female-info">${item.female_info}</span>` : '';
             let middleParts = [fatherHtml, femaleHtml].filter(p => p !== '').join(' | ');
@@ -225,12 +237,10 @@
         });
     }
 
-    function renderSegments(data, sideName, trackContainer, trackHeight) {
+    function renderSegments(data, sideName, trackContainer, pxPerYear, trackStartYear, customMaxHeight = null) {
         data.forEach((item) => {
             const start = parseInt(item.start_year);
             const end = parseInt(item.end_year);
-            
-            // 【空欄位保護】如果年代未填或無法解析，自動略過色帶與連線渲染
             if (isNaN(start) || isNaN(end)) return;
 
             const uniqueId = `${sideName}-${item.layout_order}`;
@@ -241,9 +251,9 @@
             seg.setAttribute('data-start', start);
             seg.setAttribute('data-end', end);
 
-            const topOffset = (BASE_START_YEAR - start) * (trackHeight / TOTAL_YEARS);
+            const topOffset = (trackStartYear - start) * pxPerYear;
             const durationYears = Math.abs(start - end);
-            const segHeight = Math.max(durationYears * (trackHeight / TOTAL_YEARS), 4);
+            const segHeight = Math.max(durationYears * pxPerYear, 4);
 
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${segHeight}px`;
@@ -253,7 +263,7 @@
             else if(item.justice_tier === 'evil') seg.style.background = '#f5b7b1';
             else if(item.justice_tier === 'special') seg.style.background = 'linear-gradient(to bottom, #f9e79f, #f1c40f)';
             else if(item.justice_tier === 'collapse') seg.style.background = '#641e16';
-            else seg.style.background = sideName === 'left' ? '#c0392b' : '#27ae60';
+            else seg.style.background = sideName === 'left' ? '#e74c3c' : '#27ae60';
 
             trackContainer.appendChild(seg);
         });
