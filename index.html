@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>聖經歷史・萬能呈現框架 (v4.10 純CSV驅動版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.20 動態適應版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 4px; font-size: 10pt; }
@@ -36,21 +36,14 @@
         .king-card.tier-collapse .king-name, .king-card.tier-collapse .detail-row, .king-card.tier-collapse .meta-row, .king-card.tier-collapse .prophet-row { color: #ffffff !important; }
 
         .king-card.highlight-main {
-            background: #ffeb99 !important;
-            border: 2px solid #b9770e !important;
-            border-left: 6px solid #b9770e !important;
-            box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
-            transform: scale(1.015);
-            z-index: 25;
-            color: #111111 !important;
+            background: #ffeb99 !important; border: 2px solid #b9770e !important;
+            border-left: 6px solid #b9770e !important; box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
+            transform: scale(1.015); z-index: 25; color: #111111 !important;
         }
         .king-card.highlight-main *, .king-card.highlight-overlap * { color: #111111 !important; }
         .king-card.highlight-overlap {
-            background: #fef9e7 !important;
-            border: 2px solid #f39c12 !important;
-            box-shadow: 0 0 8px rgba(241, 196, 15, 0.8);
-            z-index: 20;
-            color: #111111 !important;
+            background: #fef9e7 !important; border: 2px solid #f39c12 !important;
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.8); z-index: 20; color: #111111 !important;
         }
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
@@ -83,26 +76,23 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ 正在解析 CSV 呈現框架設定</p>
+    <p class="subtitle" id="appSubtitle">✨ 正在解析 CSV 中繼設定與動態排版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
 
-        <!-- 左側直欄 -->
         <div>
             <div class="column-header left-header" id="leftHeaderTitle">左側直欄</div>
             <div class="cards-side" id="leftCardsContainer"></div>
         </div>
 
-        <!-- 中間時間軸 -->
         <div class="timeline-center" id="timelineCenter">
             <div class="bar-track-container">
-                <div class="bar-track" id="leftTrack" style="height: 2750px;"></div>
-                <div class="bar-track" id="rightTrack" style="height: 2750px;"></div>
+                <div class="bar-track" id="leftTrack"></div>
+                <div class="bar-track" id="rightTrack"></div>
             </div>
         </div>
 
-        <!-- 右側直欄 -->
         <div>
             <div class="column-header right-header" id="rightHeaderTitle">右側直欄</div>
             <div class="cards-side" id="rightCardsContainer"></div>
@@ -113,9 +103,7 @@
 <script>
     const BASE_START_YEAR = 930;
     const TOTAL_YEARS = 344;
-    const TRACK_HEIGHT = 2750;
 
-    // 萬能 CSV 解析器 (支援引號內含逗號)
     function parseCSV(text) {
         let lines = text.trim().split('\n');
         let headers = lines[0].split(',').map(h => h.trim());
@@ -151,45 +139,73 @@
 
     async function initFramework() {
         try {
-            // 讀取唯一的通用資料檔案
             const res = await fetch('data_king_cards.csv');
             const csvText = await res.text();
             const rows = parseCSV(csvText);
 
-            // 讀取表頭設定 (取第一筆資料的中繼描述或預設)
-            document.getElementById('appTitle').innerText = "✏️ 聖經歷史・萬能呈現框架 (v4.10)";
-            document.getElementById('appSubtitle').innerText = "✨ 版面配置、左右側歸屬與年代座標全面由 CSV 錨定控制";
-            document.getElementById('leftHeaderTitle').innerText = "北國以色列 (19王全展開)";
-            document.getElementById('rightHeaderTitle').innerText = "南國猶大 (20位統治者 + 亡國時期)";
+            // 分離中繼資料 (meta) 與主體資料 (data)
+            const metaRows = rows.filter(r => r.type === 'meta');
+            const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            // 依 CSV 內的 layout_side 與 layout_order 排序
-            const leftData = rows.filter(r => r.layout_side === 'left').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
-            const rightData = rows.filter(r => r.layout_side === 'right').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
+            // 動態載入標題設定
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.20)";
+            let mainSub = "✨ 檢索中繼設定與自動化對齊完成";
+            let leftTitle = "左側直欄";
+            let rightTitle = "右側直欄";
 
-            renderSide(leftData, 'left', document.getElementById('leftCardsContainer'), document.getElementById('leftTrack'));
-            renderSide(rightData, 'right', document.getElementById('rightCardsContainer'), document.getElementById('rightTrack'));
+            metaRows.forEach(m => {
+                if (m.key === 'app_title') mainTitle = m.value;
+                if (m.key === 'app_subtitle') mainSub = m.value;
+                if (m.key === 'left_header') leftTitle = m.value;
+                if (m.key === 'right_header') rightTitle = m.value;
+            });
+
+            document.getElementById('appTitle').innerText = mainTitle;
+            document.getElementById('appSubtitle').innerText = mainSub;
+            document.getElementById('leftHeaderTitle').innerText = leftTitle;
+            document.getElementById('rightHeaderTitle').innerText = rightTitle;
+
+            const leftData = dataRows.filter(r => r.layout_side === 'left').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
+            const rightData = dataRows.filter(r => r.layout_side === 'right').sort((a,b) => parseInt(a.layout_order) - parseInt(b.layout_order));
+
+            const leftCardsEl = document.getElementById('leftCardsContainer');
+            const rightCardsEl = document.getElementById('rightCardsContainer');
+            const leftTrackEl = document.getElementById('leftTrack');
+            const rightTrackEl = document.getElementById('rightTrack');
+
+            // 渲染文字卡片
+            renderCards(leftData, 'left', leftCardsEl);
+            renderCards(rightData, 'right', rightCardsEl);
+
+            // 【自動化高度計算】讓色帶總高精確配合文字卡容器的實際高度
+            const leftCardsHeight = leftCardsEl.offsetHeight;
+            const rightCardsHeight = rightCardsEl.offsetHeight;
+            const dynamicTrackHeight = Math.max(leftCardsHeight, rightCardsHeight, 500);
+
+            leftTrackEl.style.height = `${dynamicTrackHeight}px`;
+            rightTrackEl.style.height = `${dynamicTrackHeight}px`;
+
+            // 渲染色帶 (具備未定年代空欄位保護機制)
+            renderSegments(leftData, 'left', leftTrackEl, dynamicTrackHeight);
+            renderSegments(rightData, 'right', rightTrackEl, dynamicTrackHeight);
 
             initInteractive();
             drawLines();
         } catch (e) {
-            console.error("無法讀取 CSV 檔案，請確認是否透過 Live Server 等本機伺服器運行：", e);
+            console.error("無法讀取 CSV 檔案：", e);
             alert("載入 CSV 失敗，請確認是否透過本機伺服器 (如 VS Code Live Server)開啟網頁。");
         }
     }
 
-    function renderSide(data, sideName, cardsContainer, trackContainer) {
+    function renderCards(data, sideName, container) {
         data.forEach((item) => {
-            const start = parseInt(item.start_year);
-            const end = parseInt(item.end_year);
             const uniqueId = `${sideName}-${item.layout_order}`;
-
-            // 建立文字卡片
             const card = document.createElement('div');
-            card.className = `king-card side-${sideName}-card tier-${item.justice_tier}`;
+            card.className = `king-card side-${sideName}-card tier-${item.justice_tier || 'default'}`;
             card.setAttribute('data-side', sideName);
             card.setAttribute('data-id', uniqueId);
-            card.setAttribute('data-start', start);
-            card.setAttribute('data-end', end);
+            card.setAttribute('data-start', item.start_year);
+            card.setAttribute('data-end', item.end_year);
 
             let fatherLabel = sideName === 'left' && item.layout_order === '4' ? '⚙️ 職務' : (sideName === 'left' && item.layout_order === '5' ? '⚙️ 身分' : '👨 父親');
             let fatherHtml = item.father ? `${fatherLabel}：${item.father}` : '';
@@ -199,15 +215,25 @@
             let prophetRowHtml = item.prophet ? `<div class="prophet-row">📜 先知：<span class="prophet">${item.prophet}</span></div>` : '';
 
             card.innerHTML = `
-                <div class="king-name">${item.name} (${item.reign_info}, ${item.start_year}-${item.end_year} BC)</div>
+                <div class="king-name">${item.name} (${item.reign_info}${item.start_year ? ', ' + item.start_year + '-' + item.end_year + ' BC' : ''})</div>
                 <div class="meta-row">✨ 特質：<span>${item.title_tag}</span></div>
                 ${middleRowHtml}
                 ${prophetRowHtml}
                 <div class="detail-row"><b>核心事件</b>：${item.summary}</div>
             `;
-            cardsContainer.appendChild(card);
+            container.appendChild(card);
+        });
+    }
 
-            // 建立中央色帶區段 (依 start_year / end_year 絕對定位)
+    function renderSegments(data, sideName, trackContainer, trackHeight) {
+        data.forEach((item) => {
+            const start = parseInt(item.start_year);
+            const end = parseInt(item.end_year);
+            
+            // 【空欄位保護】如果年代未填或無法解析，自動略過色帶與連線渲染
+            if (isNaN(start) || isNaN(end)) return;
+
+            const uniqueId = `${sideName}-${item.layout_order}`;
             const seg = document.createElement('div');
             seg.className = 'bar-segment';
             seg.setAttribute('data-side', sideName);
@@ -215,9 +241,9 @@
             seg.setAttribute('data-start', start);
             seg.setAttribute('data-end', end);
 
-            const topOffset = (BASE_START_YEAR - start) * (TRACK_HEIGHT / TOTAL_YEARS);
+            const topOffset = (BASE_START_YEAR - start) * (trackHeight / TOTAL_YEARS);
             const durationYears = Math.abs(start - end);
-            const segHeight = Math.max(durationYears * (TRACK_HEIGHT / TOTAL_YEARS), 4);
+            const segHeight = Math.max(durationYears * (trackHeight / TOTAL_YEARS), 4);
 
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${segHeight}px`;
@@ -280,6 +306,7 @@
     }
 
     function triggerHighlight(start, end, mainSide, mainId) {
+        if (isNaN(start) || isNaN(end)) return;
         document.querySelectorAll('.highlight-main, .highlight-overlap').forEach(el => {
             el.classList.remove('highlight-main', 'highlight-overlap');
         });
@@ -293,11 +320,11 @@
         document.querySelectorAll('.king-card').forEach(card => {
             const cSide = card.getAttribute('data-side');
             const cId = card.getAttribute('data-id');
-
             if (cSide === mainSide) return;
 
             const cStart = parseInt(card.getAttribute('data-start'));
             const cEnd = parseInt(card.getAttribute('data-end'));
+            if (isNaN(cStart) || isNaN(cEnd)) return;
 
             const maxEnd = Math.max(end, cEnd);
             const minStart = Math.min(start, cStart);
