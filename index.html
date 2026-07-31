@@ -2,18 +2,20 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.52 經文超連結與互動視窗版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.54 動態主題自動聯動版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
         .notebook-container { width: 1050px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 12px 8px; background: #fffbf0; border-radius: 6px; box-sizing: border-box; }
         
-        h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
+        /* 下拉式主標題樣式 */
+        .title-container { text-align: center; margin-bottom: 2px; }
+        #mainTitleSelect { font-size: 13pt; font-weight: bold; background: #f9e79f; color: #7d6608; padding: 4px 10px; border-radius: 4px; border: 1px solid #d4ac0d; cursor: pointer; text-align-last: center; }
+        
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
-        /* 始終維持三欄佈局，不因裝置而打散 */
+        /* 始終維持三欄佈局 */
         .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
@@ -44,7 +46,7 @@
         .king-card.tier-collapse .prophet-row { color: #ffadad !important; border-top: 1px dashed #8a3b38; }
         .king-card.tier-collapse .prophet { color: #ffebee !important; }
 
-        /* 主選中狀態：卡片與色段整條高亮 */
+        /* 主選中狀態 */
         .king-card.highlight-main {
             background: #ffeb99 !important; border: 2px solid #b9770e !important;
             border-left: 6px solid #b9770e !important; box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
@@ -90,19 +92,13 @@
         }
         
         .bar-segment.highlight-main { 
-            background: #ffcc00 !important; 
-            border: 2px solid #b9770e !important; 
-            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; 
-            z-index: 25; 
-            filter: none !important; 
+            background: #ffcc00 !important; border: 2px solid #b9770e !important; 
+            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; z-index: 25; filter: none !important; 
         }
         
         .bar-segment.highlight-overlap { 
-            background: #ffe066 !important; 
-            border: 2px solid #f39c12 !important; 
-            box-shadow: 0 0 8px #f1c40f !important; 
-            z-index: 20; 
-            filter: none !important; 
+            background: #ffe066 !important; border: 2px solid #f39c12 !important; 
+            box-shadow: 0 0 8px #f1c40f !important; z-index: 20; filter: none !important; 
         }
 
         .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
@@ -119,8 +115,13 @@
 <body>
 
 <div class="notebook-container">
-    <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.52 經文超連結與互動視窗版</p>
+    <div class="title-container">
+        <select id="mainTitleSelect" onchange="changeDataset(this.value)">
+            <!-- 動態載入檔案選項 -->
+        </select>
+    </div>
+    <!-- 永遠呈現當前框架版本副標題 -->
+    <p class="subtitle">✨ 聖經歷史・萬能呈現框架 v4.54 (動態主題自動聯動版)</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -281,7 +282,6 @@
         document.getElementById('scripture-frame').src = ''; 
     }
 
-    // 智慧經文解析轉連結
     function convertToLink(text) {
         if (!text) return "";
         const sortedBooks = Object.keys(SCRIPTURE_PHYSICAL_MAP).sort((a, b) => b.length - a.length).join('|');
@@ -323,31 +323,72 @@
         return result;
     }
 
-    async function initFramework() {
+    // 定義所有候選歷史文檔清單（符合 data_*.csv 命名格式）
+    const CANDIDATE_FILES = [
+        "data_king_cards.csv",
+        "data_intertestamental.csv",
+        "data_new_testament.csv"
+    ];
+
+    // 初始化：動態預先掃描所有符合格式的文件，提取主標題生成下拉選單
+    async function initDatasetScanner() {
+        const selectEl = document.getElementById('mainTitleSelect');
+        selectEl.innerHTML = ''; // 清空
+
+        let firstFileToLoad = CANDIDATE_FILES[0];
+
+        for (let filename of CANDIDATE_FILES) {
+            try {
+                const res = await fetch(filename);
+                if (!res.ok) continue;
+                const csvText = await res.text();
+                const rows = parseCSV(csvText);
+                const metaRows = rows.filter(r => r.type === 'meta');
+
+                let mainTitleText = `📖 ${filename} (歷史年表)`;
+                metaRows.forEach(m => {
+                    let val = m.name || m.value;
+                    if (m.key === 'main_title' && val && val !== '.') {
+                        mainTitleText = val;
+                    }
+                });
+
+                const option = document.createElement('option');
+                option.value = filename;
+                option.text = mainTitleText;
+                selectEl.appendChild(option);
+            } catch (e) {
+                console.warn(`無法讀取或解析檔案: ${filename}`, e);
+            }
+        }
+
+        if (selectEl.options.length > 0) {
+            changeDataset(selectEl.value);
+        }
+    }
+
+    async function changeDataset(filename) {
+        await loadAndRenderFramework(filename);
+    }
+
+    async function loadAndRenderFramework(csvFilename) {
         try {
-            const res = await fetch('data_king_cards.csv');
+            const res = await fetch(csvFilename);
             const csvText = await res.text();
             const rows = parseCSV(csvText);
 
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.52)";
-            let mainSub = "✨ 經文超連結與互動視窗版";
-            let leftTitle = "北國以色列 (19王全展開)";
-            let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
+            let leftTitle = "左側直欄";
+            let rightTitle = "右側直欄";
 
             metaRows.forEach(m => {
                 let val = m.name || m.value;
-                if (m.key === 'app_title' && val && val !== '.') mainTitle = val;
-                if (m.key === 'app_subtitle' && val && val !== '.') mainSub = val;
                 if (m.key === 'left_header' && val && val !== '.') leftTitle = val;
                 if (m.key === 'right_header' && val && val !== '.') rightTitle = val;
             });
 
-            document.title = mainTitle;
-            document.getElementById('appTitle').innerText = mainTitle;
-            document.getElementById('appSubtitle').innerText = mainSub;
             document.getElementById('leftHeaderTitle').innerText = leftTitle;
             document.getElementById('rightHeaderTitle').innerText = rightTitle;
 
@@ -396,7 +437,7 @@
 
             initInteractive();
         } catch (e) {
-            console.error("初始化失敗：", e);
+            console.error("載入與渲染失敗：", e);
         }
     }
 
@@ -564,8 +605,8 @@
 
     function initInteractive() {
         document.querySelectorAll('.king-card, .bar-segment').forEach(el => {
-            el.addEventListener('click', (e) => {
-                // 若點擊的是經文超連結則不觸發卡片高亮跳動
+            el.removeEventListener('click', el._clickHandler);
+            el._clickHandler = (e) => {
                 if (e.target.classList.contains('script-link')) return;
                 e.stopPropagation();
                 const start = parseInt(el.getAttribute('data-start'));
@@ -573,11 +614,13 @@
                 const side = el.getAttribute('data-side');
                 const id = el.getAttribute('data-id');
                 triggerHighlight(start, end, side, id);
-            });
+            };
+            el.addEventListener('click', el._clickHandler);
         });
     }
 
-    window.addEventListener('load', () => initFramework());
+    // 啟動時自動掃描候選檔案並填入選單
+    window.addEventListener('load', () => initDatasetScanner());
     window.addEventListener('resize', () => drawLines());
 </script>
 
