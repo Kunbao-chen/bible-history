@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.52 經文超連結與互動視窗版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.53 多重主題切換版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
         .notebook-container { width: 1050px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 12px 8px; background: #fffbf0; border-radius: 6px; box-sizing: border-box; }
         
-        h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
+        /* 下拉式主標題樣式 */
+        .title-container { text-align: center; margin-bottom: 2px; }
+        #mainTitleSelect { font-size: 13pt; font-weight: bold; background: #f9e79f; color: #7d6608; padding: 4px 10px; border-radius: 4px; border: 1px solid #d4ac0d; cursor: pointer; text-align-last: center; }
+        
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
         /* 始終維持三欄佈局，不因裝置而打散 */
@@ -119,8 +122,15 @@
 <body>
 
 <div class="notebook-container">
-    <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.52 經文超連結與互動視窗版</p>
+    <div class="title-container">
+        <select id="mainTitleSelect" onchange="changeDataset(this.value)">
+            <option value="data_king_cards.csv">📖 聖經歷史：舊王國與南北國歷代君王年表</option>
+            <option value="data_intertestamental.csv">📖 聖經歷史：兩約之間與黑暗時期年表 (範例)</option>
+            <option value="data_new_testament.csv">📖 聖經歷史：新約耶穌生平與使徒行傳年表 (範例)</option>
+        </select>
+    </div>
+    <!-- 副標題固定呈現框架版本 -->
+    <p class="subtitle">✨ 聖經歷史・萬能呈現框架 v4.53 (多重主題切換版)</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -278,7 +288,7 @@
 
     function closeScripture() { 
         document.getElementById('scripture-modal').style.display = 'none'; 
-        document.getElementById('scripture-frame').src = ''; 
+        document.getElementById('scripture-frame'].src = ''; 
     }
 
     // 智慧經文解析轉連結
@@ -323,31 +333,28 @@
         return result;
     }
 
-    async function initFramework() {
+    async function changeDataset(filename) {
+        await initFramework(filename);
+    }
+
+    async function initFramework(csvFilename = "data_king_cards.csv") {
         try {
-            const res = await fetch('data_king_cards.csv');
+            const res = await fetch(csvFilename);
             const csvText = await res.text();
             const rows = parseCSV(csvText);
 
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.52)";
-            let mainSub = "✨ 經文超連結與互動視窗版";
-            let leftTitle = "北國以色列 (19王全展開)";
-            let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
+            let leftTitle = "左側直欄";
+            let rightTitle = "右側直欄";
 
             metaRows.forEach(m => {
                 let val = m.name || m.value;
-                if (m.key === 'app_title' && val && val !== '.') mainTitle = val;
-                if (m.key === 'app_subtitle' && val && val !== '.') mainSub = val;
                 if (m.key === 'left_header' && val && val !== '.') leftTitle = val;
                 if (m.key === 'right_header' && val && val !== '.') rightTitle = val;
             });
 
-            document.title = mainTitle;
-            document.getElementById('appTitle').innerText = mainTitle;
-            document.getElementById('appSubtitle').innerText = mainSub;
             document.getElementById('leftHeaderTitle').innerText = leftTitle;
             document.getElementById('rightHeaderTitle').innerText = rightTitle;
 
@@ -396,7 +403,7 @@
 
             initInteractive();
         } catch (e) {
-            console.error("初始化失敗：", e);
+            console.error("初始化失敗或檔案不存在：", e);
         }
     }
 
@@ -564,8 +571,8 @@
 
     function initInteractive() {
         document.querySelectorAll('.king-card, .bar-segment').forEach(el => {
-            el.addEventListener('click', (e) => {
-                // 若點擊的是經文超連結則不觸發卡片高亮跳動
+            el.removeEventListener('click', el._clickHandler);
+            el._clickHandler = (e) => {
                 if (e.target.classList.contains('script-link')) return;
                 e.stopPropagation();
                 const start = parseInt(el.getAttribute('data-start'));
@@ -573,11 +580,12 @@
                 const side = el.getAttribute('data-side');
                 const id = el.getAttribute('data-id');
                 triggerHighlight(start, end, side, id);
-            });
+            };
+            el.addEventListener('click', el._clickHandler);
         });
     }
 
-    window.addEventListener('load', () => initFramework());
+    window.addEventListener('load', () => initFramework("data_king_cards.csv"));
     window.addEventListener('resize', () => drawLines());
 </script>
 
