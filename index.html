@@ -2,16 +2,18 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>聖經歷史・萬能呈現框架 (v4.49 色段全亮與標頭修正版)</title>
+    <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>聖經歷史・萬能呈現框架 (v4.51 三欄還原與自由縮放版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
-        .notebook-container { max-width: 1550px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 12px 8px; background: #fffbf0; border-radius: 6px; box-sizing: border-box; }
+        .notebook-container { width: 1050px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 12px 8px; background: #fffbf0; border-radius: 6px; box-sizing: border-box; }
         
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
+        /* 始終維持三欄佈局，不因裝置而打散 */
         .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
@@ -87,7 +89,6 @@
             transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0; right: 0;
         }
         
-        /* 整個色段主高亮：金黃色填滿 + 強烈外發光 */
         .bar-segment.highlight-main { 
             background: #ffcc00 !important; 
             border: 2px solid #b9770e !important; 
@@ -96,7 +97,6 @@
             filter: none !important; 
         }
         
-        /* 整個色段重疊高亮：柔和亮黃色填滿 */
         .bar-segment.highlight-overlap { 
             background: #ffe066 !important; 
             border: 2px solid #f39c12 !important; 
@@ -106,21 +106,13 @@
         }
 
         .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-
-        @media screen and (max-width: 1000px) {
-            body { padding: 4px; }
-            .notebook-container { padding: 8px 4px; }
-            .main-layout { grid-template-columns: 1fr; gap: 15px; padding: 0 8px; }
-            .timeline-center { order: -1; margin-bottom: 10px; align-self: center; }
-            .svg-overlay { display: none; }
-        }
     </style>
 </head>
 <body>
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.49 色段全亮與標頭修正版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.51 三欄還原與自由縮放版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -187,12 +179,11 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.49)";
-            let mainSub = "✨ 具備色段全亮與標頭同步版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.51)";
+            let mainSub = "✨ 三欄一致與自由縮放版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
-            // 修正：meta 行的值實際上存在於 `name` 欄位中
             metaRows.forEach(m => {
                 let val = m.name || m.value;
                 if (m.key === 'app_title' && val && val !== '.') mainTitle = val;
@@ -343,8 +334,6 @@
         while (svg.childNodes.length > 0) {
             svg.removeChild(svg.lastChild);
         }
-
-        if (window.innerWidth <= 1000) return;
 
         ['left', 'right'].forEach(side => {
             document.querySelectorAll(`#${side}CardsContainer .king-card`).forEach(card => {
