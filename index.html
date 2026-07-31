@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.54 動態主題自動聯動版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.55 主標題自動對應版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -117,11 +117,11 @@
 <div class="notebook-container">
     <div class="title-container">
         <select id="mainTitleSelect" onchange="changeDataset(this.value)">
-            <!-- 動態載入檔案選項 -->
+            <!-- 動態載入 -->
         </select>
     </div>
     <!-- 永遠呈現當前框架版本副標題 -->
-    <p class="subtitle">✨ 聖經歷史・萬能呈現框架 v4.54 (動態主題自動聯動版)</p>
+    <p class="subtitle">✨ 聖經歷史・萬能呈現框架 v4.55 (主標題自動對應版)</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -215,7 +215,7 @@
         "提前": "nt/1_tim", "提摩太前書": "nt/1_tim", "1 Timothy": "nt/1_tim", "1 Tim": "nt/1_tim",
         "提後": "nt/2_tim", "提摩太後書": "nt/2_tim", "2 Timothy": "nt/2_tim", "2 Tim": "nt/2_tim",
         "多": "nt/titus", "提多書": "nt/titus", "Titus": "nt/titus",
-        "門": "nt/philem", "腓利門書": "nt/philem", "Philemon": "nt/philem", "Philem": "nt/philem",
+        "門": "nt/philem", "腓利門書": "nt/philem", "Philemon": "nt/philem", "Philemon": "nt/philem",
         "來": "nt/heb", "希伯來書": "nt/heb", "Hebrews": "nt/heb", "Heb": "nt/heb",
         "雅": "nt/jas", "雅各書": "nt/jas", "James": "nt/jas", "Jas": "nt/jas",
         "彼前": "nt/1_pet", "彼得前書": "nt/1_pet", "1 Peter": "nt/1_pet", "1 Pet": "nt/1_pet",
@@ -285,7 +285,7 @@
     function convertToLink(text) {
         if (!text) return "";
         const sortedBooks = Object.keys(SCRIPTURE_PHYSICAL_MAP).sort((a, b) => b.length - a.length).join('|');
-        const regex = new RegExp(`(JST\\s*|約譯)?(${sortedBooks})[^\\u4e00-\\u9fa5\\w]*(\\d+)(?:[:：](\\d+)(?:[\\-－—](\\d+))?)?`, 'gi');
+        const regex = new RegExp(`(JST\\s*|约譯)?(${sortedBooks})[^\\u4e00-\\u9fa5\\w]*(\\d+)(?:[:：](\\d+)(?:[\\-－—](\\d+))?)?`, 'gi');
         const wrapLink = (m, p1, b, c, s, e) => `<span class="script-link" onclick="openScripture('${b}', ${c}, '${s||""}', '${e||""}', ${!!p1})">${m}</span>`;
         return String(text).replace(regex, wrapLink);
     }
@@ -323,19 +323,17 @@
         return result;
     }
 
-    // 定義所有候選歷史文檔清單（符合 data_*.csv 命名格式）
+    // 定義所有候選歷史文檔清單（可自行擴充）
     const CANDIDATE_FILES = [
         "data_king_cards.csv",
         "data_intertestamental.csv",
         "data_new_testament.csv"
     ];
 
-    // 初始化：動態預先掃描所有符合格式的文件，提取主標題生成下拉選單
+    // 初始化：自動掃描各檔案，抓取內部 meta 的 app_title 填入下拉選單
     async function initDatasetScanner() {
         const selectEl = document.getElementById('mainTitleSelect');
-        selectEl.innerHTML = ''; // 清空
-
-        let firstFileToLoad = CANDIDATE_FILES[0];
+        selectEl.innerHTML = '';
 
         for (let filename of CANDIDATE_FILES) {
             try {
@@ -345,10 +343,10 @@
                 const rows = parseCSV(csvText);
                 const metaRows = rows.filter(r => r.type === 'meta');
 
-                let mainTitleText = `📖 ${filename} (歷史年表)`;
+                let mainTitleText = `📖 ${filename}`;
                 metaRows.forEach(m => {
                     let val = m.name || m.value;
-                    if (m.key === 'main_title' && val && val !== '.') {
+                    if (m.key === 'app_title' && val && val !== '.') {
                         mainTitleText = val;
                     }
                 });
@@ -358,7 +356,7 @@
                 option.text = mainTitleText;
                 selectEl.appendChild(option);
             } catch (e) {
-                console.warn(`無法讀取或解析檔案: ${filename}`, e);
+                console.warn(`無法讀取檔案: ${filename}`, e);
             }
         }
 
@@ -619,7 +617,6 @@
         });
     }
 
-    // 啟動時自動掃描候選檔案並填入選單
     window.addEventListener('load', () => initDatasetScanner());
     window.addEventListener('resize', () => drawLines());
 </script>
