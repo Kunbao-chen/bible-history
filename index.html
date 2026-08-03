@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.52 經文超連結與互動視窗版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.53 雙軌同包膜與寬度控制版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -81,8 +81,23 @@
             padding: 4px 4px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative; align-self: flex-start;
         }
-        .bar-track-container { display: flex; gap: 6px; width: 100%; justify-content: center; position: relative; height: 100%; }
-        .bar-track { width: 24px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
+        
+        /* 統一包膜容器：可自由控制左右軌寬度與間距 */
+        .bar-track-wrapper { 
+            --left-track-width: 24px;
+            --right-track-width: 24px;
+            --track-gap: 6px;
+
+            display: flex; 
+            gap: var(--track-gap); 
+            width: calc(var(--left-track-width) + var(--right-track-width) + var(--track-gap)); 
+            justify-content: center; 
+            position: relative; 
+            height: 100%; 
+        }
+        .bar-track { background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; box-sizing: border-box; }
+        .bar-track.track-left { width: var(--left-track-width); }
+        .bar-track.track-right { width: var(--right-track-width); }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
@@ -120,7 +135,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.52 經文超連結與互動視窗版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.53 雙軌同包膜與寬度控制版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -131,9 +146,9 @@
         </div>
 
         <div class="timeline-center" id="timelineCenter">
-            <div class="bar-track-container">
-                <div class="bar-track" id="leftTrack"></div>
-                <div class="bar-track" id="rightTrack"></div>
+            <div class="bar-track-wrapper" id="trackWrapper">
+                <div class="bar-track track-left" id="leftTrack"></div>
+                <div class="bar-track track-right" id="rightTrack"></div>
             </div>
         </div>
 
@@ -332,8 +347,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.52)";
-            let mainSub = "✨ 經文超連結與互動視窗版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.53)";
+            let mainSub = "✨ 雙軌同包膜與寬度控制版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
