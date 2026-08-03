@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.55 主標題自動對應版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.6 動態色帶與多重政權版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
         .notebook-container { width: 1050px; margin: 0 auto; border: 2px dashed #d4ac0d; padding: 12px 8px; background: #fffbf0; border-radius: 6px; box-sizing: border-box; }
         
-        /* 下拉式主標題樣式 */
-        .title-container { text-align: center; margin-bottom: 2px; }
-        #mainTitleSelect { font-size: 13pt; font-weight: bold; background: #f9e79f; color: #7d6608; padding: 4px 10px; border-radius: 4px; border: 1px solid #d4ac0d; cursor: pointer; text-align-last: center; }
-        
+        h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
-        /* 始終維持三欄佈局 */
-        .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
+        /* 三欄佈局：左右卡片區固定，中間時間軸採彈性寬度容器 */
+        .main-layout { display: grid; grid-template-columns: 420px 140px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .left-header { background: #e74c3c; }
@@ -37,14 +34,7 @@
         .king-card.tier-bad { background: #fdfefe; }
         .king-card.tier-evil { background: #fadbd8; }
         .king-card.tier-special { background: #fef9e7; }
-        
         .king-card.tier-collapse { background: #4a1512; color: #ffffff !important; }
-        .king-card.tier-collapse .king-name { color: #fce4ec !important; border-bottom: 1px solid #8a3b38; }
-        .king-card.tier-collapse .meta-row, 
-        .king-card.tier-collapse .detail-row, 
-        .king-card.tier-collapse .female-info { color: #f5c6cb !important; }
-        .king-card.tier-collapse .prophet-row { color: #ffadad !important; border-top: 1px dashed #8a3b38; }
-        .king-card.tier-collapse .prophet { color: #ffebee !important; }
 
         /* 主選中狀態 */
         .king-card.highlight-main {
@@ -64,12 +54,6 @@
             background: #fef9e7 !important; border: 2px solid #f39c12 !important;
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.8); z-index: 20; color: #111111 !important;
         }
-        .king-card.highlight-overlap .king-name,
-        .king-card.highlight-overlap .meta-row,
-        .king-card.highlight-overlap .detail-row,
-        .king-card.highlight-overlap .prophet-row,
-        .king-card.highlight-overlap .prophet,
-        .king-card.highlight-overlap span { color: #111111 !important; }
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
         .meta-row { white-space: normal; word-break: break-all; color: #34495e; font-size: 9.5pt; margin: 2px 0; line-height: 1.3; }
@@ -78,13 +62,18 @@
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
+        /* 時間軸中樞：雙軌並行與彈性變寬容器 */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 4px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative; align-self: flex-start;
         }
-        .bar-track-container { display: flex; gap: 6px; width: 100%; justify-content: center; position: relative; height: 100%; }
-        .bar-track { width: 24px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
+        .bar-track-container { display: flex; justify-content: space-between; width: 100%; position: relative; height: 100%; box-sizing: border-box; }
+        
+        /* 獨立軌道，支援動態色帶寬度與對齊 */
+        .bar-track { width: 45%; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; box-sizing: border-box; }
+        .bar-track.full-width { width: 100% !important; }
+        .bar-track.center-align { margin: 0 auto; }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
@@ -93,12 +82,12 @@
         
         .bar-segment.highlight-main { 
             background: #ffcc00 !important; border: 2px solid #b9770e !important; 
-            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; z-index: 25; filter: none !important; 
+            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; z-index: 25; 
         }
         
         .bar-segment.highlight-overlap { 
             background: #ffe066 !important; border: 2px solid #f39c12 !important; 
-            box-shadow: 0 0 8px #f1c40f !important; z-index: 20; filter: none !important; 
+            box-shadow: 0 0 8px #f1c40f !important; z-index: 20; 
         }
 
         .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
@@ -115,13 +104,8 @@
 <body>
 
 <div class="notebook-container">
-    <div class="title-container">
-        <select id="mainTitleSelect" onchange="changeDataset(this.value)">
-            <!-- 動態載入 -->
-        </select>
-    </div>
-    <!-- 永遠呈現當前框架版本副標題 -->
-    <p class="subtitle">✨ 聖經歷史・萬能呈現框架 v4.55 (主標題自動對應版)</p>
+    <h1 id="appTitle">載入中...</h1>
+    <p class="subtitle" id="appSubtitle">✨ v4.6 彈性色帶與多重政權版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -132,7 +116,7 @@
         </div>
 
         <div class="timeline-center" id="timelineCenter">
-            <div class="bar-track-container">
+            <div class="bar-track-container" id="trackContainerWrapper">
                 <div class="bar-track" id="leftTrack"></div>
                 <div class="bar-track" id="rightTrack"></div>
             </div>
@@ -157,7 +141,6 @@
 </div>
 
 <script>
-    // 經文對照對應表
     const SCRIPTURE_PHYSICAL_MAP = {
         "創": "ot/gen", "創世記": "ot/gen", "Genesis": "ot/gen", "Gen": "ot/gen",
         "出": "ot/ex", "出埃及記": "ot/ex", "Exodus": "ot/ex", "Ex": "ot/ex",
@@ -215,7 +198,7 @@
         "提前": "nt/1_tim", "提摩太前書": "nt/1_tim", "1 Timothy": "nt/1_tim", "1 Tim": "nt/1_tim",
         "提後": "nt/2_tim", "提摩太後書": "nt/2_tim", "2 Timothy": "nt/2_tim", "2 Tim": "nt/2_tim",
         "多": "nt/titus", "提多書": "nt/titus", "Titus": "nt/titus",
-        "門": "nt/philem", "腓利門書": "nt/philem", "Philemon": "nt/philem", "Philemon": "nt/philem",
+        "門": "nt/philem", "腓利門書": "nt/philem", "Philemon": "nt/philem", "Philem": "nt/philem",
         "來": "nt/heb", "希伯來書": "nt/heb", "Hebrews": "nt/heb", "Heb": "nt/heb",
         "雅": "nt/jas", "雅各書": "nt/jas", "James": "nt/jas", "Jas": "nt/jas",
         "彼前": "nt/1_pet", "彼得前書": "nt/1_pet", "1 Peter": "nt/1_pet", "1 Pet": "nt/1_pet",
@@ -285,7 +268,7 @@
     function convertToLink(text) {
         if (!text) return "";
         const sortedBooks = Object.keys(SCRIPTURE_PHYSICAL_MAP).sort((a, b) => b.length - a.length).join('|');
-        const regex = new RegExp(`(JST\\s*|约譯)?(${sortedBooks})[^\\u4e00-\\u9fa5\\w]*(\\d+)(?:[:：](\\d+)(?:[\\-－—](\\d+))?)?`, 'gi');
+        const regex = new RegExp(`(JST\\s*|約譯)?(${sortedBooks})[^\\u4e00-\\u9fa5\\w]*(\\d+)(?:[:：](\\d+)(?:[\\-－—](\\d+))?)?`, 'gi');
         const wrapLink = (m, p1, b, c, s, e) => `<span class="script-link" onclick="openScripture('${b}', ${c}, '${s||""}', '${e||""}', ${!!p1})">${m}</span>`;
         return String(text).replace(regex, wrapLink);
     }
@@ -296,10 +279,11 @@
         let result = [];
 
         for (let i = 1; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if(!line || line.startsWith('#')) continue; // 略過註解行
             let row = [];
             let inQuotes = false;
             let currentField = '';
-            let line = lines[i];
 
             for (let c = 0; c < line.length; c++) {
                 let char = line[c];
@@ -323,70 +307,31 @@
         return result;
     }
 
-    // 定義所有候選歷史文檔清單（可自行擴充）
-    const CANDIDATE_FILES = [
-        "data_king_cards.csv",
-        "data_intertestamental.csv",
-        "data_new_testament.csv"
-    ];
-
-    // 初始化：自動掃描各檔案，抓取內部 meta 的 app_title 填入下拉選單
-    async function initDatasetScanner() {
-        const selectEl = document.getElementById('mainTitleSelect');
-        selectEl.innerHTML = '';
-
-        for (let filename of CANDIDATE_FILES) {
-            try {
-                const res = await fetch(filename);
-                if (!res.ok) continue;
-                const csvText = await res.text();
-                const rows = parseCSV(csvText);
-                const metaRows = rows.filter(r => r.type === 'meta');
-
-                let mainTitleText = `📖 ${filename}`;
-                metaRows.forEach(m => {
-                    let val = m.name || m.value;
-                    if (m.key === 'app_title' && val && val !== '.') {
-                        mainTitleText = val;
-                    }
-                });
-
-                const option = document.createElement('option');
-                option.value = filename;
-                option.text = mainTitleText;
-                selectEl.appendChild(option);
-            } catch (e) {
-                console.warn(`無法讀取檔案: ${filename}`, e);
-            }
-        }
-
-        if (selectEl.options.length > 0) {
-            changeDataset(selectEl.value);
-        }
-    }
-
-    async function changeDataset(filename) {
-        await loadAndRenderFramework(filename);
-    }
-
-    async function loadAndRenderFramework(csvFilename) {
+    async function initFramework() {
         try {
-            const res = await fetch(csvFilename);
+            const res = await fetch('data_king_cards.csv');
             const csvText = await res.text();
             const rows = parseCSV(csvText);
 
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let leftTitle = "左側直欄";
-            let rightTitle = "右側直欄";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.6)";
+            let mainSub = "✨ 支援分裂、統一與外來政權動態色帶呈現";
+            let leftTitle = "左側政權";
+            let rightTitle = "右側政權";
 
             metaRows.forEach(m => {
                 let val = m.name || m.value;
+                if (m.key === 'app_title' && val && val !== '.') mainTitle = val;
+                if (m.key === 'app_subtitle' && val && val !== '.') mainSub = val;
                 if (m.key === 'left_header' && val && val !== '.') leftTitle = val;
                 if (m.key === 'right_header' && val && val !== '.') rightTitle = val;
             });
 
+            document.title = mainTitle;
+            document.getElementById('appTitle').innerText = mainTitle;
+            document.getElementById('appSubtitle').innerText = mainSub;
             document.getElementById('leftHeaderTitle').innerText = leftTitle;
             document.getElementById('rightHeaderTitle').innerText = rightTitle;
 
@@ -424,8 +369,8 @@
 
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear, TOP_BASE_YEAR);
-            renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear, TOP_BASE_YEAR);
+            renderTrackWithDynamicWidth(leftData, 'left', leftTrackEl, basePxPerYear, TOP_BASE_YEAR);
+            renderTrackWithDynamicWidth(rightData, 'right', rightTrackEl, basePxPerYear, TOP_BASE_YEAR);
 
             setTimeout(() => {
                 applyGroupCenterAlignment(leftCardsEl, leftCardsHeight, maxCardsHeight);
@@ -435,7 +380,7 @@
 
             initInteractive();
         } catch (e) {
-            console.error("載入與渲染失敗：", e);
+            console.error("初始化失敗：", e);
         }
     }
 
@@ -474,7 +419,7 @@
         });
     }
 
-    function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear, topBaseYear) {
+    function renderTrackWithDynamicWidth(data, sideName, trackContainer, basePxPerYear, topBaseYear) {
         trackContainer.innerHTML = '';
 
         data.forEach((item) => {
@@ -498,6 +443,24 @@
 
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
+
+            // 支援動態色帶寬度 (track_width) 與對齊方向 (track_align)
+            let widthVal = parseInt(item.track_width);
+            if (!isNaN(widthVal)) {
+                seg.style.width = `${widthVal}%`;
+            }
+
+            let align = item.track_align ? item.track_align.toLowerCase() : (sideName === 'left' ? 'left' : 'right');
+            if (align === 'right') {
+                seg.style.left = 'auto';
+                seg.style.right = '0';
+            } else if (align === 'center') {
+                seg.style.left = '50%';
+                seg.style.transform = 'translateX(-50%)';
+            } else {
+                seg.style.left = '0';
+                seg.style.right = 'auto';
+            }
 
             const tier = item.justice_tier;
             if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
@@ -603,8 +566,7 @@
 
     function initInteractive() {
         document.querySelectorAll('.king-card, .bar-segment').forEach(el => {
-            el.removeEventListener('click', el._clickHandler);
-            el._clickHandler = (e) => {
+            el.addEventListener('click', (e) => {
                 if (e.target.classList.contains('script-link')) return;
                 e.stopPropagation();
                 const start = parseInt(el.getAttribute('data-start'));
@@ -612,12 +574,11 @@
                 const side = el.getAttribute('data-side');
                 const id = el.getAttribute('data-id');
                 triggerHighlight(start, end, side, id);
-            };
-            el.addEventListener('click', el._clickHandler);
+            });
         });
     }
 
-    window.addEventListener('load', () => initDatasetScanner());
+    window.addEventListener('load', () => initFramework());
     window.addEventListener('resize', () => drawLines());
 </script>
 
