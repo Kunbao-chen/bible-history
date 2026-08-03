@@ -2,8 +2,9 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
+    <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.6 動態色帶與多重政權版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.52 經文超連結與互動視窗版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -12,8 +13,8 @@
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
-        /* 三欄佈局：左右卡片區固定，中間時間軸採彈性寬度容器 */
-        .main-layout { display: grid; grid-template-columns: 420px 140px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
+        /* 始終維持三欄佈局，不因裝置而打散 */
+        .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
         .left-header { background: #e74c3c; }
@@ -34,9 +35,16 @@
         .king-card.tier-bad { background: #fdfefe; }
         .king-card.tier-evil { background: #fadbd8; }
         .king-card.tier-special { background: #fef9e7; }
+        
         .king-card.tier-collapse { background: #4a1512; color: #ffffff !important; }
+        .king-card.tier-collapse .king-name { color: #fce4ec !important; border-bottom: 1px solid #8a3b38; }
+        .king-card.tier-collapse .meta-row, 
+        .king-card.tier-collapse .detail-row, 
+        .king-card.tier-collapse .female-info { color: #f5c6cb !important; }
+        .king-card.tier-collapse .prophet-row { color: #ffadad !important; border-top: 1px dashed #8a3b38; }
+        .king-card.tier-collapse .prophet { color: #ffebee !important; }
 
-        /* 主選中狀態 */
+        /* 主選中狀態：卡片與色段整條高亮 */
         .king-card.highlight-main {
             background: #ffeb99 !important; border: 2px solid #b9770e !important;
             border-left: 6px solid #b9770e !important; box-shadow: 0 0 12px rgba(211, 84, 0, 0.95);
@@ -54,6 +62,12 @@
             background: #fef9e7 !important; border: 2px solid #f39c12 !important;
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.8); z-index: 20; color: #111111 !important;
         }
+        .king-card.highlight-overlap .king-name,
+        .king-card.highlight-overlap .meta-row,
+        .king-card.highlight-overlap .detail-row,
+        .king-card.highlight-overlap .prophet-row,
+        .king-card.highlight-overlap .prophet,
+        .king-card.highlight-overlap span { color: #111111 !important; }
 
         .king-name { font-weight: bold; color: #2c3e50; font-size: 11pt; border-bottom: 1px solid #ecf0f1; padding-bottom: 2px; margin-bottom: 2px; }
         .meta-row { white-space: normal; word-break: break-all; color: #34495e; font-size: 9.5pt; margin: 2px 0; line-height: 1.3; }
@@ -62,18 +76,13 @@
         .female-info { color: #566573; font-weight: normal; }
         .detail-row { color: #566573; margin-top: 3px; font-size: 10pt; border-top: 1px dotted #f2f4f4; padding-top: 3px; }
 
-        /* 時間軸中樞：雙軌並行與彈性變寬容器 */
         .timeline-center { 
             display: flex; justify-content: center; background: #fff; border: 1px solid #bdc3c7; 
             padding: 4px 4px; border-radius: 4px; box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
             position: relative; align-self: flex-start;
         }
-        .bar-track-container { display: flex; justify-content: space-between; width: 100%; position: relative; height: 100%; box-sizing: border-box; }
-        
-        /* 獨立軌道，支援動態色帶寬度與對齊 */
-        .bar-track { width: 45%; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; box-sizing: border-box; }
-        .bar-track.full-width { width: 100% !important; }
-        .bar-track.center-align { margin: 0 auto; }
+        .bar-track-container { display: flex; gap: 6px; width: 100%; justify-content: center; position: relative; height: 100%; }
+        .bar-track { width: 24px; background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
@@ -81,13 +90,19 @@
         }
         
         .bar-segment.highlight-main { 
-            background: #ffcc00 !important; border: 2px solid #b9770e !important; 
-            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; z-index: 25; 
+            background: #ffcc00 !important; 
+            border: 2px solid #b9770e !important; 
+            box-shadow: 0 0 12px #d35400, inset 0 0 6px #fff !important; 
+            z-index: 25; 
+            filter: none !important; 
         }
         
         .bar-segment.highlight-overlap { 
-            background: #ffe066 !important; border: 2px solid #f39c12 !important; 
-            box-shadow: 0 0 8px #f1c40f !important; z-index: 20; 
+            background: #ffe066 !important; 
+            border: 2px solid #f39c12 !important; 
+            box-shadow: 0 0 8px #f1c40f !important; 
+            z-index: 20; 
+            filter: none !important; 
         }
 
         .svg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
@@ -105,7 +120,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.6 彈性色帶與多重政權版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.52 經文超連結與互動視窗版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -116,7 +131,7 @@
         </div>
 
         <div class="timeline-center" id="timelineCenter">
-            <div class="bar-track-container" id="trackContainerWrapper">
+            <div class="bar-track-container">
                 <div class="bar-track" id="leftTrack"></div>
                 <div class="bar-track" id="rightTrack"></div>
             </div>
@@ -141,6 +156,7 @@
 </div>
 
 <script>
+    // 經文對照對應表
     const SCRIPTURE_PHYSICAL_MAP = {
         "創": "ot/gen", "創世記": "ot/gen", "Genesis": "ot/gen", "Gen": "ot/gen",
         "出": "ot/ex", "出埃及記": "ot/ex", "Exodus": "ot/ex", "Ex": "ot/ex",
@@ -265,6 +281,7 @@
         document.getElementById('scripture-frame').src = ''; 
     }
 
+    // 智慧經文解析轉連結
     function convertToLink(text) {
         if (!text) return "";
         const sortedBooks = Object.keys(SCRIPTURE_PHYSICAL_MAP).sort((a, b) => b.length - a.length).join('|');
@@ -279,11 +296,10 @@
         let result = [];
 
         for (let i = 1; i < lines.length; i++) {
-            let line = lines[i].trim();
-            if(!line || line.startsWith('#')) continue; // 略過註解行
             let row = [];
             let inQuotes = false;
             let currentField = '';
+            let line = lines[i];
 
             for (let c = 0; c < line.length; c++) {
                 let char = line[c];
@@ -316,10 +332,10 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.6)";
-            let mainSub = "✨ 支援分裂、統一與外來政權動態色帶呈現";
-            let leftTitle = "左側政權";
-            let rightTitle = "右側政權";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.52)";
+            let mainSub = "✨ 經文超連結與互動視窗版";
+            let leftTitle = "北國以色列 (19王全展開)";
+            let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
             metaRows.forEach(m => {
                 let val = m.name || m.value;
@@ -369,8 +385,8 @@
 
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            renderTrackWithDynamicWidth(leftData, 'left', leftTrackEl, basePxPerYear, TOP_BASE_YEAR);
-            renderTrackWithDynamicWidth(rightData, 'right', rightTrackEl, basePxPerYear, TOP_BASE_YEAR);
+            renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear, TOP_BASE_YEAR);
+            renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear, TOP_BASE_YEAR);
 
             setTimeout(() => {
                 applyGroupCenterAlignment(leftCardsEl, leftCardsHeight, maxCardsHeight);
@@ -419,7 +435,7 @@
         });
     }
 
-    function renderTrackWithDynamicWidth(data, sideName, trackContainer, basePxPerYear, topBaseYear) {
+    function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear, topBaseYear) {
         trackContainer.innerHTML = '';
 
         data.forEach((item) => {
@@ -443,24 +459,6 @@
 
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
-
-            // 支援動態色帶寬度 (track_width) 與對齊方向 (track_align)
-            let widthVal = parseInt(item.track_width);
-            if (!isNaN(widthVal)) {
-                seg.style.width = `${widthVal}%`;
-            }
-
-            let align = item.track_align ? item.track_align.toLowerCase() : (sideName === 'left' ? 'left' : 'right');
-            if (align === 'right') {
-                seg.style.left = 'auto';
-                seg.style.right = '0';
-            } else if (align === 'center') {
-                seg.style.left = '50%';
-                seg.style.transform = 'translateX(-50%)';
-            } else {
-                seg.style.left = '0';
-                seg.style.right = 'auto';
-            }
 
             const tier = item.justice_tier;
             if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
@@ -567,6 +565,7 @@
     function initInteractive() {
         document.querySelectorAll('.king-card, .bar-segment').forEach(el => {
             el.addEventListener('click', (e) => {
+                // 若點擊的是經文超連結則不觸發卡片高亮跳動
                 if (e.target.classList.contains('script-link')) return;
                 e.stopPropagation();
                 const start = parseInt(el.getAttribute('data-start'));
