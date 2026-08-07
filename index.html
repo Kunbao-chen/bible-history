@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.53 雙軌同包膜與寬度控制版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.55 統一王國色帶無縫融合版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -82,11 +82,11 @@
             position: relative; align-self: flex-start;
         }
         
-        /* 統一包膜容器：可自由控制左右軌寬度與間距 */
+        /* 統一包膜容器： gap 設為 0px 讓左右兩軌完全無縫接合 */
         .bar-track-wrapper { 
             --left-track-width: 24px;
             --right-track-width: 24px;
-            --track-gap: 6px;
+            --track-gap: 0px;
 
             display: flex; 
             gap: var(--track-gap); 
@@ -96,12 +96,12 @@
             height: 100%; 
         }
         .bar-track { background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; box-sizing: border-box; }
-        .bar-track.track-left { width: var(--left-track-width); }
-        .bar-track.track-right { width: var(--right-track-width); }
+        .bar-track.track-left { width: var(--left-track-width); border-right: none; }
+        .bar-track.track-right { width: var(--right-track-width); border-left: none; }
         
         .bar-segment { 
             width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
-            transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0; right: 0;
+            transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0;
         }
         
         .bar-segment.highlight-main { 
@@ -135,7 +135,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.53 雙軌同包膜與寬度控制版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.55 統一王國色帶無縫融合版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -347,8 +347,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.53)";
-            let mainSub = "✨ 雙軌同包膜與寬度控制版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.55)";
+            let mainSub = "✨ 統一王國色帶無縫融合版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -474,6 +474,27 @@
 
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
+
+            // 讀取 CSV 中的色段寬度與對齊設定
+            const customWidth = (item.track_width && item.track_width !== '.') ? item.track_width.trim() : '';
+            const customAlign = (item.track_align && item.track_align !== '.') ? item.track_align.trim().toLowerCase() : 'center';
+
+            if (customWidth) {
+                seg.style.width = customWidth;
+                if (customAlign === 'left') {
+                    seg.style.left = '0';
+                    seg.style.right = 'auto';
+                } else if (customAlign === 'right') {
+                    seg.style.left = 'auto';
+                    seg.style.right = '0';
+                } else {
+                    seg.style.left = '50%';
+                    seg.style.transform = 'translateX(-50%)';
+                }
+            } else {
+                seg.style.width = '100%';
+                seg.style.left = '0';
+            }
 
             const tier = item.justice_tier;
             if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
