@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.57 修正延伸與全寬渲染版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.58 左右起點對稱內縮版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -133,7 +133,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.57 修正延伸與全寬渲染版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.58 左右起點對稱內縮版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -342,8 +342,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.57)";
-            let mainSub = "✨ 修正延伸與全寬渲染版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.58)";
+            let mainSub = "✨ 左右起點對稱內縮版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -468,22 +468,22 @@
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
 
-            // 設定寬度與延伸起點方向
+            // 設定寬度與對稱延伸起點
             const customWidth = (item.track_width && item.track_width !== '.') ? item.track_width.trim() : '50%';
             seg.style.width = customWidth;
 
             if (customWidth === '100%') {
-                // 100% 全寬（如統一王國）：起點拉到最左端 (0)，一路橫跨到最右
+                // 100% 滿版（如統一王國）：從最左邊 (0) 塗滿整條畫布
                 seg.style.left = '0';
                 seg.style.right = 'auto';
             } else if (sideName === 'left') {
-                // 左軌（北國）：基準點在中央分界線 (right: 50%)，向左延伸
-                seg.style.right = '50%';
-                seg.style.left = 'auto';
-            } else {
-                // 右軌（南國）：基準點在中央分界線 (left: 50%)，向右延伸
-                seg.style.left = '50%';
+                // 左軌（北國）：以最左邊為起點，向右延伸
+                seg.style.left = '0';
                 seg.style.right = 'auto';
+            } else {
+                // 右軌（南國）：以最右邊為起點，向左延伸
+                seg.style.right = '0';
+                seg.style.left = 'auto';
             }
 
             const tier = item.justice_tier;
@@ -526,7 +526,7 @@
                     const x1 = side === 'left' ? (cardRect.right - container.left) : (cardRect.left - container.left);
                     const y1 = cardRect.top + cardRect.height / 2 - container.top;
                     
-                    // 連線端點精確對齊：左側卡片接色段左邊緣、右側卡片接色段右邊緣
+                    // 精確端點對齊：左卡連左軌左邊緣、右卡連右軌右邊緣
                     const x2 = side === 'left' ? (segRect.left - container.left) : (segRect.right - container.left);
                     const y2 = segRect.top + segRect.height / 2 - container.top;
 
