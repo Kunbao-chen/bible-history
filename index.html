@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.56 單一100%總寬模型版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.57 修正延伸與全寬渲染版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -93,7 +93,7 @@
             overflow: hidden;
         }
 
-        /* 色段定位：左軌靠左 (left:0)、右軌靠右 (right:0) */
+        /* 色段基礎定位 */
         .bar-segment { 
             position: absolute; 
             box-sizing: border-box; 
@@ -101,8 +101,6 @@
             cursor: pointer; 
             border-bottom: 1px solid rgba(0,0,0,0.2);
         }
-        .bar-segment[data-side="left"] { left: 0; }
-        .bar-segment[data-side="right"] { right: 0; }
         
         .bar-segment.highlight-main { 
             background: #ffcc00 !important; 
@@ -135,7 +133,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.56 單一100%總寬模型版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.57 修正延伸與全寬渲染版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -344,8 +342,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.56)";
-            let mainSub = "✨ 單一100%總寬模型版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.57)";
+            let mainSub = "✨ 修正延伸與全寬渲染版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -395,7 +393,7 @@
 
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            // 統一繪製於單一 100% 色帶畫布中
+            // 繪製色帶
             trackWrapperEl.innerHTML = '';
             renderTrackWithGlobalScale(dataRows, trackWrapperEl, basePxPerYear, TOP_BASE_YEAR);
 
@@ -470,9 +468,23 @@
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
 
-            // 設定寬度：若有自訂則依自訂，若無預設各佔 50%
+            // 設定寬度與延伸起點方向
             const customWidth = (item.track_width && item.track_width !== '.') ? item.track_width.trim() : '50%';
             seg.style.width = customWidth;
+
+            if (customWidth === '100%') {
+                // 100% 全寬（如統一王國）：起點拉到最左端 (0)，一路橫跨到最右
+                seg.style.left = '0';
+                seg.style.right = 'auto';
+            } else if (sideName === 'left') {
+                // 左軌（北國）：基準點在中央分界線 (right: 50%)，向左延伸
+                seg.style.right = '50%';
+                seg.style.left = 'auto';
+            } else {
+                // 右軌（南國）：基準點在中央分界線 (left: 50%)，向右延伸
+                seg.style.left = '50%';
+                seg.style.right = 'auto';
+            }
 
             const tier = item.justice_tier;
             if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
@@ -513,7 +525,8 @@
 
                     const x1 = side === 'left' ? (cardRect.right - container.left) : (cardRect.left - container.left);
                     const y1 = cardRect.top + cardRect.height / 2 - container.top;
-                    // 連線端點：左側接色帶左緣、右側接色帶右緣
+                    
+                    // 連線端點精確對齊：左側卡片接色段左邊緣、右側卡片接色段右邊緣
                     const x2 = side === 'left' ? (segRect.left - container.left) : (segRect.right - container.left);
                     const y2 = segRect.top + segRect.height / 2 - container.top;
 
