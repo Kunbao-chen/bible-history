@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.58 左右起點對稱內縮版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.59 色帶方向與連線精確修正版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -133,7 +133,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.58 左右起點對稱內縮版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.59 色帶方向與連線精確修正版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -342,15 +342,15 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.58)";
-            let mainSub = "✨ 左右起點對稱內縮版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.59)";
+            // 強制硬編碼固定顯示版本號，防止被 CSV 的 app_subtitle 覆蓋
+            let mainSub = "✨ v4.59 色帶方向與連線精確修正版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
             metaRows.forEach(m => {
                 let val = m.name || m.value;
                 if (m.key === 'app_title' && val && val !== '.') mainTitle = val;
-                if (m.key === 'app_subtitle' && val && val !== '.') mainSub = val;
                 if (m.key === 'left_header' && val && val !== '.') leftTitle = val;
                 if (m.key === 'right_header' && val && val !== '.') rightTitle = val;
             });
@@ -468,20 +468,20 @@
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
 
-            // 設定寬度與對稱延伸起點
+            // 🌟 修正：精確依據 layout_side 靠左或靠右延伸
             const customWidth = (item.track_width && item.track_width !== '.') ? item.track_width.trim() : '50%';
             seg.style.width = customWidth;
 
             if (customWidth === '100%') {
-                // 100% 滿版（如統一王國）：從最左邊 (0) 塗滿整條畫布
+                // 100% 寬度（如統一王國）：從最左端 (left: 0) 延伸至最右端
                 seg.style.left = '0';
                 seg.style.right = 'auto';
             } else if (sideName === 'left') {
-                // 左軌（北國）：以最左邊為起點，向右延伸
+                // 左軌（北國）：固定靠最左邊 (left: 0)，向右延伸
                 seg.style.left = '0';
                 seg.style.right = 'auto';
             } else {
-                // 右軌（南國）：以最右邊為起點，向左延伸
+                // 右軌（南國）：固定靠最右邊 (right: 0)，向左延伸
                 seg.style.right = '0';
                 seg.style.left = 'auto';
             }
@@ -526,7 +526,7 @@
                     const x1 = side === 'left' ? (cardRect.right - container.left) : (cardRect.left - container.left);
                     const y1 = cardRect.top + cardRect.height / 2 - container.top;
                     
-                    // 精確端點對齊：左卡連左軌左邊緣、右卡連右軌右邊緣
+                    // 🌟 修正：精確讓左側卡片連線接至左色塊左緣 (segRect.left)，右側卡片連線接至右色塊右緣 (segRect.right)
                     const x2 = side === 'left' ? (segRect.left - container.left) : (segRect.right - container.left);
                     const y2 = segRect.top + segRect.height / 2 - container.top;
 
