@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- 允許使用者自由縮放，保持三欄完整呈現 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>聖經歷史・萬能呈現框架 (v4.55 統一王國色帶無縫融合版)</title>
+    <title>聖經歷史・萬能呈現框架 (v4.56 單一100%總寬模型版)</title>
     <style>
         @page { size: A4 portrait; margin: 4mm; }
         body { font-family: "Noto Sans TC", Arial, sans-serif; background: #fffdf9; color: #2c3e50; margin: 0; padding: 8px; font-size: 10pt; box-sizing: border-box; }
@@ -13,7 +13,7 @@
         h1 { text-align: center; font-size: 14pt; margin: 0 0 2px 0; background: #f9e79f; color: #7d6608; padding: 3px; border-radius: 4px; }
         p.subtitle { text-align: center; font-size: 10pt; margin: 0 0 10px 0; color: #7f8c8d; }
 
-        /* 始終維持三欄佈局，不因裝置而打散 */
+        /* 始終維持三欄佈局 */
         .main-layout { display: grid; grid-template-columns: 420px 100px 420px; justify-content: center; gap: 20px; align-items: start; position: relative; }
         
         .column-header { text-align: center; font-weight: bold; padding: 6px; border-radius: 3px; font-size: 11pt; color: white; margin-bottom: 6px; }
@@ -82,27 +82,27 @@
             position: relative; align-self: flex-start;
         }
         
-        /* 統一包膜容器： gap 設為 0px 讓左右兩軌完全無縫接合 */
+        /* 100% 統一色帶畫布 (總寬 48px) */
         .bar-track-wrapper { 
-            --left-track-width: 24px;
-            --right-track-width: 24px;
-            --track-gap: 0px;
-
-            display: flex; 
-            gap: var(--track-gap); 
-            width: calc(var(--left-track-width) + var(--right-track-width) + var(--track-gap)); 
-            justify-content: center; 
             position: relative; 
+            width: 48px; 
             height: 100%; 
+            background: #f4f6f7; 
+            border: 1px solid #95a5a6; 
+            box-sizing: border-box;
+            overflow: hidden;
         }
-        .bar-track { background: #f4f6f7; border: 1px solid #95a5a6; display: flex; flex-direction: column; position: relative; box-sizing: border-box; }
-        .bar-track.track-left { width: var(--left-track-width); border-right: none; }
-        .bar-track.track-right { width: var(--right-track-width); border-left: none; }
-        
+
+        /* 色段定位：左軌靠左 (left:0)、右軌靠右 (right:0) */
         .bar-segment { 
-            width: 100%; border-bottom: 1px solid rgba(0,0,0,0.2); box-sizing: border-box; 
-            transition: all 0.2s ease; cursor: pointer; position: absolute; left: 0;
+            position: absolute; 
+            box-sizing: border-box; 
+            transition: all 0.2s ease; 
+            cursor: pointer; 
+            border-bottom: 1px solid rgba(0,0,0,0.2);
         }
+        .bar-segment[data-side="left"] { left: 0; }
+        .bar-segment[data-side="right"] { right: 0; }
         
         .bar-segment.highlight-main { 
             background: #ffcc00 !important; 
@@ -135,7 +135,7 @@
 
 <div class="notebook-container">
     <h1 id="appTitle">載入中...</h1>
-    <p class="subtitle" id="appSubtitle">✨ v4.55 統一王國色帶無縫融合版</p>
+    <p class="subtitle" id="appSubtitle">✨ v4.56 單一100%總寬模型版</p>
 
     <div class="main-layout" id="layoutContainer">
         <svg class="svg-overlay" id="linkSvg"></svg>
@@ -146,10 +146,7 @@
         </div>
 
         <div class="timeline-center" id="timelineCenter">
-            <div class="bar-track-wrapper" id="trackWrapper">
-                <div class="bar-track track-left" id="leftTrack"></div>
-                <div class="bar-track track-right" id="rightTrack"></div>
-            </div>
+            <div class="bar-track-wrapper" id="trackWrapper"></div>
         </div>
 
         <div>
@@ -347,8 +344,8 @@
             const metaRows = rows.filter(r => r.type === 'meta');
             const dataRows = rows.filter(r => r.type === 'data' || !r.type);
 
-            let mainTitle = "聖經歷史・萬能呈現框架 (v4.55)";
-            let mainSub = "✨ 統一王國色帶無縫融合版";
+            let mainTitle = "聖經歷史・萬能呈現框架 (v4.56)";
+            let mainSub = "✨ 單一100%總寬模型版";
             let leftTitle = "北國以色列 (19王全展開)";
             let rightTitle = "聯合王國 + 南國猶大 (統治者與亡國)";
 
@@ -383,8 +380,7 @@
 
             const leftCardsEl = document.getElementById('leftCardsContainer');
             const rightCardsEl = document.getElementById('rightCardsContainer');
-            const leftTrackEl = document.getElementById('leftTrack');
-            const rightTrackEl = document.getElementById('rightTrack');
+            const trackWrapperEl = document.getElementById('trackWrapper');
             const timelineCenterEl = document.getElementById('timelineCenter');
 
             renderCards(leftData, 'left', leftCardsEl);
@@ -394,14 +390,14 @@
             const rightCardsHeight = rightCardsEl.offsetHeight;
             const maxCardsHeight = Math.max(leftCardsHeight, rightCardsHeight, 800);
 
-            leftTrackEl.style.height = `${maxCardsHeight}px`;
-            rightTrackEl.style.height = `${maxCardsHeight}px`;
+            trackWrapperEl.style.height = `${maxCardsHeight}px`;
             timelineCenterEl.style.height = `${maxCardsHeight}px`;
 
             const basePxPerYear = maxCardsHeight / TOTAL_YEARS;
 
-            renderTrackWithGlobalScale(leftData, 'left', leftTrackEl, basePxPerYear, TOP_BASE_YEAR);
-            renderTrackWithGlobalScale(rightData, 'right', rightTrackEl, basePxPerYear, TOP_BASE_YEAR);
+            // 統一繪製於單一 100% 色帶畫布中
+            trackWrapperEl.innerHTML = '';
+            renderTrackWithGlobalScale(dataRows, trackWrapperEl, basePxPerYear, TOP_BASE_YEAR);
 
             setTimeout(() => {
                 applyGroupCenterAlignment(leftCardsEl, leftCardsHeight, maxCardsHeight);
@@ -450,14 +446,13 @@
         });
     }
 
-    function renderTrackWithGlobalScale(data, sideName, trackContainer, basePxPerYear, topBaseYear) {
-        trackContainer.innerHTML = '';
-
-        data.forEach((item) => {
+    function renderTrackWithGlobalScale(dataRows, trackContainer, basePxPerYear, topBaseYear) {
+        dataRows.forEach((item) => {
             const rawS = parseInt(item.start_year);
             const rawE = parseInt(item.end_year);
             if (isNaN(rawS) || isNaN(rawE)) return;
 
+            const sideName = item.layout_side || 'right';
             const start = Math.max(rawS, rawE);
             const end = Math.min(rawS, rawE);
 
@@ -475,26 +470,9 @@
             seg.style.top = `${topOffset}px`;
             seg.style.height = `${height}px`;
 
-            // 讀取 CSV 中的色段寬度與對齊設定
-            const customWidth = (item.track_width && item.track_width !== '.') ? item.track_width.trim() : '';
-            const customAlign = (item.track_align && item.track_align !== '.') ? item.track_align.trim().toLowerCase() : 'center';
-
-            if (customWidth) {
-                seg.style.width = customWidth;
-                if (customAlign === 'left') {
-                    seg.style.left = '0';
-                    seg.style.right = 'auto';
-                } else if (customAlign === 'right') {
-                    seg.style.left = 'auto';
-                    seg.style.right = '0';
-                } else {
-                    seg.style.left = '50%';
-                    seg.style.transform = 'translateX(-50%)';
-                }
-            } else {
-                seg.style.width = '100%';
-                seg.style.left = '0';
-            }
+            // 設定寬度：若有自訂則依自訂，若無預設各佔 50%
+            const customWidth = (item.track_width && item.track_width !== '.') ? item.track_width.trim() : '50%';
+            seg.style.width = customWidth;
 
             const tier = item.justice_tier;
             if(tier === 'good') seg.style.background = 'linear-gradient(to bottom, #52be80, #27ae60)';
@@ -528,13 +506,14 @@
         ['left', 'right'].forEach(side => {
             document.querySelectorAll(`#${side}CardsContainer .king-card`).forEach(card => {
                 const id = card.getAttribute('data-id');
-                const segment = document.querySelector(`#${side}Track .bar-segment[data-side="${side}"][data-id="${id}"]`);
+                const segment = document.querySelector(`.bar-segment[data-side="${side}"][data-id="${id}"]`);
                 if (segment) {
                     const cardRect = card.getBoundingClientRect();
                     const segRect = segment.getBoundingClientRect();
 
                     const x1 = side === 'left' ? (cardRect.right - container.left) : (cardRect.left - container.left);
                     const y1 = cardRect.top + cardRect.height / 2 - container.top;
+                    // 連線端點：左側接色帶左緣、右側接色帶右緣
                     const x2 = side === 'left' ? (segRect.left - container.left) : (segRect.right - container.left);
                     const y2 = segRect.top + segRect.height / 2 - container.top;
 
@@ -601,7 +580,6 @@
     function initInteractive() {
         document.querySelectorAll('.king-card, .bar-segment').forEach(el => {
             el.addEventListener('click', (e) => {
-                // 若點擊的是經文超連結則不觸發卡片高亮跳動
                 if (e.target.classList.contains('script-link')) return;
                 e.stopPropagation();
                 const start = parseInt(el.getAttribute('data-start'));
